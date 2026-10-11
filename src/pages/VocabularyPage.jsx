@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Plus, Pencil, Trash2, Download, BookOpen, MousePointerClick, Languages } from 'lucide-react'
-import { getVocabulary, addWord, updateWord, removeWord } from '../lib/vocabulary'
+import { useVocabulary } from '../lib/useVocabulary'
+import GuestSaveBanner from '../components/GuestSaveBanner'
 import AddWordModal from '../components/AddWordModal'
 import PageHeader from '../components/PageHeader'
 import { useConfirm } from '../lib/confirmDialog'
@@ -32,15 +33,9 @@ function plural(n, one, few, many) {
 
 export default function VocabularyPage() {
   const confirmAction = useConfirm()
-  const [entries, setEntries] = useState([])
+  const { entries, categories, local, loading, add, update, remove } = useVocabulary()
   const [modalOpen, setModalOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState(null)
-
-  function reload() {
-    setEntries(getVocabulary())
-  }
-
-  useEffect(reload, [])
 
   function openAddModal() {
     setEditingEntry(null)
@@ -52,14 +47,10 @@ export default function VocabularyPage() {
     setModalOpen(true)
   }
 
-  function handleSave(data) {
-    if (editingEntry) {
-      updateWord(editingEntry.id, data)
-    } else {
-      addWord(data)
-    }
+  async function handleSave(data) {
+    if (editingEntry) await update(editingEntry.id, data)
+    else await add(data)
     setModalOpen(false)
-    reload()
   }
 
   async function handleDelete(entry) {
@@ -70,11 +61,9 @@ export default function VocabularyPage() {
       danger: true,
     })
     if (!ok) return
-    removeWord(entry.id)
-    reload()
+    await remove(entry.id)
   }
 
-  const categories = [...new Set(entries.map((e) => e.category).filter(Boolean))]
   const groups = [
     ...categories.map((cat) => ({ category: cat, items: entries.filter((e) => e.category === cat) })),
     { category: null, items: entries.filter((e) => !e.category) },
@@ -108,7 +97,15 @@ export default function VocabularyPage() {
         }
       />
 
-      {entries.length === 0 ? (
+      {!loading && local && (
+        <GuestSaveBanner className="-mt-2 mb-8">
+          Слова сохраняются только в этом браузере — войди, чтобы они были в аккаунте и на любом устройстве.
+        </GuestSaveBanner>
+      )}
+
+      {loading ? (
+        <p className="text-sm text-ink/40">Загружаем словарь…</p>
+      ) : entries.length === 0 ? (
         <section className="card grid grid-cols-1 gap-8 p-6 sm:p-8 md:grid-cols-[1fr_1fr] md:items-center">
           <div>
             <h2 className="h-section">Словарь пока пуст</h2>

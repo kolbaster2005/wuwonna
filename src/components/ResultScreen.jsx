@@ -89,7 +89,7 @@ export default function ResultScreen({
         {actions}
       </div>
 
-      {footer && <p className="mt-5 text-xs leading-relaxed text-ink/45">{footer}</p>}
+      {footer && <div className="mt-5 text-xs leading-relaxed text-ink/45">{footer}</div>}
     </div>
   )
 }

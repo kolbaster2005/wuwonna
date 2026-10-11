@@ -1,5 +1,20 @@
 import { useSearchParams } from 'react-router-dom'
-import { Clock, ListChecks, CheckSquare, ExternalLink, Presentation, Globe2, Info } from 'lucide-react'
+import {
+  CalendarDays,
+  CheckSquare,
+  ClipboardCheck,
+  Clock,
+  CreditCard,
+  ExternalLink,
+  Globe2,
+  Info,
+  ListChecks,
+  Mail,
+  MonitorPlay,
+  Presentation,
+  Send,
+  UserPlus,
+} from 'lucide-react'
 import RichText from '../components/RichText'
 import PageHeader from '../components/PageHeader'
 import Tabs from '../components/Tabs'
@@ -154,53 +169,145 @@ function StatsTab() {
   )
 }
 
-function MaterialsTab() {
-  const links = [
-    { title: 'Официальный сайт WU', href: OFFICIAL_WU_URL, icon: Globe2, external: true },
-    // Книга пока скрыта с сайта — ссылку вернуть вместе с маршрутом /kniga (App.jsx):
-    // { title: 'Официальная книга по подготовке', href: '/kniga', icon: BookOpen, external: false }, (BookOpen — из lucide-react)
-  ]
+const usefulLinks = [
+  { title: 'Официальный сайт WU', href: OFFICIAL_WU_URL, icon: Globe2 },
+  {
+    title: 'Презентация о том, как считаются баллы за ответы',
+    href: 'https://www.wu.ac.at/fileadmin/wu/h/programs/bachelor/wiso/Teilpunktesystem_WISO.pdf',
+    icon: Presentation,
+  },
+  // Книга пока скрыта с сайта — ссылку вернуть вместе с маршрутом /kniga (App.jsx):
+  // { title: 'Официальная книга по подготовке', href: '/kniga', icon: BookOpen }, (BookOpen — из lucide-react)
+]
 
+const socialLinks = [
+  { title: 'YouTube-канал WU WONNA', href: 'https://www.youtube.com/@wuwonna', icon: MonitorPlay },
+  { title: 'Telegram-канал WU WONNA', href: 'https://t.me/wuwonna', icon: Send },
+]
+
+// Список внешних ссылок карточками — открываются в новой вкладке.
+function LinkList({ links }) {
   return (
-    <div>
-      <h2 className="h-section">Полезные материалы</h2>
-      <ul className="mt-6 max-w-2xl space-y-3">
-        {links.map((link) => (
-          <li key={link.title}>
-            <a
-              href={link.href}
-              target={link.external ? '_blank' : undefined}
-              rel={link.external ? 'noreferrer' : undefined}
-              className="card flex items-center gap-3 p-4 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
-            >
-              <link.icon size={17} className="shrink-0 text-pine-600" />
-              {link.title}
-              <ExternalLink size={14} className="ml-auto shrink-0 text-ink/30" />
-            </a>
-          </li>
-        ))}
-        <li>
-          <div
-            className="flex cursor-not-allowed items-center gap-3 rounded-xl border border-dashed border-line bg-white p-4 text-sm font-semibold text-ink/35"
-            title="Ссылку добавим, как только пришлёшь презентацию"
+    <ul className="mt-6 max-w-2xl space-y-3">
+      {links.map((link) => (
+        <li key={link.title}>
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noreferrer"
+            className="card flex items-center gap-3 p-4 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
           >
-            <Presentation size={17} className="shrink-0" />
-            Презентация о том, как считаются баллы за ответы
-            <span className="ml-auto shrink-0 text-xs font-normal">скоро</span>
-          </div>
+            <link.icon size={17} className="shrink-0 text-pine-600" />
+            {link.title}
+            <ExternalLink size={14} className="ml-auto shrink-0 text-ink/30" />
+          </a>
         </li>
-      </ul>
+      ))}
+    </ul>
+  )
+}
+
+function MaterialsTab() {
+  return (
+    <div className="space-y-10">
+      <section>
+        <h2 className="h-section">Полезные материалы</h2>
+        <LinkList links={usefulLinks} />
+      </section>
+      <section>
+        <h2 className="h-section">Соцсети</h2>
+        <LinkList links={socialLinks} />
+      </section>
     </div>
   )
 }
 
+// Шаги поступления на 2026 год — кратко, по официальной странице WU.
+// Каждый год даты меняются: обновить здесь.
+const registrationSteps = [
+  {
+    icon: UserPlus,
+    title: 'Регистрация онлайн',
+    when: '2 марта — 19 мая 2026',
+    points: [
+      'Заполни регистрационную форму на сайте WU.',
+      'Подать можно, даже если ещё учишься в последнем классе.',
+    ],
+  },
+  {
+    icon: ClipboardCheck,
+    title: 'Онлайн-самооценка (OSA)',
+    when: 'до 28 мая 2026, 12:00',
+    points: [
+      'Ссылка на OSA — в твоей регистрационной форме.',
+      'Не оценивается и ни на что не влияет, но пройти её обязательно — полностью и вовремя.',
+      'После прохождения в форме должна появиться зелёная галочка.',
+      'Технические проблемы — пиши на aufnahmeverfahren@wu.ac.at с темой «OSA» и своим ID OSA.',
+    ],
+  },
+  {
+    icon: CreditCard,
+    title: 'Оплата сбора — 50 €',
+    when: 'до 19 мая 2026',
+    points: [
+      'Онлайн-банкинг, EPS или карта (Visa, Mastercard, Amex, Diners).',
+      'Сбор не возвращается — даже если не поступишь. Поэтому сначала пройди OSA, потом плати.',
+      'Оплата засчитана, когда в форме появится зелёная галочка.',
+      'Для граждан Украины в 2026 году сбор отменён.',
+    ],
+  },
+  {
+    icon: CalendarDays,
+    title: 'Вступительный экзамен',
+    when: '30 июня 2026, 10:00–12:00',
+    points: [
+      'Очно, в Messe Wien (VIECON). Другой даты нет.',
+      'С собой: удостоверение личности с фото (оригинал), распечатанное приглашение, синяя или чёрная ручка, разрешённый калькулятор.',
+    ],
+  },
+  {
+    icon: Mail,
+    title: 'Результаты',
+    when: 'до 10 дней после экзамена',
+    points: ['Придут на почту и появятся в регистрационной форме.'],
+  },
+]
+
 function RegistrationTab() {
   return (
-    <div>
+    <div className="max-w-3xl">
       <h2 className="h-section">Процесс регистрации</h2>
-      <div className="max-w-prose">
-        <RegistrationInfo />
-      </div>
+      <p className="mt-2 text-ink/60">
+        Кратко по шагам на 2026 год. Подробности — на <OfficialWuLink />.
+      </p>
+
+      <ol className="mt-8">
+        {registrationSteps.map(({ icon: Icon, title, when, points }, i) => {
+          const isLast = i === registrationSteps.length - 1
+          return (
+            <li key={title} className="relative flex gap-4 pb-8 last:pb-0 sm:gap-5">
+              {/* вертикальная линия между шагами */}
+              {!isLast && <span aria-hidden="true" className="absolute left-5 top-11 bottom-0 w-px bg-line" />}
+              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pine-600 text-white">
+                <Icon size={19} />
+              </span>
+              <div className="min-w-0 pt-0.5">
+                <p className="eyebrow text-pine-700">Шаг {i + 1}</p>
+                <h3 className="mt-0.5 text-lg font-extrabold">{title}</h3>
+                <span className="chip mt-2 bg-pine-50 text-pine-800">{when}</span>
+                <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-ink/70">
+                  {points.map((point) => (
+                    <li key={point} className="flex gap-2.5">
+                      <span aria-hidden="true" className="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full bg-pine-600" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          )
+        })}
+      </ol>
     </div>
   )
 }

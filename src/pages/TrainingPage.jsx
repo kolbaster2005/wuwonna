@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, MinusCircle, Shuffle, Lis
 import { fetchTopics, fetchQuestionCountsByTopic, fetchQuestionsByTopics } from '../lib/data'
 import { groupTopicsByChapter } from '../data/topics'
 import { scoreQuestion, scoreStatus } from '../lib/scoring'
-import { addWord, getVocabulary } from '../lib/vocabulary'
+import { useVocabulary } from '../lib/useVocabulary'
 import { useAuth } from '../lib/authContext'
 import { useProModal } from '../lib/proModal'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -25,6 +25,7 @@ function shuffle(arr) {
 }
 
 export default function TrainingPage() {
+  const vocabulary = useVocabulary()
   const confirmAction = useConfirm()
   const [phase, setPhase] = useState('setup') // 'setup' | 'session' | 'finished'
   // completed — тренировка уже завершена: вопросы открываются в режиме
@@ -240,8 +241,8 @@ export default function TrainingPage() {
   const resultCounts = { correct: 0, partial: 0, incorrect: 0, unanswered: questions.length - answeredCount }
   Object.values(answers).forEach((a) => (resultCounts[a.status] += 1))
 
-  function handleSaveWord(data) {
-    addWord(data)
+  async function handleSaveWord(data) {
+    await vocabulary.add(data)
     setWordModalPrefill(null)
   }
 
@@ -609,7 +610,7 @@ export default function TrainingPage() {
       {wordModalPrefill !== null && (
         <AddWordModal
           initial={{ word: wordModalPrefill }}
-          existingCategories={[...new Set(getVocabulary().map((e) => e.category).filter(Boolean))]}
+          existingCategories={vocabulary.categories}
           onSave={handleSaveWord}
           onClose={() => setWordModalPrefill(null)}
         />

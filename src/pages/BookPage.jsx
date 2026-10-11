@@ -9,7 +9,7 @@ import {
   saveBookHighlight,
   deleteBookHighlight,
 } from '../lib/data'
-import { addWord, getVocabulary } from '../lib/vocabulary'
+import { useVocabulary } from '../lib/useVocabulary'
 import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
 import RichSelectableContent from '../components/RichSelectableContent'
@@ -17,6 +17,7 @@ import RichText from '../components/RichText'
 import AddWordModal from '../components/AddWordModal'
 
 export default function BookPage() {
+  const vocabulary = useVocabulary()
   const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const [chapters, setChapters] = useState(undefined)
@@ -101,8 +102,8 @@ export default function BookPage() {
     setHighlights((prev) => prev.filter((h) => h.id !== highlightId))
   }
 
-  function handleSaveWord(data) {
-    addWord(data)
+  async function handleSaveWord(data) {
+    await vocabulary.add(data)
     setWordModalPrefill(null)
   }
 
@@ -278,7 +279,7 @@ export default function BookPage() {
       {wordModalPrefill !== null && (
         <AddWordModal
           initial={{ word: wordModalPrefill }}
-          existingCategories={[...new Set(getVocabulary().map((e) => e.category).filter(Boolean))]}
+          existingCategories={vocabulary.categories}
           onSave={handleSaveWord}
           onClose={() => setWordModalPrefill(null)}
         />

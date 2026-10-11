@@ -7,17 +7,17 @@ import {
   Clock,
   Flame,
   ListChecks,
-  LogIn,
   RotateCcw,
   Target,
   TrendingUp,
 } from 'lucide-react'
 import { fetchTests, fetchAttempts } from '../lib/data'
 import { chapterProgress, lastAttempt, nextTest, summary, weakestTests, attemptRatio } from '../lib/progress'
-import { getVocabulary } from '../lib/vocabulary'
+import { useVocabulary } from '../lib/useVocabulary'
 import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
 import PageHeader from '../components/PageHeader'
+import GuestSaveBanner from '../components/GuestSaveBanner'
 
 // --- форматирование ---
 
@@ -145,7 +145,7 @@ export default function ProgressPage() {
   const [tests, setTests] = useState(null)
   const [attempts, setAttempts] = useState([])
   const [expanded, setExpanded] = useState(() => new Set())
-  const vocabularyCount = getVocabulary().length
+  const vocabularyCount = useVocabulary().entries.length
 
   useEffect(() => {
     if (authLoading) return
@@ -185,14 +185,9 @@ export default function ProgressPage() {
       <PageHeader icon={TrendingUp} title="Мой прогресс" subtitle="Как продвигается подготовка — по главам и тестам" />
 
       {(!isSupabaseConfigured || !user) && (
-        <p className="-mt-2 mb-8 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm leading-relaxed text-amber-900">
-          <LogIn size={15} className="mr-1.5 inline-block -translate-y-px align-middle" />
-          Прогресс сейчас сохраняется только в этом браузере —{' '}
-          <Link to="/login" className="font-semibold underline">
-            войди
-          </Link>
-          , чтобы видеть его на любом устройстве.
-        </p>
+        <GuestSaveBanner className="-mt-2 mb-8">
+          Прогресс сохраняется только в этом браузере — войди, чтобы он был в аккаунте и на любом устройстве.
+        </GuestSaveBanner>
       )}
 
       {/* --- Сводка --- */}

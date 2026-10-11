@@ -9,7 +9,7 @@ export default function LoginPage() {
   const { signIn, signUp, user } = useAuth()
   const location = useLocation()
 
-  const [mode, setMode] = useState('signin') // 'signin' | 'signup'
+  const [mode, setMode] = useState(location.state?.mode === 'signup' ? 'signup' : 'signin') // 'signin' | 'signup'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   // Куда вернуть после входа: туда, откуда прислал RequireAuth (например,
   // /admin), иначе на главную — обычному ученику в админке делать нечего.
-  const from = location.state?.from?.pathname ?? '/'
+  const from = location.state?.from ? `${location.state.from.pathname}${location.state.from.search ?? ''}` : '/'
 
   // Как только сессия появилась (сразу после успешного входа или если уже
   // вошёл) — уходим. <Navigate>, а не navigate() прямо во время рендера.
@@ -55,7 +55,7 @@ export default function LoginPage() {
   }
 
   const benefits = [
-    'Прогресс по главам — на любом устройстве',
+    'Прогресс и словарь — на любом устройстве',
     'Результаты всех пройденных пробников',
     'PRO-доступ привязывается к аккаунту',
   ]

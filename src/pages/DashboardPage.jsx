@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { fetchAttempts, fetchTests } from '../lib/data'
 import { chapterNextTest, chapterProgress, dayStreak, nextTest, recentTests, summary } from '../lib/progress'
-import { getVocabulary } from '../lib/vocabulary'
+import { useVocabulary } from '../lib/useVocabulary'
 import { TOPICS } from '../data/topics'
 import { useAuth } from '../lib/authContext'
 import { useProModal } from '../lib/proModal'
@@ -196,7 +196,7 @@ export default function DashboardPage() {
   const { openProModal } = useProModal()
   const [tests, setTests] = useState(null)
   const [attempts, setAttempts] = useState([])
-  const vocabularyCount = getVocabulary().length
+  const vocabularyCount = useVocabulary().entries.length
 
   useEffect(() => {
     let alive = true

@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, MinusCircle, BookOpen, Ci
 import { fetchTestById, fetchQuestions, fetchPassages, fetchCategories, saveAttempt } from '../lib/data'
 import { buildSteps, buildGroups, findPinnedPassage } from '../lib/steps'
 import { scoreQuestion, scoreStatus } from '../lib/scoring'
-import { addWord, getVocabulary } from '../lib/vocabulary'
+import { useVocabulary } from '../lib/useVocabulary'
 import { useAuth } from '../lib/authContext'
 import RichSelectableContent from '../components/RichSelectableContent'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -32,13 +32,21 @@ function SaveStatus({ status, isGuest }) {
   }
   if (status === 'local') {
     return isGuest ? (
-      <>
-        Ты не вошёл, поэтому результат сохранён только в этом браузере.{' '}
-        <Link to="/login" className="font-semibold text-pine-700 hover:underline">
-          Войди
-        </Link>{' '}
-        — и он перенесётся в аккаунт.
-      </>
+      <div className="mx-auto mt-2 max-w-md rounded-2xl border border-pine-100 bg-pine-50 p-5 text-left text-sm">
+        <p className="text-base font-extrabold text-ink">Сохрани результат в аккаунте</p>
+        <p className="mt-1 leading-relaxed text-ink/65">
+          Сейчас он только в этом браузере. С аккаунтом прогресс по главам и словарь будут с тобой на любом
+          устройстве — всё, что уже сохранено здесь, перенесётся само.
+        </p>
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+          <Link to="/login" state={{ from: { pathname: '/progress' }, mode: 'signup' }} className="btn btn-primary btn-sm px-4 py-2.5">
+            Создать аккаунт
+          </Link>
+          <Link to="/login" state={{ from: { pathname: '/progress' } }} className="btn btn-secondary btn-sm px-4 py-2.5">
+            У меня есть аккаунт
+          </Link>
+        </div>
+      </div>
     ) : (
       'Сохранить в аккаунт пока не получилось — результат временно сохранён в этом браузере и перенесётся в аккаунт автоматически.'
     )
@@ -55,6 +63,7 @@ function pluralQuestions(n) {
 }
 
 export default function TestTakingPage() {
+  const vocabulary = useVocabulary()
   const confirmAction = useConfirm()
   const { testId } = useParams()
   const { user, hasPro, loading: authLoading } = useAuth()
@@ -254,8 +263,8 @@ export default function TestTakingPage() {
     }
   }
 
-  function handleSaveWord(data) {
-    addWord(data)
+  async function handleSaveWord(data) {
+    await vocabulary.add(data)
     setWordModalPrefill(null)
   }
 
@@ -559,7 +568,7 @@ export default function TestTakingPage() {
       {wordModalPrefill !== null && (
         <AddWordModal
           initial={{ word: wordModalPrefill }}
-          existingCategories={[...new Set(getVocabulary().map((e) => e.category).filter(Boolean))]}
+          existingCategories={vocabulary.categories}
           onSave={handleSaveWord}
           onClose={() => setWordModalPrefill(null)}
         />

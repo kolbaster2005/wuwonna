@@ -93,6 +93,9 @@ create table user_vocabulary (
   user_id uuid references auth.users(id) on delete cascade,
   word text not null,
   context text,
+  translation text,
+  example text,
+  category text,
   added_at timestamptz not null default now()
 );
 
@@ -122,6 +125,7 @@ create policy "users insert their own progress" on user_progress for insert with
 create policy "users read their own vocabulary" on user_vocabulary for select using (auth.uid() = user_id);
 create policy "users manage their own vocabulary" on user_vocabulary for insert with check (auth.uid() = user_id);
 create policy "users delete their own vocabulary" on user_vocabulary for delete using (auth.uid() = user_id);
+create policy "users update their own vocabulary" on user_vocabulary for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- --- Данные: категория + "Пробник 2026" ---
 insert into categories (name, slug) values ('Пробники', 'probniki');

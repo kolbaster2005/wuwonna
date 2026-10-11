@@ -148,7 +148,23 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
       await page.screenshot({ path: join(outDir, `${name}-${vpName}.png`), fullPage: true })
       // горизонтальная прокрутка на телефоне — частая регрессия вёрстки
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
-      if (overflow > 1) problems.push(`[${vpName}] ${name}: горизонтальная прокрутка на ${overflow}px`)
+      if (overflow > 1) {
+        // какой элемент вылезает за край — чтобы не искать вручную
+        const culprit = await page.evaluate(() => {
+          const el = [...document.querySelectorAll('body *')]
+            .filter((e) => e.getBoundingClientRect().right > window.innerWidth + 1)
+            .filter((e) => {
+              // обрезанное родителем с overflow:hidden прокрутку не создаёт
+              for (let p = e.parentElement; p && p !== document.body; p = p.parentElement) {
+                if (getComputedStyle(p).overflowX !== 'visible') return false
+              }
+              return true
+            })
+            .pop()
+          return el ? `<${el.tagName.toLowerCase()} class="${el.getAttribute('class')}">` : '?'
+        })
+        problems.push(`[${vpName}] ${name}: горизонтальная прокрутка на ${overflow}px — ${culprit}`)
+      }
     } catch (err) {
       problems.push(`[${vpName}] ${name}: ${err.message.split('\n')[0]}`)
     }

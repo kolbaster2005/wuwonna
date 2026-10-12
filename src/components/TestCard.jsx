@@ -1,18 +1,20 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FileText, ListChecks, Clock, ShieldCheck, Pin, Lock, CheckCircle2, RotateCcw, Languages, Eye } from 'lucide-react'
+import { FileText, ListChecks, Clock, ShieldCheck, Pin, Lock, CheckCircle2, RotateCcw, Languages, Eye, History, ArrowRight } from 'lucide-react'
 import { setTestPinned } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
 import { useProModal } from '../lib/proModal'
 import RichText from './RichText'
-import { testPath, testResultPath } from '../seo/content'
+import { testExamPath, testPath, testResultPath } from '../seo/content'
 import { useI18n } from '../i18n'
 
 // result — { best (0..1), attempts } по этому тесту, если человек его уже
 // проходил (см. statsByTest в lib/progress.js). Пройденная карточка
 // помечается и слегка приглушается, при наведении — обычная.
-export default function TestCard({ test, result, onPinChange }) {
+// draft — незавершённая попытка (lib/drafts.js): пометка «Начат» и кнопка
+// «Продолжить» вместо «Начать тест» / «Пройти ещё раз».
+export default function TestCard({ test, result, draft, onPinChange }) {
   const [pinning, setPinning] = useState(false)
   const { hasPro, isAdmin, loading: authLoading } = useAuth()
   const { openProModal } = useProModal()
@@ -24,6 +26,7 @@ export default function TestCard({ test, result, onPinChange }) {
   // на мгновение мигает серой.
   const isLockedForUser = Boolean(test.is_pro) && !hasPro && !authLoading
   const isDone = Boolean(result?.attempts) && !isLockedForUser
+  const inProgress = Boolean(draft) && !isLockedForUser
   // Закрытая карточка приглушается целиком, кроме цветной плашки «Только в PRO».
   const lockedFade = isLockedForUser ? 'opacity-55 grayscale' : ''
 
@@ -79,7 +82,16 @@ export default function TestCard({ test, result, onPinChange }) {
               <Lock size={12} /> {t('testCard.proOnly')}
             </span>
           )}
-          {isDone && (
+          {inProgress && (
+            <span className="inline-flex items-center gap-1.5 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+              <History size={13} />{' '}
+              {t('testCard.inProgress', {
+                answered: draft.answers?.length ?? 0,
+                total: draft.questions_count || test.questions_count,
+              })}
+            </span>
+          )}
+          {isDone && !inProgress && (
             <span
               className="inline-flex items-center gap-1.5 bg-pine-50 px-3 py-1 text-xs font-bold text-pine-700"
               title={t('testCard.bestResult', { count: result.attempts })}
@@ -126,8 +138,17 @@ export default function TestCard({ test, result, onPinChange }) {
         >
           <Lock size={14} /> {t('testCard.openWithPro')}
         </button>
+      ) : inProgress && !isDone ? (
+        // Начат и ни разу не завершён — продолжить с того же места.
+        <Link
+          to={testExamPath(test, lang)}
+          className="mt-5 flex h-11 w-full items-center justify-center gap-2 border border-transparent bg-pine-600 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:mt-6"
+        >
+          {t('testCard.continue')} <ArrowRight size={15} />
+        </Link>
       ) : isDone ? (
-        // Пройденный: посмотреть разбор последней попытки или пройти заново.
+        // Пройденный: посмотреть разбор последней попытки или пройти заново
+        // (а если начата новая попытка — продолжить её).
         // Две кнопки в ряд — текст мельче, чтобы помещался в одну строку.
         <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-6">
           <Link
@@ -137,10 +158,18 @@ export default function TestCard({ test, result, onPinChange }) {
             <Eye size={13} className="shrink-0" /> {t('testCard.results')}
           </Link>
           <Link
-            to={testPath(test, lang)}
+            to={inProgress ? testExamPath(test, lang) : testPath(test, lang)}
             className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-transparent bg-pine-600 px-2 text-[12px] font-bold text-white transition-colors hover:bg-pine-700"
           >
-            <RotateCcw size={13} className="shrink-0" /> {t('testCard.retake')}
+            {inProgress ? (
+              <>
+                {t('testCard.continue')} <ArrowRight size={13} className="shrink-0" />
+              </>
+            ) : (
+              <>
+                <RotateCcw size={13} className="shrink-0" /> {t('testCard.retake')}
+              </>
+            )}
           </Link>
         </div>
       ) : (

@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, MinusCircle, BookOpen, Circle, Eye, RotateCcw } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, MinusCircle, BookOpen, Circle, Eye, RotateCcw, History } from 'lucide-react'
 import {
   fetchAttempts,
   fetchTestById,
@@ -12,6 +12,7 @@ import {
   saveAttempt,
 } from '../lib/data'
 import { answersFromAttempt, pickAttempt } from '../lib/progress'
+import { deleteDraft, loadDrafts, saveDraft } from '../lib/drafts'
 import { buildSteps, buildGroups, findPinnedPassage } from '../lib/steps'
 import { scoreQuestion, scoreStatus } from '../lib/scoring'
 import { useVocabulary } from '../lib/useVocabulary'
@@ -105,6 +106,16 @@ export default function TestTakingPage({ review = false }) {
   const [attempt, setAttempt] = useState(undefined)
   const [selectionKnown, setSelectionKnown] = useState(true)
 
+  // Незавершённая попытка (lib/drafts.js): ответы, шаг и таймер сохраняются по
+  // ходу теста, при следующем открытии тест продолжается с того же места.
+  // draftReady — черновик уже прочитан (до этого не сохраняем, чтобы не
+  // затереть его пустым). resumed — продолжили сохранённую попытку (плашка).
+  const [draftReady, setDraftReady] = useState(false)
+  const [resumed, setResumed] = useState(false)
+  // Последнее состояние для сохранения из таймера и при закрытии вкладки.
+  const latest = useRef({})
+  latest.current = { test, questions, answers, currentStepIndex, elapsedSeconds, completed, userId: user?.id }
+
   // Версии на других языках — для переключателя языка (он спросит
   // подтверждение: другая версия — другой тест).
   const [versions, setVersions] = useState(null)
@@ -112,7 +123,7 @@ export default function TestTakingPage({ review = false }) {
   useTestAlternates(versions, review ? testPath : testExamPath)
 
   useEffect(() => {
-    if (review && authLoading) return // попытки зависят от того, кто вошёл
+    if (authLoading) return // попытки и черновики зависят от того, кто вошёл
     let alive = true
     fetchTestByPath(lang, slug).then(async ({ test: found, redirect }) => {
       if (!alive) return
@@ -158,12 +169,69 @@ export default function TestTakingPage({ review = false }) {
           setCompleted(true)
           setFinished(true)
         }
+        return
       }
+
+      // Начатая раньше попытка этой версии пробника — продолжаем с того же места.
+      const draft = (await loadDrafts(user?.id)).find((d) => d.test_id === shown.id)
+      if (!alive) return
+      if (draft) {
+        const restored = answersFromAttempt(draft, qs)
+        const lastStep = Math.max(0, buildSteps(qs, ps).length - 1)
+        setAnswers(restored.answers)
+        setCurrentStepIndex(Math.min(draft.current_step ?? 0, lastStep))
+        setElapsedSeconds(draft.elapsed_seconds ?? 0)
+        setResumed(true)
+      }
+      setDraftReady(true)
     })
     return () => {
       alive = false
     }
   }, [lang, slug, navigate, review, attemptId, authLoading, user?.id])
+
+  // Сохранить незавершённую попытку. Пока нет ни одного ответа, черновик не
+  // создаётся — просто открыть тест не значит его начать.
+  function persistDraft() {
+    const { test: t, questions: qs, answers: a, currentStepIndex: step, elapsedSeconds: sec, completed: done, userId } =
+      latest.current
+    if (review || done || !t || Object.keys(a).length === 0) return
+    saveDraft(userId, {
+      test_id: t.id,
+      translation_group: t.translation_group ?? t.id,
+      answers: Object.entries(a).map(([index, x]) => ({
+        question_id: qs[index].id,
+        selected: x.selected,
+        score: x.score,
+        max: x.max,
+      })),
+      current_step: step,
+      elapsed_seconds: sec,
+      questions_count: qs.length,
+    })
+  }
+
+  // После ответа или перехода к другому вопросу — с небольшой задержкой…
+  useEffect(() => {
+    if (!draftReady) return
+    const id = setTimeout(persistDraft, 800)
+    return () => clearTimeout(id)
+    // persistDraft читает актуальное состояние из latest
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answers, currentStepIndex, draftReady])
+
+  // …раз в 15 секунд (время на таймере) и при закрытии вкладки.
+  useEffect(() => {
+    if (!draftReady || review) return
+    const id = setInterval(persistDraft, 15000)
+    window.addEventListener('pagehide', persistDraft)
+    return () => {
+      clearInterval(id)
+      window.removeEventListener('pagehide', persistDraft)
+      persistDraft() // ушёл на другую страницу сайта
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftReady, review])
 
   // Таймер стартует, как только начинается тестирование, и тикает, пока не
   // поставлен на паузу.
@@ -204,7 +272,7 @@ export default function TestTakingPage({ review = false }) {
     setPendingSelection(currentAnswer?.selected ?? [])
   }, [currentStepIndex, currentAnswer])
 
-  if (test === undefined || authLoading || (review && attempt === undefined && test !== null)) {
+  if (test === undefined || authLoading || (review ? attempt === undefined : !draftReady) && test !== null) {
     return <main className="mx-auto max-w-6xl px-6 py-12 text-sm text-ink/40">{t('testTaking.loading')}</main>
   }
   if (test === null) {
@@ -300,6 +368,7 @@ export default function TestTakingPage({ review = false }) {
       }
       setFinished(true)
       setCompleted(true)
+      setResumed(false)
       saveResult()
       return
     }
@@ -335,10 +404,31 @@ export default function TestTakingPage({ review = false }) {
         })),
       })
       setSaveStatus(saved.savedLocally ? 'local' : 'saved')
+      // Попытка сохранена — незавершённая больше не нужна.
+      await deleteDraft(user?.id, test.id)
     } catch (err) {
       console.error('saveResult error:', err)
       setSaveStatus('error')
     }
+  }
+
+  // «Начать заново»: незавершённая попытка удаляется, тест — с первого шага.
+  async function handleRestart() {
+    const ok = await confirmAction({
+      title: t('testTaking.resume.restartConfirm.title'),
+      message: t('testTaking.resume.restartConfirm.message'),
+      confirmLabel: t('testTaking.resume.restartConfirm.confirm'),
+      danger: true,
+    })
+    if (!ok) return
+    await deleteDraft(user?.id, test.id)
+    setAnswers({})
+    setCurrentStepIndex(0)
+    setElapsedSeconds(0)
+    setHighlightsByQuestion({})
+    setHighlightsByOption({})
+    setHighlightsByPassage({})
+    setResumed(false)
   }
 
   async function handleSaveWord(data) {
@@ -370,6 +460,18 @@ export default function TestTakingPage({ review = false }) {
           { label: review ? t('testTaking.review.breadcrumb') : t('testTaking.breadcrumb') },
         ]}
       />
+
+      {resumed && !completed && (
+        <div className="mt-5 flex flex-col gap-2 border border-pine-100 bg-pine-50 px-4 py-3 text-sm text-pine-800 sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex items-center gap-2">
+            <History size={16} className="shrink-0" />
+            {t('testTaking.resume.notice', { answered: answeredCount, total: questions.length })}
+          </p>
+          <button onClick={handleRestart} className="shrink-0 text-left font-bold underline-offset-4 hover:underline">
+            {t('testTaking.resume.restart')}
+          </button>
+        </div>
+      )}
 
       {review && !selectionKnown && (
         <p className="mt-5 border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { ShieldCheck, CalendarDays, Search, ClipboardList } from 'lucide-react'
 import { fetchTests, fetchCategories, fetchAttempts, categoryName } from '../lib/data'
 import { attemptsForShownTests, localizeSections, statsByTest } from '../lib/progress'
+import { loadDrafts } from '../lib/drafts'
 import { useAuth } from '../lib/authContext'
 import { ORIGINALITY_OPTIONS } from '../lib/originality'
 import TestCard from '../components/TestCard'
@@ -24,6 +25,8 @@ export default function PracticeTestsPage() {
   // пройденные карточки. Те же данные, что и в «Моём прогрессе».
   const { user, loading: authLoading } = useAuth()
   const [attempts, setAttempts] = useState([])
+  // Незавершённые попытки по id версии пробника — «Начат» и «Продолжить» на карточке.
+  const [draftsByTest, setDraftsByTest] = useState({})
 
   const [originality, setOriginality] = useState('')
   const [year, setYear] = useState('')
@@ -56,6 +59,7 @@ export default function PracticeTestsPage() {
     fetchAttempts(user?.id)
       .then((list) => alive && setAttempts(list))
       .catch((err) => console.error('fetchAttempts error:', err))
+    loadDrafts(user?.id).then((list) => alive && setDraftsByTest(Object.fromEntries(list.map((d) => [d.test_id, d]))))
     return () => {
       alive = false
     }
@@ -163,7 +167,13 @@ export default function PracticeTestsPage() {
               )}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
                 {section.tests.map((test) => (
-                  <TestCard key={test.id} test={test} result={resultsByTest[test.id]} onPinChange={load} />
+                  <TestCard
+                    key={test.id}
+                    test={test}
+                    result={resultsByTest[test.id]}
+                    draft={draftsByTest[test.id]}
+                    onPinChange={load}
+                  />
                 ))}
               </div>
             </section>

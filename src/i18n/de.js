@@ -81,6 +81,8 @@ export default {
     done: 'Erledigt · {percent} %',
     questions: { one: '{count} Aufgabe', other: '{count} Aufgaben' },
     openWithPro: 'Mit PRO öffnen',
+    inProgress: 'Begonnen · {answered} von {total}',
+    continue: 'Weitermachen',
     results: 'Ergebnisse',
     retake: 'Nochmal machen',
     start: 'Test starten',
@@ -248,8 +250,13 @@ export default {
       notTaken: 'Noch nicht gemacht',
       again: 'Nochmal',
     },
+    drafts: {
+      title: 'Angefangene Probetests',
+      answered: '{answered} von {total} beantwortet',
+      continue: 'Weitermachen',
+    },
     recent: {
-      title: 'Letzte Ergebnisse',
+      title: 'Letztes Ergebnis',
       counts: 'Richtig {correct} · teilweise {partial} · falsch {incorrect}',
     },
   },
@@ -336,6 +343,15 @@ export default {
     toResult: 'Zum Ergebnis',
     finish: 'Beenden',
     next: 'Weiter',
+    resume: {
+      notice: 'Du machst dort weiter, wo du aufgehört hast: {answered} von {total} beantwortet.',
+      restart: 'Neu beginnen',
+      restartConfirm: {
+        title: 'Probetest neu beginnen?',
+        message: 'Die Antworten dieses unvollständigen Versuchs werden gelöscht, der Timer startet bei null.',
+        confirm: 'Neu beginnen',
+      },
+    },
     review: {
       breadcrumb: 'Ergebnis',
       kicker: 'Ergebnis vom {date}',

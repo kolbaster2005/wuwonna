@@ -80,6 +80,8 @@ export default {
     done: 'Done · {percent}%',
     questions: { one: '{count} question', other: '{count} questions' },
     openWithPro: 'Unlock with PRO',
+    inProgress: 'Started · {answered} of {total}',
+    continue: 'Continue',
     results: 'Results',
     retake: 'Take again',
     start: 'Start test',
@@ -247,8 +249,13 @@ export default {
       notTaken: 'Not taken yet',
       again: 'Again',
     },
+    drafts: {
+      title: 'Unfinished practice tests',
+      answered: '{answered} of {total} answered',
+      continue: 'Continue',
+    },
     recent: {
-      title: 'Recent results',
+      title: 'Latest result',
       counts: 'Correct {correct} · partial {partial} · wrong {incorrect}',
     },
   },
@@ -335,6 +342,15 @@ export default {
     toResult: 'To result',
     finish: 'Finish',
     next: 'Next',
+    resume: {
+      notice: 'Picking up where you left off: {answered} of {total} answered.',
+      restart: 'Start over',
+      restartConfirm: {
+        title: 'Start the practice test over?',
+        message: 'The answers of this unfinished attempt will be deleted and the timer will restart from zero.',
+        confirm: 'Start over',
+      },
+    },
     review: {
       breadcrumb: 'Result',
       kicker: 'Result from {date}',

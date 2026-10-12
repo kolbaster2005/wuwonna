@@ -83,6 +83,8 @@ export default {
     done: 'Пройдено · {percent}%',
     questions: { one: '{count} задание', few: '{count} задания', many: '{count} заданий', other: '{count} задания' },
     openWithPro: 'Открыть с PRO',
+    inProgress: 'Начат · {answered} из {total}',
+    continue: 'Продолжить',
     results: 'Результаты',
     retake: 'Пройти ещё раз',
     start: 'Начать тест',
@@ -250,8 +252,13 @@ export default {
       notTaken: 'Ещё не проходил',
       again: 'Ещё раз',
     },
+    drafts: {
+      title: 'Незавершённые пробники',
+      answered: 'Отвечено {answered} из {total}',
+      continue: 'Продолжить',
+    },
     recent: {
-      title: 'Недавние результаты',
+      title: 'Последний результат',
       counts: 'Верно {correct} · частично {partial} · неверно {incorrect}',
     },
   },
@@ -340,6 +347,15 @@ export default {
     toResult: 'К результату',
     finish: 'Завершить',
     next: 'Далее',
+    resume: {
+      notice: 'Продолжаем с того места, где ты остановился: отвечено {answered} из {total}.',
+      restart: 'Начать заново',
+      restartConfirm: {
+        title: 'Начать пробник заново?',
+        message: 'Ответы этой незавершённой попытки удалятся, таймер начнётся с нуля.',
+        confirm: 'Начать заново',
+      },
+    },
     review: {
       breadcrumb: 'Результат',
       kicker: 'Результат от {date}',

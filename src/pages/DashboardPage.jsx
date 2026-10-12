@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ClipboardList, Eye, Lock, RotateCcw } from 'lucide-react'
+import { ArrowRight, ClipboardList, Eye, History, Lock, RotateCcw } from 'lucide-react'
 import { fetchAttempts, fetchTests } from '../lib/data'
 import {
   attemptRatio,
@@ -15,15 +15,17 @@ import {
 } from '../lib/progress'
 import { TOPICS } from '../data/topics'
 import { useAuth } from '../lib/authContext'
-import { testPath, testResultPath } from '../seo/content'
+import { testExamPath, testPath, testResultPath } from '../seo/content'
+import { loadDrafts } from '../lib/drafts'
 import { useProModal } from '../lib/proModal'
 import { useI18n } from '../i18n'
 
 // Главная для вошедшего. Сетка 2 колонки × 2 строки:
 //   слева на обе строки — карта прогресса по главам (каждая подглава —
 //   квадратик, по цвету видно, где прогресс есть, а где нет);
-//   справа: 1-я строка — два последних результата с переходом к разбору
-//           ответов (пока ничего не пройдено — «С чего начать»),
+//   справа: 1-я строка — незавершённые пробники с кнопкой «Продолжить»; если
+//           таких нет — последний результат с переходом к разбору ответов;
+//           если и его нет — «С чего начать»,
 //           2-я строка — пробники в формате экзамена (сразу начать, без меню).
 
 // Немецкие названия глав книги — подписи под «Глава 1», «Глава 2»...
@@ -176,7 +178,8 @@ const smallButton = (primary) =>
 
 // --- справа, 2-я строка: пробники в формате экзамена ---
 
-function ExamsWidget({ exams, attempts }) {
+// drafts — незавершённые попытки: у начатого пробника «Продолжить».
+function ExamsWidget({ exams, attempts, drafts }) {
   const { t, lang, path } = useI18n()
   const { hasPro } = useAuth()
   const { openProModal } = useProModal()
@@ -198,6 +201,7 @@ function ExamsWidget({ exams, attempts }) {
         {exams.map((test) => {
           const stats = byTest[test.id]
           const locked = Boolean(test.is_pro) && !hasPro
+          const draft = drafts.find((x) => x.test_id === test.id)
           return (
             <li key={test.id} className="flex items-center justify-between gap-3 py-3">
               <div className="min-w-0">
@@ -207,7 +211,12 @@ function ExamsWidget({ exams, attempts }) {
                 <p className="mt-0.5 text-xs text-ink/50">
                   {locked
                     ? t('testCard.proOnly')
-                    : stats
+                    : draft
+                      ? t('testCard.inProgress', {
+                          answered: draft.answers?.length ?? 0,
+                          total: draft.questions_count || test.questions_count,
+                        })
+                      : stats
                       ? t('dashboard.exams.best', { percent: Math.round(stats.best * 100) })
                       : t('dashboard.exams.notTaken')}
                 </p>
@@ -216,6 +225,10 @@ function ExamsWidget({ exams, attempts }) {
                 <button onClick={() => openProModal()} className={smallButton(false)}>
                   <Lock size={13} /> PRO
                 </button>
+              ) : draft ? (
+                <Link to={testExamPath(test, lang)} className={smallButton(true)}>
+                  {t('testCard.continue')} <ArrowRight size={13} />
+                </Link>
               ) : (
                 <Link to={testPath(test, lang)} className={smallButton(!stats)}>
                   {stats ? (
@@ -237,7 +250,47 @@ function ExamsWidget({ exams, attempts }) {
   )
 }
 
-// --- справа, 1-я строка: два последних результата ---
+// --- справа, 1-я строка: незавершённые пробники ---
+
+function DraftsWidget({ items }) {
+  const { t, lang, formatDate } = useI18n()
+  return (
+    <section className="order-first lg:order-none">
+      <p className="eyebrow">{t('dashboard.drafts.title')}</p>
+      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        {items.map(({ test, draft }) => {
+          const answered = draft.answers?.length ?? 0
+          const total = draft.questions_count || test.questions_count || answered
+          const ratio = total ? answered / total : 0
+          return (
+            <div key={test.id} className="card flex flex-col p-5">
+              <div className="flex items-center gap-4">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
+                  <History size={22} />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate font-extrabold">{test.title}</p>
+                  <p className="text-xs text-ink/50">
+                    {t('dashboard.drafts.answered', { answered, total })} ·{' '}
+                    {formatDate(draft.updated_at, { day: 'numeric', month: 'long' })}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 h-1.5 w-full overflow-hidden bg-line">
+                <div className="h-full bg-pine-600" style={{ width: `${Math.round(ratio * 100)}%` }} />
+              </div>
+              <Link to={testExamPath(test, lang)} className={`${smallButton(true)} mt-4`}>
+                {t('dashboard.drafts.continue')} <ArrowRight size={13} />
+              </Link>
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+// --- справа, 1-я строка, если незавершённых нет: последний результат ---
 
 function RecentResults({ items }) {
   const { t, lang, formatDate } = useI18n()
@@ -277,16 +330,18 @@ export default function DashboardPage() {
   const { t, lang } = useI18n()
   const [tests, setTests] = useState(null)
   const [attempts, setAttempts] = useState([])
+  const [drafts, setDrafts] = useState([])
 
   // Версии пробников на языке страницы; попытки на других языковых версиях
   // засчитываются показанным (attemptsForShownTests).
   useEffect(() => {
     let alive = true
-    Promise.all([fetchTests({ lang }), fetchAttempts(user.id)]).then(([ts, as]) => {
+    Promise.all([fetchTests({ lang }), fetchAttempts(user.id), loadDrafts(user.id)]).then(([ts, as, ds]) => {
       if (!alive) return
       const shown = localizeSections(ts, (number) => t('progress.chapter', { number }))
       setTests(shown)
       setAttempts(attemptsForShownTests(as, shown))
+      setDrafts(ds)
     })
     return () => {
       alive = false
@@ -308,18 +363,26 @@ export default function DashboardPage() {
   const chapter = (lastChapter && chapterNextTest(lastChapter) && lastChapter) || chapters.find((c) => chapterNextTest(c))
   const next = chapter ? chapterNextTest(chapter) : nextTest(tests, attempts)
   const exams = tests.filter((test) => !test.section?.trim())
-  const recent = recentTests(tests, attempts, 2)
+  const recent = recentTests(tests, attempts, 1)
+  // Незавершённые — только по версиям, которые на этой странице (на другом
+  // языке у пробника свои вопросы и свой черновик). Самые свежие — первыми.
+  const unfinished = drafts
+    .map((draft) => ({ draft, test: tests.find((test) => test.id === draft.test_id) }))
+    .filter((item) => item.test)
+    .slice(0, 2)
 
   return (
     <main className="page">
       <div className="grid grid-cols-1 gap-6 lg:grid-flow-col lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
         {chapters.length > 0 && <ChaptersMap chapters={chapters} />}
-        {recent.length > 0 ? (
+        {unfinished.length > 0 ? (
+          <DraftsWidget items={unfinished} />
+        ) : recent.length > 0 ? (
           <RecentResults items={recent} />
         ) : (
           <LastResultCard last={last} lastTest={lastTest} next={next} />
         )}
-        {exams.length > 0 && <ExamsWidget exams={exams} attempts={attempts} />}
+        {exams.length > 0 && <ExamsWidget exams={exams} attempts={attempts} drafts={drafts} />}
       </div>
     </main>
   )

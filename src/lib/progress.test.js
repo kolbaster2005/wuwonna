@@ -2,6 +2,9 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   attemptCounts,
+  statsByTest,
+  attemptsForShownTests,
+  localizeSections,
   chapterNextTest,
   chapterProgress,
   dayStreak,
@@ -136,4 +139,36 @@ test('продолжить главу: первая непройденная, п
     attempt('t12', 4, 4, '2026-10-01T10:00:00Z'),
   ])
   assert.equal(chapterNextTest(perfect), null)
+})
+
+test('attemptsForShownTests: попытка на другой языковой версии засчитывается показанной', () => {
+  const shown = [
+    { id: 'de-1', translation_group: 'g1' },
+    { id: 'ru-2', translation_group: 'ru-2' },
+  ]
+  const attempts = [
+    { test_id: 'ru-1', translation_group: 'g1', score: 1, max_score: 2 },
+    { test_id: 'ru-2', score: 2, max_score: 2 }, // старая попытка без группы
+    { test_id: 'deleted', translation_group: 'gone', score: 0, max_score: 1 },
+  ]
+  const mapped = attemptsForShownTests(attempts, shown)
+  assert.equal(mapped[0].test_id, 'de-1')
+  assert.equal(mapped[0].original_test_id, 'ru-1')
+  assert.equal(mapped[1].test_id, 'ru-2')
+  assert.equal(mapped[2].test_id, 'deleted')
+  assert.equal(statsByTest(mapped)['de-1'].best, 0.5)
+})
+
+test('localizeSections: раздел русской версии-заменителя — на языке страницы', () => {
+  const tests = [
+    { id: 'a', section: 'Kapitel 1' },
+    { id: 'b', section: 'Глава 1', is_fallback: true },
+    { id: 'c', section: null, is_fallback: true },
+  ]
+  const result = localizeSections(tests, (n) => `Kapitel ${n}`)
+  assert.deepEqual(
+    result.map((t) => t.section),
+    ['Kapitel 1', 'Kapitel 1', null],
+  )
+  assert.equal(chapterProgress(result, []).length, 1)
 })

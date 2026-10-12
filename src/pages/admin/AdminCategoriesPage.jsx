@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
-import { fetchCategories, createCategory } from '../../lib/data'
+import { fetchCategories, createCategory, updateCategoryNames } from '../../lib/data'
+import { reportErrors } from '../../lib/reportErrors'
 import { isSupabaseConfigured } from '../../lib/supabaseClient'
 import { translateError } from '../../i18n/translate'
 
@@ -30,6 +31,18 @@ export default function AdminCategoriesPage() {
     } finally {
       setSaving(false)
     }
+  }
+
+  function updateName(id, field, value) {
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, [field]: value } : c)))
+  }
+
+  // Названия вкладки на немецком и английском — сохраняются, когда уходишь
+  // из поля. Пустое поле — на сайте будет русское название.
+  async function saveNames(cat) {
+    await reportErrors('сохранить названия категории', () =>
+      updateCategoryNames(cat.id, { name_de: cat.name_de?.trim(), name_en: cat.name_en?.trim() }),
+    )
   }
 
   return (
@@ -64,9 +77,28 @@ export default function AdminCategoriesPage() {
 
       <ul className="mt-6 divide-y divide-line rounded-xl border border-line bg-white">
         {categories.map((cat) => (
-          <li key={cat.id} className="flex items-center justify-between px-5 py-3.5 text-sm">
-            <span className="font-semibold">{cat.name}</span>
-            <span className="text-ink/40">{cat.slug}</span>
+          <li key={cat.id} className="px-5 py-3.5 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold">{cat.name}</span>
+              <span className="text-ink/40">{cat.slug}</span>
+            </div>
+            <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {[
+                ['name_de', 'Название (DE)'],
+                ['name_en', 'Название (EN)'],
+              ].map(([field, label]) => (
+                <label key={field} className="flex items-center gap-2 text-xs text-ink/50">
+                  <span className="w-24 shrink-0">{label}</span>
+                  <input
+                    value={cat[field] ?? ''}
+                    onChange={(e) => updateName(cat.id, field, e.target.value)}
+                    onBlur={() => saveNames(cat)}
+                    placeholder={cat.name}
+                    className="w-full rounded-lg border border-line px-2.5 py-1.5 text-sm text-ink focus:outline-none"
+                  />
+                </label>
+              ))}
+            </div>
           </li>
         ))}
       </ul>

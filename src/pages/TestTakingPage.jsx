@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, MinusCircle, BookOpen, Circle, Eye } from 'lucide-react'
-import { fetchTestById, fetchQuestions, fetchPassages, fetchCategories, saveAttempt } from '../lib/data'
+import { fetchTestByPath, fetchQuestions, fetchPassages, fetchCategories, saveAttempt } from '../lib/data'
 import { buildSteps, buildGroups, findPinnedPassage } from '../lib/steps'
 import { scoreQuestion, scoreStatus } from '../lib/scoring'
 import { useVocabulary } from '../lib/useVocabulary'
@@ -15,7 +15,7 @@ import AddWordModal from '../components/AddWordModal'
 import ProLockedNotice from '../components/ProLockedNotice'
 import ResultScreen, { secondaryActionClass } from '../components/ResultScreen'
 import { useConfirm } from '../lib/confirmDialog'
-import { testIdFromParam, testPath } from '../seo/content'
+import { testExamPath, testPath } from '../seo/content'
 import { useI18n } from '../i18n'
 
 // Строка под результатом: сохранился ли результат и где.
@@ -58,8 +58,9 @@ function SaveStatus({ status, isGuest }) {
 export default function TestTakingPage() {
   const vocabulary = useVocabulary()
   const confirmAction = useConfirm()
-  const { t, path, formatNumber } = useI18n()
-  const testId = testIdFromParam(useParams().slug) // в адресе — slug или старый id
+  const { t, lang, path, formatNumber } = useI18n()
+  const { slug } = useParams() // в адресе — slug или старый id
+  const navigate = useNavigate()
   const { user, hasPro, loading: authLoading } = useAuth()
   const [test, setTest] = useState(undefined)
   const [questions, setQuestions] = useState([])
@@ -86,20 +87,29 @@ export default function TestTakingPage() {
 
   useEffect(() => {
     let alive = true
-    Promise.all([fetchTestById(testId), fetchQuestions(testId), fetchPassages(testId), fetchCategories()]).then(
-      ([t, qs, ps, cats]) => {
-        if (alive) {
-          setTest(t)
-          setQuestions(qs)
-          setPassages(ps)
-          setCategories(cats)
-        }
-      },
-    )
+    fetchTestByPath(lang, slug).then(async ({ test: found, redirect }) => {
+      if (!alive) return
+      // Есть версия на языке страницы (или открыли по старому id) — на её адрес.
+      const target = redirect && testExamPath(redirect, lang)
+      if (target && target !== testExamPath({ slug }, lang)) {
+        navigate(target, { replace: true })
+        return
+      }
+      if (!found) {
+        setTest(null)
+        return
+      }
+      const [qs, ps, cats] = await Promise.all([fetchQuestions(found.id), fetchPassages(found.id), fetchCategories()])
+      if (!alive) return
+      setTest(found)
+      setQuestions(qs)
+      setPassages(ps)
+      setCategories(cats)
+    })
     return () => {
       alive = false
     }
-  }, [testId])
+  }, [lang, slug, navigate])
 
   // Таймер стартует, как только начинается тестирование, и тикает, пока не
   // поставлен на паузу.
@@ -155,7 +165,7 @@ export default function TestTakingPage() {
   if (test?.is_pro && !hasPro) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
-        <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test) }]} />
+        <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test, lang) }]} />
         <div className="mt-5 rounded-2xl border border-line bg-white p-5 sm:mt-6 sm:p-8 lg:p-10">
           <ProLockedNotice testTitle={test.title} />
         </div>
@@ -167,7 +177,7 @@ export default function TestTakingPage() {
   if (questions.length === 0) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
-        <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test) }]} />
+        <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test, lang) }]} />
         <div className="mt-5 rounded-2xl border border-line bg-white px-5 py-16 text-center sm:mt-6">
           <h1 className="text-xl font-extrabold">{t('testTaking.noQuestions')}</h1>
           <p className="mt-2 text-sm text-ink/55">{t('testTaking.noQuestionsText')}</p>
@@ -239,6 +249,8 @@ export default function TestTakingPage() {
     try {
       const saved = await saveAttempt(user?.id, {
         test_id: test.id,
+        // группа переводов: попытка засчитывается всем языковым версиям
+        translation_group: test.translation_group,
         score: Math.round(totalScore * 100) / 100,
         max_score: totalMax,
         questions_count: questions.length,
@@ -282,7 +294,7 @@ export default function TestTakingPage() {
       <Breadcrumbs
         items={[
           { label: t('breadcrumbs.tests'), to: path('tests') },
-          { label: test.title, to: testPath(test) },
+          { label: test.title, to: testPath(test, lang) },
           { label: t('testTaking.breadcrumb') },
         ]}
       />

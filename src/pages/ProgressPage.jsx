@@ -12,8 +12,17 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { fetchTests, fetchAttempts } from '../lib/data'
-import { testPath } from '../seo/content'
-import { chapterProgress, lastAttempt, nextTest, summary, weakestTests, attemptRatio } from '../lib/progress'
+import { testExamPath, testPath } from '../seo/content'
+import {
+  attemptsForShownTests,
+  chapterProgress,
+  lastAttempt,
+  localizeSections,
+  nextTest,
+  summary,
+  weakestTests,
+  attemptRatio,
+} from '../lib/progress'
 import { useVocabulary } from '../lib/useVocabulary'
 import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
@@ -79,7 +88,7 @@ function Card({ title, icon: Icon, children }) {
 }
 
 function ChapterCard({ chapter, expanded, onToggle }) {
-  const { t, formatDate } = useI18n()
+  const { t, lang, formatDate } = useI18n()
   return (
     <div className="rounded-2xl border border-line bg-white">
       <button onClick={onToggle} aria-expanded={expanded} className="w-full px-5 py-4 text-left">
@@ -116,7 +125,7 @@ function ChapterCard({ chapter, expanded, onToggle }) {
                 </div>
                 <span className="w-10 text-right text-sm font-bold tabular-nums">{attempts > 0 ? percent(best) : '—'}</span>
                 <Link
-                  to={testPath(test)}
+                  to={testPath(test, lang)}
                   className="shrink-0 rounded-lg border border-line px-2.5 py-1.5 text-xs font-bold text-ink/70 hover:border-ink/30"
                 >
                   {attempts > 0 ? t('progress.again') : t('progress.take')}
@@ -136,20 +145,23 @@ export default function ProgressPage() {
   const [attempts, setAttempts] = useState([])
   const [expanded, setExpanded] = useState(() => new Set())
   const vocabularyCount = useVocabulary().entries.length
-  const { t, path, formatDate, formatNumber } = useI18n()
+  const { t, lang, path, formatDate, formatNumber } = useI18n()
 
+  // Версии пробников на языке страницы; попытки на других языковых версиях
+  // засчитываются показанным (attemptsForShownTests).
   useEffect(() => {
     if (authLoading) return
     let alive = true
-    Promise.all([fetchTests(), fetchAttempts(user?.id)]).then(([ts, as]) => {
+    Promise.all([fetchTests({ lang }), fetchAttempts(user?.id)]).then(([ts, as]) => {
       if (!alive) return
-      setTests(ts)
-      setAttempts(as)
+      const shown = localizeSections(ts, (number) => t('progress.chapter', { number }))
+      setTests(shown)
+      setAttempts(attemptsForShownTests(as, shown))
     })
     return () => {
       alive = false
     }
-  }, [authLoading, user?.id])
+  }, [authLoading, user?.id, lang, t])
 
   function toggleChapter(title) {
     setExpanded((prev) => {
@@ -260,7 +272,7 @@ export default function ProgressPage() {
                   </p>
                 )}
                 <Link
-                  to={`${testPath(lastTest)}/exam`}
+                  to={testExamPath(lastTest, lang)}
                   className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
                 >
                   <RotateCcw size={15} /> {t('testCard.retake')}
@@ -279,7 +291,7 @@ export default function ProgressPage() {
               </p>
               <p className="mt-1 font-bold">{next.title}</p>
               <Link
-                to={testPath(next)}
+                to={testPath(next, lang)}
                 className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-pine-600 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
               >
                 {t('dashboard.start')} <ArrowRight size={15} />
@@ -293,7 +305,7 @@ export default function ProgressPage() {
               <ul className="space-y-3">
                 {weakest.map(({ test, best }) => (
                   <li key={test.id}>
-                    <Link to={testPath(test)} className="group block">
+                    <Link to={testPath(test, lang)} className="group block">
                       <div className="flex items-baseline justify-between gap-3">
                         <span className="truncate text-sm font-bold group-hover:text-pine-700">{test.title}</span>
                         <span className="text-sm font-bold tabular-nums">{percent(best)}</span>

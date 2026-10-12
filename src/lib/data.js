@@ -26,6 +26,21 @@ export async function fetchCategories() {
   return data
 }
 
+// Названия вкладки на немецком и английском (supabase/add-languages.sql).
+export async function updateCategoryNames(categoryId, { name_de, name_en }) {
+  if (!isSupabaseConfigured) return store.saveCategory({ id: categoryId, name_de, name_en })
+  const { data, error } = await supabase
+    .from('categories')
+    .update({ name_de: name_de || null, name_en: name_en || null })
+    .eq('id', categoryId)
+    .select('id')
+  if (error) {
+    if (error.code === MISSING_COLUMN) throw new Error('errors.noLanguages')
+    throw error
+  }
+  if (data.length === 0) throw notAllowedError()
+}
+
 export async function createCategory({ name, slug }) {
   if (!isSupabaseConfigured) return store.saveCategory({ name, slug })
 
@@ -49,7 +64,7 @@ export async function createCategory({ name, slug }) {
 // обычных запросах явно перечисляем колонки без pdf_url, а сам файл
 // запрашиваем отдельно, только когда пользователь жмёт "Скачать".
 const TEST_LIST_COLUMNS =
-  'id, category_id, title, description, long_description, originality, is_pinned, is_pro, questions_count, duration_minutes, year, sort_order, section, created_at'
+  'id, category_id, title, description, long_description, originality, is_pinned, is_pro, questions_count, duration_minutes, year, sort_order, section, created_at, lang, translation_group, slug, seo_title, seo_description'
 
 // Эти колонки появляются только после отдельных SQL-скриптов. Пока скрипт не
 // выполнен, запрос с такой колонкой падает (Postgres 42703 "column does not
@@ -58,8 +73,57 @@ const TEST_LIST_COLUMNS =
 const OPTIONAL_COLUMNS = {
   sort_order: 'supabase/add-test-order.sql',
   section: 'supabase/add-test-sections.sql',
+  lang: 'supabase/add-languages.sql',
+  translation_group: 'supabase/add-languages.sql',
+  slug: 'supabase/add-languages.sql',
+  seo_title: 'supabase/add-languages.sql',
+  seo_description: 'supabase/add-languages.sql',
 }
 const MISSING_COLUMN = '42703'
+
+// --- Языковые версии пробников (supabase/add-languages.sql) ---
+// Каждая языковая версия — своя строка practice_tests со своими вопросами;
+// версии одного пробника связаны translation_group. Пока миграция не
+// выполнена (или в локальном режиме), всё считается русским и каждый пробник
+// — своей группой.
+
+// Поля, общие для всех языковых версий: меняются сразу во всей группе, иначе
+// немецкая версия случайно окажется бесплатной при платной русской.
+export const SHARED_TEST_FIELDS = [
+  'category_id',
+  'is_pro',
+  'is_pinned',
+  'sort_order',
+  'year',
+  'duration_minutes',
+  'originality',
+]
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+function withLanguage(test) {
+  return { ...test, lang: test.lang ?? 'ru', translation_group: test.translation_group ?? test.id, slug: test.slug ?? null }
+}
+
+// Название категории (вкладки) на языке страницы, пустое — русское.
+export function categoryName(category, lang) {
+  return (lang !== 'ru' && category[`name_${lang}`]) || category.name
+}
+
+// По одной версии на группу: на языке страницы, а если её нет — русская
+// (is_fallback: true — на карточке пометка, у страницы noindex).
+export function pickVersions(tests, lang) {
+  const groups = new Map()
+  tests.forEach((t) => groups.set(t.translation_group, [...(groups.get(t.translation_group) ?? []), t]))
+  return [...groups.values()]
+    .map((versions) => {
+      const own = versions.find((t) => t.lang === lang)
+      if (own) return { ...own, is_fallback: false }
+      const fallback = versions.find((t) => t.lang === 'ru')
+      return fallback ? { ...fallback, is_fallback: lang !== 'ru' } : null
+    })
+    .filter(Boolean)
+}
 
 // Если RLS запрещает update, Supabase не возвращает ошибку — просто ничего
 // не обновляется (0 строк). Без этой проверки сохранение "молча" не работало бы.
@@ -128,48 +192,149 @@ async function attachHasPdf(tests) {
   return tests.map((t) => ({ ...t, has_pdf: withPdf.has(t.id) }))
 }
 
-export async function fetchTests({ categoryId } = {}) {
-  if (!isSupabaseConfigured) {
-    const tests = store
-      .listTests()
-      .map((t) => ({ ...t, questions_count: store.listQuestions(t.id).length, has_pdf: Boolean(t.pdf_url) }))
+function localTests() {
+  return store
+    .listTests()
+    .map((t) => withLanguage({ ...t, questions_count: store.listQuestions(t.id).length, has_pdf: Boolean(t.pdf_url) }))
+}
+
+// lang не указан — все языковые версии (админка). Указан — по одной версии
+// на группу: на этом языке или русская (см. pickVersions).
+export async function fetchTests({ categoryId, lang } = {}) {
+  const finish = (tests) => {
     const filtered = categoryId ? tests.filter((t) => t.category_id === categoryId) : tests
-    return sortTests(filtered)
+    return sortTests(lang ? pickVersions(filtered, lang) : filtered)
   }
+  if (!isSupabaseConfigured) return finish(localTests())
 
   // Сортировка целиком на стороне sortTests — так запрос не зависит от того,
   // есть ли уже колонка sort_order в базе.
   const { data, error } = await selectTests((columns) => {
-    const query = supabase.from('practice_tests').select(columns)
-    return categoryId ? query.eq('category_id', categoryId) : query
+    let query = supabase.from('practice_tests').select(columns)
+    if (categoryId) query = query.eq('category_id', categoryId)
+    if (lang && columns.includes('lang')) query = query.in('lang', [...new Set([lang, 'ru'])])
+    return query
   })
   if (error) {
     console.error('fetchTests error, falling back to local store:', error)
-    const tests = store
-      .listTests()
-      .map((t) => ({ ...t, questions_count: store.listQuestions(t.id).length, has_pdf: Boolean(t.pdf_url) }))
-    const filtered = categoryId ? tests.filter((t) => t.category_id === categoryId) : tests
-    return sortTests(filtered)
+    return finish(localTests())
   }
-  return sortTests(await attachHasPdf(await attachQuestionCounts(data)))
+  return finish((await attachHasPdf(await attachQuestionCounts(data))).map(withLanguage))
 }
 
 export async function fetchTestById(testId) {
-  if (!isSupabaseConfigured) {
-    const t = store.getTest(testId)
-    return t ? { ...t, questions_count: store.listQuestions(testId).length, has_pdf: Boolean(t.pdf_url) } : null
-  }
+  if (!isSupabaseConfigured) return localTests().find((t) => t.id === testId) ?? null
 
   const { data, error } = await selectTests((columns) =>
     supabase.from('practice_tests').select(columns).eq('id', testId).single(),
   )
   if (error) {
     console.error('fetchTestById error, falling back to local store:', error)
-    const t = store.getTest(testId)
-    return t ? { ...t, questions_count: store.listQuestions(testId).length, has_pdf: Boolean(t.pdf_url) } : null
+    return localTests().find((t) => t.id === testId) ?? null
   }
   const [withCount] = await attachHasPdf(await attachQuestionCounts([data]))
-  return withCount
+  return withLanguage(withCount)
+}
+
+// Пробник по адресу страницы (/de/probetests/<slugOrId>):
+//   слаг среди версий языка страницы -> среди русских (фоллбэк) -> по id
+//   (старые ссылки) -> null (404).
+// Возвращает { test, redirect }: redirect — версия, на адрес которой надо
+// перейти (у группы есть версия на языке страницы, или открыли по id).
+// test.is_fallback — показываем русскую версию на чужом языке.
+export async function fetchTestByPath(lang, slugOrId) {
+  let candidates
+  if (!isSupabaseConfigured) {
+    candidates = localTests()
+  } else {
+    const { data, error } = await selectTests((columns) => {
+      const query = supabase.from('practice_tests').select(columns)
+      if (!columns.includes('slug')) {
+        return UUID.test(slugOrId) ? query.eq('id', slugOrId) : Promise.resolve({ data: [], error: null })
+      }
+      return UUID.test(slugOrId) ? query.or(`slug.eq.${slugOrId},id.eq.${slugOrId}`) : query.eq('slug', slugOrId)
+    })
+    if (error) {
+      console.error('fetchTestByPath error, falling back to local store:', error)
+      candidates = localTests()
+    } else {
+      candidates = data.map(withLanguage)
+    }
+  }
+
+  const bySlug = candidates.filter((t) => t.slug === slugOrId)
+  let test = bySlug.find((t) => t.lang === lang) ?? bySlug.find((t) => t.lang === 'ru')
+  const foundBySlug = Boolean(test)
+  test ??= candidates.find((t) => t.id === slugOrId)
+  if (!test) return { test: null, redirect: null }
+
+  // Нужна другая версия той же группы: своя для языка страницы, если есть.
+  let redirect = foundBySlug ? null : test
+  if (test.lang !== lang) {
+    const versions = await fetchTestVersions(test.translation_group)
+    const own = versions.find((v) => v.lang === lang)
+    if (own) redirect = { ...test, ...own }
+  }
+
+  const [full] = isSupabaseConfigured ? await attachHasPdf(await attachQuestionCounts([test])) : [test]
+  return { test: { ...full, is_fallback: full.lang !== lang }, redirect }
+}
+
+// Все языковые версии одного пробника: [{ id, lang, slug }] — для
+// переключателя языка.
+export async function fetchTestVersions(translationGroup) {
+  if (!translationGroup) return []
+  if (!isSupabaseConfigured) {
+    return localTests()
+      .filter((t) => t.translation_group === translationGroup)
+      .map(({ id, lang, slug }) => ({ id, lang, slug }))
+  }
+  const { data, error } = await supabase
+    .from('practice_tests')
+    .select('id, lang, slug')
+    .eq('translation_group', translationGroup)
+  if (error) {
+    // Колонок ещё нет — у пробника только русская версия (группа = id).
+    if (error.code !== MISSING_COLUMN) console.error('fetchTestVersions error:', error)
+    return [{ id: translationGroup, lang: 'ru', slug: null }]
+  }
+  return data.map(withLanguage)
+}
+
+// Слаг уже занят другой версией на этом языке?
+export async function isSlugTaken(lang, slug, exceptId) {
+  if (!slug) return false
+  if (!isSupabaseConfigured) return localTests().some((t) => t.lang === lang && t.slug === slug && t.id !== exceptId)
+  const { data, error } = await supabase.from('practice_tests').select('id').eq('lang', lang).eq('slug', slug)
+  if (error) return false
+  return data.some((row) => row.id !== exceptId)
+}
+
+// Копия пробника на другой язык (тест + вопросы + тексты) — SQL-функция
+// create_test_translation из add-languages.sql. Возвращает id копии.
+export async function createTestTranslation(sourceTestId, targetLang) {
+  if (!isSupabaseConfigured) return store.createTestTranslation(sourceTestId, targetLang)
+  const { data, error } = await supabase.rpc('create_test_translation', {
+    source_test_id: sourceTestId,
+    target_lang: targetLang,
+  })
+  if (error) {
+    if (error.code === 'PGRST202') throw new Error('errors.noLanguages')
+    if (error.message?.includes('already exists')) throw new Error('errors.versionExists')
+    throw error
+  }
+  return data
+}
+
+// update по всей группе переводов (а без колонок языков — по id).
+async function updateGroup(test, patch) {
+  const group = test.translation_group ?? test.id
+  let result = await supabase.from('practice_tests').update(patch).eq('translation_group', group).select('id')
+  if (result.error?.code === MISSING_COLUMN) {
+    result = await supabase.from('practice_tests').update(patch).eq('id', test.id).select('id')
+  }
+  if (result.error) throw result.error
+  if (result.data.length === 0) throw notAllowedError()
 }
 
 // Забирает сам PDF (base64) — вызывать только по клику на "Скачать", не при
@@ -203,18 +368,30 @@ export async function saveTest(test) {
 
   const { data, error } = await supabase.from('practice_tests').upsert(test).select().single()
   if (error) throw error
+  // Общие поля (SHARED_TEST_FIELDS) — сразу во всех языковых версиях.
+  if (test.id && data.translation_group) {
+    const shared = Object.fromEntries(SHARED_TEST_FIELDS.filter((f) => f in test).map((f) => [f, test[f]]))
+    await updateGroup(data, shared)
+  }
   return data
 }
 
 // Сохраняет порядок пробников после перетаскивания в админке: sort_order =
-// позиция в orderedIds. Отдельные update, а не upsert — upsert с неполной
-// строкой падает на NOT NULL-колонках (см. setTestProAccess).
-export async function reorderTests(orderedIds) {
-  if (!isSupabaseConfigured) return store.reorderTests(orderedIds)
+// позиция в orderedGroups (translation_group) — сразу у всех языковых версий.
+// Отдельные update, а не upsert — upsert с неполной строкой падает на
+// NOT NULL-колонках (см. setTestProAccess).
+export async function reorderTests(orderedGroups) {
+  if (!isSupabaseConfigured) return store.reorderTests(orderedGroups)
 
-  const results = await Promise.all(
-    orderedIds.map((id, index) => supabase.from('practice_tests').update({ sort_order: index }).eq('id', id).select('id')),
-  )
+  const byGroup = (column) =>
+    Promise.all(
+      orderedGroups.map((group, index) =>
+        supabase.from('practice_tests').update({ sort_order: index }).eq(column, group).select('id'),
+      ),
+    )
+  let results = await byGroup('translation_group')
+  // Колонки языков ещё нет — группа = id пробника.
+  if (results.some((r) => r.error?.message?.includes('translation_group'))) results = await byGroup('id')
   const failed = results.find((r) => r.error)
   if (failed?.error.code === MISSING_COLUMN) {
     throw new Error('errors.noSortOrder')
@@ -223,49 +400,37 @@ export async function reorderTests(orderedIds) {
   if (results.some((r) => r.data.length === 0)) throw notAllowedError()
 }
 
-// Переключает доступ к пробнику: только PRO или для всех. Отдельный update,
-// а не saveTest (upsert): upsert с одним полем вместо всей строки в Postgres
-// падает на NOT NULL-колонках (title и т.п.).
-export async function setTestProAccess(testId, isPro) {
-  if (!isSupabaseConfigured) return store.saveTest({ id: testId, is_pro: isPro })
-
-  const { data, error } = await selectTests((columns) =>
-    supabase.from('practice_tests').update({ is_pro: isPro }).eq('id', testId).select(columns).single(),
-  )
-  if (error) throw error
-  return data
+// Переключает доступ к пробнику: только PRO или для всех — у всех языковых
+// версий сразу. Отдельный update, а не saveTest (upsert): upsert с одним
+// полем вместо всей строки в Postgres падает на NOT NULL-колонках (title и т.п.).
+// test — { id, translation_group }.
+export async function setTestProAccess(test, isPro) {
+  if (!isSupabaseConfigured) return store.updateGroup(test, { is_pro: isPro })
+  await updateGroup(test, { is_pro: isPro })
 }
 
-// Закрепить/открепить пробник. Отдельный update — upsert с неполной строкой
-// падает на NOT NULL-колонках (см. setTestProAccess).
-export async function setTestPinned(testId, isPinned) {
-  if (!isSupabaseConfigured) return store.saveTest({ id: testId, is_pinned: isPinned })
-
-  const { data, error } = await supabase
-    .from('practice_tests')
-    .update({ is_pinned: isPinned })
-    .eq('id', testId)
-    .select('id')
-  if (error) throw error
-  if (data.length === 0) throw notAllowedError()
+// Закрепить/открепить пробник (все языковые версии). Отдельный update —
+// upsert с неполной строкой падает на NOT NULL-колонках (см. setTestProAccess).
+export async function setTestPinned(test, isPinned) {
+  if (!isSupabaseConfigured) return store.updateGroup(test, { is_pinned: isPinned })
+  await updateGroup(test, { is_pinned: isPinned })
 }
 
-// Переносит пробник в другую категорию (вкладку на странице «Пробники»)
-// прямо из списка в админке. Отдельный update — по той же причине, что и
-// setTestProAccess.
-export async function setTestCategory(testId, categoryId) {
-  if (!isSupabaseConfigured) return store.saveTest({ id: testId, category_id: categoryId })
-
-  const { data, error } = await supabase
-    .from('practice_tests')
-    .update({ category_id: categoryId })
-    .eq('id', testId)
-    .select('id')
-  if (error) throw error
-  if (data.length === 0) throw notAllowedError()
+// Переносит пробник (все языковые версии) в другую категорию — вкладку на
+// странице «Пробники» — прямо из списка в админке.
+export async function setTestCategory(test, categoryId) {
+  if (!isSupabaseConfigured) return store.updateGroup(test, { category_id: categoryId })
+  await updateGroup(test, { category_id: categoryId })
 }
 
+// Удаляет одну языковую версию. Русскую, пока есть другие, удалить нельзя:
+// она — запасная версия для языков без перевода.
 export async function deleteTest(testId) {
+  const test = await fetchTestById(testId)
+  if (test?.lang === 'ru') {
+    const versions = await fetchTestVersions(test.translation_group)
+    if (versions.some((v) => v.lang !== 'ru')) throw new Error('errors.deleteRussianFirst')
+  }
   if (!isSupabaseConfigured) return store.deleteTest(testId)
 
   const { data, error } = await supabase.from('practice_tests').delete().eq('id', testId).select('id')
@@ -691,12 +856,18 @@ export async function setUserPlan(userId, plan) {
 const PROGRESS_COLUMNS =
   'id, test_id, score, max_score, questions_count, answered_count, duration_seconds, answers, completed_at'
 
+// translation_group попытки — для браузера (в базе группа берётся из
+// practice_tests): попытка на любой языковой версии засчитывается всей группе.
+function attemptRow({ translation_group: _group, ...attempt }) {
+  return attempt
+}
+
 // Попытки, которые лежат в браузере (сделаны до входа или пока в базе не
 // было колонок), переносим в аккаунт, как только запись в базу работает.
 async function uploadLocalAttempts(userId) {
   const local = localProgress.list()
   if (local.length === 0) return
-  const rows = local.map(({ id: _localId, ...attempt }) => ({ ...attempt, user_id: userId }))
+  const rows = local.map(({ id: _localId, ...attempt }) => ({ ...attemptRow(attempt), user_id: userId }))
   const { error } = await supabase.from('user_progress').insert(rows)
   if (error) {
     console.warn('uploadLocalAttempts: пока не получилось перенести попытки из браузера:', error)
@@ -710,7 +881,7 @@ export async function saveAttempt(userId, attempt) {
 
   const { data, error } = await supabase
     .from('user_progress')
-    .insert({ ...attempt, user_id: userId })
+    .insert({ ...attemptRow(attempt), user_id: userId })
     .select(PROGRESS_COLUMNS)
     .single()
   if (error) {
@@ -723,18 +894,23 @@ export async function saveAttempt(userId, attempt) {
   return data
 }
 
+// Каждая попытка — с translation_group своего пробника (для
+// attemptsForShownTests в lib/progress.js).
 export async function fetchAttempts(userId) {
   if (!isSupabaseConfigured || !userId) return localProgress.list()
 
   await uploadLocalAttempts(userId)
-  const { data, error } = await supabase
-    .from('user_progress')
-    .select(PROGRESS_COLUMNS)
-    .eq('user_id', userId)
-    .order('completed_at', { ascending: true })
+  const query = (columns) =>
+    supabase.from('user_progress').select(columns).eq('user_id', userId).order('completed_at', { ascending: true })
+  let { data, error } = await query(`${PROGRESS_COLUMNS}, practice_tests(translation_group)`)
+  // Колонки языков ещё нет — без группы (она = test_id).
+  if (error?.code === MISSING_COLUMN) ({ data, error } = await query(PROGRESS_COLUMNS))
   if (error) {
     console.error('fetchAttempts error, falling back to local store:', error)
     return localProgress.list()
   }
-  return data
+  return data.map(({ practice_tests: test, ...attempt }) => ({
+    ...attempt,
+    translation_group: test?.translation_group ?? attempt.test_id,
+  }))
 }

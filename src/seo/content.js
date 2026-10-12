@@ -1,7 +1,8 @@
 // Тексты для поиска (Google, его нейросеть и другие ИИ-ассистенты): заголовки
 // и описания страниц, частые вопросы об экзамене, описание проекта.
 //
-// Файл — чистый JS без React и без импортов: его читает и сайт (компонент
+// Файл — чистый JS без React (импорт только из такого же чистого
+// src/i18n/routes.js): его читает и сайт (компонент
 // RouteSeo, страницы «Об экзамене» и «О проекте»), и скрипт
 // scripts/prerender.mjs, который при сборке кладёт эти тексты в готовый HTML
 // каждой страницы. Поменял здесь — поменялось и на сайте, и для поисковиков.
@@ -12,6 +13,8 @@
 //
 // Разметка внутри строк: **жирный**, [ссылка] — ссылка на официальную
 // страницу WU о поступлении (OFFICIAL_WU_URL).
+
+import { localPath } from '../i18n/routes.js'
 
 export const SITE = {
   url: 'https://wuwonna.at',
@@ -279,90 +282,42 @@ export const ABOUT = {
   },
 }
 
-// Понятные адреса пробников: /probniki/wiso-probnik-2026-oficialnyj вместо
-// /probniki/5d1b0666-…. Ключ — id пробника в базе. Новый пробник без строки
-// здесь просто открывается по id — ничего не ломается; чтобы дать ему
-// красивый адрес, добавь строку (латиница, цифры и дефисы). Менять уже
-// выданный адрес не стоит: старые ссылки и позиции в поиске пропадут.
-export const TEST_SLUGS = {
-  '5d1b0666-184a-4bf8-a56e-cf1813273597': 'wiso-probnik-2026-oficialnyj', // Официальный пробник WiSo 2026/2027
-  '3fbee26e-b52d-44bc-9fa7-2bd18d0d72a5': 'wiso-probnik-2026-s-razborom', // Пробник 2026 (с разбором)
-  '98788230-f0ec-45d3-9904-9a9c5d88d16e': 'wiso-probnik-set-1', // Пробник Set 1
-  'fea4f351-cd3a-415e-a2e1-4d9520263ee8': 'wiso-probnik-set-2', // Пробник Set 2
-  'fcf1b101-bbd4-41fa-803b-6229a911ff5f': 'kniga-wu-glava-1-1', // Глава 1.1
-  '7d2c31fa-27dc-413a-8168-2225bcd452a6': 'kniga-wu-glava-1-2', // Глава 1.2
-  '79ca2285-ab2f-4156-8211-fea9ff6fb4cc': 'kniga-wu-glava-1-3', // Глава 1.3
-  '8b8f915f-cd1a-4801-aaf0-817ae7ffcc81': 'kniga-wu-glava-1-4', // Глава 1.4
-  '603f1b53-621b-4626-98a1-c310f64228c8': 'kniga-wu-glava-1-5', // Глава 1.5
-  '1c941b41-fc8b-4bdc-a13e-5c74258049fa': 'kniga-wu-glava-2-1', // Глава 2.1
-  'd546a137-311e-4841-9f56-c60e5a1962eb': 'kniga-wu-glava-2-2', // Глава 2.2
-  '2f9c1c85-9a75-4e7d-a90d-61c671519914': 'kniga-wu-glava-2-3', // Глава 2.3
-  '146b3aa1-451e-4dad-aa84-9c14322d7f57': 'kniga-wu-glava-2-4', // Глава 2.4
-  '4677645e-a17a-4dcc-8803-f5db29d671e2': 'kniga-wu-glava-2-5', // Глава 2.5
-  'd462202e-60be-40d0-8db8-99c8fc692788': 'kniga-wu-glava-2-6', // Глава 2.6
-  'cb0febff-5e6f-495b-a913-8cd96c74163e': 'kniga-wu-glava-3-1', // Глава 3.1
-  'b6089fc1-ba66-4dcc-8c0a-ec3a59c640dc': 'kniga-wu-glava-3-2-chast-1', // Глава 3.2 часть 1
-  'cd1d8389-1bce-42ce-918a-5182eff2b298': 'kniga-wu-glava-3-2-chast-2', // Глава 3.2 часть 2
-  '160cee67-a251-4193-b3d3-8a0d6b5c683c': 'kniga-wu-glava-3-3-chast-1', // Глава 3.3 часть 1
-  'da6fc434-0814-44a2-ac11-89d30afbadb0': 'kniga-wu-glava-3-3-chast-2', // Глава 3.3 часть 2
-  '7ddccbb2-f73d-4af3-8409-d61154bcb884': 'kniga-wu-glava-3-4-chast-1', // Глава 3.4 часть 1
-  'e61245cd-f347-480f-9d19-a0c7509c214c': 'kniga-wu-glava-3-4-chast-2', // Глава 3.4 часть 2
-  'b21795e0-e6d5-481c-86f4-98722e86bd77': 'kniga-wu-glava-3-4-chast-3', // Глава 3.4 часть 3
-  '283481c6-20a6-451a-9519-087b0adb2d4a': 'kniga-wu-glava-3-5-chast-1', // Глава 3.5 часть 1
-  '3baa7d6e-5976-44e7-9b7a-2eb7db021197': 'kniga-wu-glava-3-5-chast-2', // Глава 3.5 часть 2
-  '66bb8a9b-e636-470b-9545-95c2e77384cb': 'kniga-wu-glava-3-5-chast-3', // Глава 3.5 часть 3
-  'f5902579-85c0-42aa-a671-8517464d7433': 'kniga-wu-glava-3-5-chast-4', // Глава 3.5 часть 4
-  '56b604ea-d958-4069-8620-5a2f1366b46c': 'kniga-wu-glava-4-1', // Глава 4.1
-  '0174eb7a-52e5-4743-b6e1-cd52314c60be': 'kniga-wu-glava-4-2', // Глава 4.2
-  '71012839-ee39-4cf6-9c6a-2d4d246cc612': 'kniga-wu-glava-4-3', // Глава 4.3
-  '81c09969-2826-4b8d-80ae-736bb610053a': 'kniga-wu-glava-4-4-1', // Глава 4.4.1
-  '7b42a2f9-9335-4818-9ed4-52a090fbf154': 'kniga-wu-glava-4-4-2', // Глава 4.4.2
+// Адрес страницы пробника: по slug из базы (practice_tests.slug), без него —
+// по id. lang — язык страницы; по умолчанию язык самой версии. Русская
+// версия, показанная на немецкой странице (нет перевода), открывается по
+// /de/probetests/<русский slug>. Менять уже выданный slug не стоит: старые
+// ссылки и позиции в поиске пропадут.
+export function testPath(test, lang = test.lang ?? 'ru') {
+  return localPath('test', { slug: test.slug || test.id }, lang)
 }
 
-const TEST_ID_BY_SLUG = Object.fromEntries(Object.entries(TEST_SLUGS).map(([id, slug]) => [slug, id]))
-
-// Адрес страницы пробника (по slug, если он есть).
-export function testPath(testOrId) {
-  const id = typeof testOrId === 'string' ? testOrId : testOrId.id
-  return `/probniki/${TEST_SLUGS[id] ?? id}`
+export function testExamPath(test, lang = test.lang ?? 'ru') {
+  return localPath('testExam', { slug: test.slug || test.id }, lang)
 }
 
-// Из адреса /probniki/:testId — id пробника в базе (там может быть и slug,
-// и старый id).
-export function testIdFromParam(param) {
-  return TEST_ID_BY_SLUG[param] ?? param
+// Шаблон заголовка, если у версии нет своего seo_title.
+const TEST_SEO_TEMPLATES = {
+  ru: (test) =>
+    `${test.title} — ${test.section ? `тест по книге WU, ${test.section}` : 'пробник к экзамену WU Wien'} (WiSo Aufnahmeprüfung) | WU WONNA`,
+  de: (test) =>
+    `${test.title} – ${test.section ? `Übungstest zum WU-Skript, ${test.section}` : 'Probetest zur Aufnahmeprüfung der WU Wien'} (WiSo) | WU WONNA`,
+  en: (test) =>
+    `${test.title} – ${test.section ? `WU study script practice test, ${test.section}` : 'WU Vienna entrance exam practice test'} (WiSo) | WU WONNA`,
 }
 
-// Свои заголовок и описание для поиска — для главных пробников. Остальные
-// собираются автоматически в testSeo.
-const TEST_SEO_OVERRIDES = {
-  '5d1b0666-184a-4bf8-a56e-cf1813273597': {
-    title: 'Официальный пробник WU WiSo 2026/27 онлайн — вступительный экзамен (Aufnahmeprüfung) | WU WONNA',
-    description:
-      'Официальный пробник вступительного экзамена WU Wien (WiSo Aufnahmeprüfung) 2026/27 онлайн: 26 заданий, 120 минут, таймер как на экзамене и разбор каждого ответа. Бесплатно.',
-  },
-  '3fbee26e-b52d-44bc-9fa7-2bd18d0d72a5': {
-    title: 'Пробник WU 2026 с разбором ответов — экономика и математика (WiSo Aufnahmeprüfung) | WU WONNA',
-    description:
-      'Пробник к вступительному экзамену WU Wien 2026/27 с подробным разбором каждого варианта: основы экономики по книге WU и математика. Онлайн, с таймером, бесплатно.',
-  },
-  '98788230-f0ec-45d3-9904-9a9c5d88d16e': {
-    title: 'Пробник WiSo Set 1 — тренировочный вариант экзамена WU Wien | WU WONNA',
-  },
-  'fea4f351-cd3a-415e-a2e1-4d9520263ee8': {
-    title: 'Пробник WiSo Set 2 — сложный вариант экзамена WU Wien | WU WONNA',
-  },
-}
-
-// Заголовок и описание страницы одного пробника.
+// Заголовок и описание страницы одного пробника: свои seo_title и
+// seo_description из базы, если заполнены, иначе — по шаблону языка версии.
 export function testSeo(test) {
-  const kind = test.section ? `тест по книге WU, ${test.section}` : 'пробник к экзамену WU Wien'
-  const description = (test.description || test.long_description || SITE_SUMMARY.ru).replace(/\*\*/g, '').replace(/\s+/g, ' ').trim()
+  const lang = test.lang ?? 'ru'
+  const description = (test.description || test.long_description || inLang(SITE_SUMMARY, lang))
+    .replace(/\*\*/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
   return {
-    title: `${test.title} — ${kind} (WiSo Aufnahmeprüfung) | WU WONNA`,
-    description: description.length > 200 ? `${description.slice(0, 197).trimEnd()}…` : description,
-    ...TEST_SEO_OVERRIDES[test.id],
+    title: test.seo_title || inLang(TEST_SEO_TEMPLATES, lang)(test),
+    description: test.seo_description || (description.length > 200 ? `${description.slice(0, 197).trimEnd()}…` : description),
     path: testPath(test),
+    lang,
   }
 }
 

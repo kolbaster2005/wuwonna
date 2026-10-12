@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FileText, ListChecks, Clock, ShieldCheck, Pin, Lock, CheckCircle2, RotateCcw } from 'lucide-react'
+import { FileText, ListChecks, Clock, ShieldCheck, Pin, Lock, CheckCircle2, RotateCcw, Languages } from 'lucide-react'
 import { setTestPinned } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
@@ -16,7 +16,7 @@ export default function TestCard({ test, result, onPinChange }) {
   const [pinning, setPinning] = useState(false)
   const { hasPro, isAdmin, loading: authLoading } = useAuth()
   const { openProModal } = useProModal()
-  const { t, errorText } = useI18n()
+  const { t, lang, errorText } = useI18n()
   // Закреплять/откреплять может только админ. Без Supabase входа нет вообще —
   // тогда, как и в админке (RequireAuth), не мешаем локальной разработке.
   const canPin = isAdmin || !isSupabaseConfigured
@@ -30,7 +30,7 @@ export default function TestCard({ test, result, onPinChange }) {
   async function togglePin() {
     setPinning(true)
     try {
-      await setTestPinned(test.id, !test.is_pinned)
+      await setTestPinned(test, !test.is_pinned)
       onPinChange?.()
     } catch (err) {
       alert(t('testCard.pinFailed', { error: errorText(err) }))
@@ -91,6 +91,12 @@ export default function TestCard({ test, result, onPinChange }) {
 
         <div className={`mb-5 sm:mb-6 ${lockedFade}`}>
           <h3 className="mt-4 pr-8 text-lg font-extrabold tracking-tight sm:mt-5 sm:text-xl">{test.title}</h3>
+          {/* Перевода на язык страницы ещё нет — показана русская версия */}
+          {test.is_fallback && (
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-amber-700">
+              <Languages size={13} /> {t('testCard.fallback')}
+            </p>
+          )}
           <RichText text={test.description} className="mt-2 text-sm leading-relaxed text-ink/55" />
         </div>
 
@@ -119,7 +125,7 @@ export default function TestCard({ test, result, onPinChange }) {
         </button>
       ) : (
         <Link
-          to={testPath(test)}
+          to={testPath(test, lang)}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-pine-600 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:mt-6"
         >
           {isDone ? (

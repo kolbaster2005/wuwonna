@@ -49,7 +49,7 @@ export default function ConfirmDialog({ title, message, confirmLabel, cancelLabe
           {title}
         </h2>
         {message && (
-          <p id="confirm-dialog-message" className="mt-2 leading-relaxed text-ink/60">
+          <p id="confirm-dialog-message" className="mt-2 whitespace-pre-line leading-relaxed text-ink/60">
             {message}
           </p>
         )}

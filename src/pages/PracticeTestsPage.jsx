@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ShieldCheck, CalendarDays, Search, ClipboardList } from 'lucide-react'
-import { fetchTests, fetchCategories, fetchAttempts } from '../lib/data'
-import { statsByTest } from '../lib/progress'
+import { fetchTests, fetchCategories, fetchAttempts, categoryName } from '../lib/data'
+import { attemptsForShownTests, localizeSections, statsByTest } from '../lib/progress'
 import { useAuth } from '../lib/authContext'
 import { ORIGINALITY_OPTIONS } from '../lib/originality'
 import TestCard from '../components/TestCard'
@@ -16,14 +16,14 @@ import { useI18n } from '../i18n'
 const TABS_WITHOUT_FILTERS = ['основы-экономики']
 
 export default function PracticeTestsPage() {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const [categories, setCategories] = useState([])
   const [tests, setTests] = useState([])
   const [loading, setLoading] = useState(true)
   // Результаты по тестам (лучший %, число попыток) — чтобы пометить
   // пройденные карточки. Те же данные, что и в «Моём прогрессе».
   const { user, loading: authLoading } = useAuth()
-  const [resultsByTest, setResultsByTest] = useState({})
+  const [attempts, setAttempts] = useState([])
 
   const [originality, setOriginality] = useState('')
   const [year, setYear] = useState('')
@@ -34,28 +34,35 @@ export default function PracticeTestsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeCategory = categories.find((c) => c.slug === searchParams.get('tab')) ?? categories[0] ?? null
 
+  // По одной версии каждого пробника — на языке страницы или русская (см.
+  // fetchTests). Разделы русских версий-заменителей — на языке страницы.
   function load() {
-    return Promise.all([fetchCategories(), fetchTests()]).then(([cats, allTests]) => {
+    return Promise.all([fetchCategories(), fetchTests({ lang })]).then(([cats, allTests]) => {
       setCategories(cats)
-      setTests(allTests)
+      setTests(localizeSections(allTests, (number) => t('progress.chapter', { number })))
       setLoading(false)
     })
   }
 
   useEffect(() => {
     load().catch(() => setLoading(false))
-  }, [])
+    // load зависит только от языка
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang])
 
   useEffect(() => {
     if (authLoading) return
     let alive = true
     fetchAttempts(user?.id)
-      .then((attempts) => alive && setResultsByTest(statsByTest(attempts)))
+      .then((list) => alive && setAttempts(list))
       .catch((err) => console.error('fetchAttempts error:', err))
     return () => {
       alive = false
     }
   }, [authLoading, user?.id])
+
+  // Пройденный на любом языке пробник помечен пройденным и здесь.
+  const resultsByTest = useMemo(() => statsByTest(attemptsForShownTests(attempts, tests)), [attempts, tests])
 
   const showFilters = !TABS_WITHOUT_FILTERS.includes(activeCategory?.slug)
 
@@ -107,7 +114,7 @@ export default function PracticeTestsPage() {
         {categories.length > 0 && (
           <Tabs
             className="mt-6"
-            items={categories.map((c) => ({ id: c.id, label: c.name }))}
+            items={categories.map((c) => ({ id: c.id, label: categoryName(c, lang) }))}
             value={activeCategory?.id}
             onChange={(id) => selectTab(categories.find((c) => c.id === id))}
           />

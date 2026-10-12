@@ -140,3 +140,30 @@ export function chapterNextTest(chapter) {
   const weakest = [...chapter.tests].filter((t) => t.best < 1).sort((a, b) => a.best - b.best)[0]
   return weakest?.test ?? null
 }
+
+// --- Языковые версии ---
+// Попытка на любой языковой версии пробника засчитывается всей группе
+// переводов. Попытки хранятся с test_id той версии, на которой их сделали;
+// перед подсчётами test_id заменяется на версию той же группы, которая сейчас
+// на экране (tests — показанные версии, по одной на группу).
+// Группа попытки — attempt.translation_group (из базы или сохранённая в
+// браузере), а у старых попыток без неё — test_id (у русских версий группа
+// совпадает с id).
+export function attemptsForShownTests(attempts, tests) {
+  const shownByGroup = new Map(tests.map((t) => [t.translation_group ?? t.id, t.id]))
+  return attempts.map((a) => {
+    const shownId = shownByGroup.get(a.translation_group ?? a.test_id)
+    return shownId && shownId !== a.test_id ? { ...a, test_id: shownId, original_test_id: a.test_id } : a
+  })
+}
+
+// Названия глав внутри одного языка должны совпадать («Kapitel 1» у всех
+// немецких версий главы 1). У русской версии, показанной вместо перевода
+// (is_fallback), раздел «Глава 1» заменяется на название главы на языке
+// страницы — chapterName(номер) — иначе глава развалилась бы на две.
+export function localizeSections(tests, chapterName) {
+  return tests.map((t) => {
+    const number = t.is_fallback ? t.section?.match(/\d+/)?.[0] : null
+    return number ? { ...t, section: chapterName(Number(number)) } : t
+  })
+}

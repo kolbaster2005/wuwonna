@@ -2,7 +2,16 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, BookOpen, ChevronRight, TrendingUp } from 'lucide-react'
 import { fetchAttempts, fetchTests } from '../lib/data'
-import { attemptRatio, chapterNextTest, chapterProgress, lastAttempt, nextTest, summary } from '../lib/progress'
+import {
+  attemptRatio,
+  attemptsForShownTests,
+  chapterNextTest,
+  chapterProgress,
+  lastAttempt,
+  localizeSections,
+  nextTest,
+  summary,
+} from '../lib/progress'
 import { useVocabulary } from '../lib/useVocabulary'
 import { TOPICS } from '../data/topics'
 import { useAuth } from '../lib/authContext'
@@ -67,7 +76,7 @@ function Ring({ ratio, size = 64 }) {
 // --- слева: карта прогресса по главам ---
 
 function ChaptersMap({ chapters }) {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const overall = chapters.reduce((sum, c) => sum + c.ratio, 0) / chapters.length
   return (
     <section className="card flex flex-col p-6 sm:p-8 lg:row-span-3">
@@ -98,7 +107,7 @@ function ChaptersMap({ chapters }) {
                   return (
                     <Link
                       key={item.test.id}
-                      to={testPath(item.test)}
+                      to={testPath(item.test, lang)}
                       title={`${item.test.title} — ${status}`}
                       aria-label={`${item.test.title}: ${status}`}
                       className={`h-6 w-6 rounded-md transition-transform hover:scale-110 hover:ring-2 hover:ring-pine-600/40 ${levelClass(item)}`}
@@ -125,9 +134,9 @@ function ChaptersMap({ chapters }) {
 // --- справа, 1-я строка: последний результат + «Продолжить» ---
 
 function LastResultCard({ last, lastTest, next }) {
-  const { t, formatDate } = useI18n()
+  const { t, lang, formatDate } = useI18n()
   const button = next && (
-    <Link to={testPath(next)} className="btn btn-primary shrink-0">
+    <Link to={testPath(next, lang)} className="btn btn-primary shrink-0">
       {last ? t('dashboard.continue') : t('dashboard.start')} <ArrowRight size={16} />
     </Link>
   )
@@ -183,22 +192,25 @@ function TileLink({ to, icon: Icon, title, subtitle, dark = false }) {
 
 export default function DashboardPage() {
   const { user } = useAuth()
-  const { t, path } = useI18n()
+  const { t, lang, path } = useI18n()
   const [tests, setTests] = useState(null)
   const [attempts, setAttempts] = useState([])
   const wordsCount = useVocabulary().entries.length
 
+  // Версии пробников на языке страницы; попытки на других языковых версиях
+  // засчитываются показанным (attemptsForShownTests).
   useEffect(() => {
     let alive = true
-    Promise.all([fetchTests(), fetchAttempts(user.id)]).then(([ts, as]) => {
+    Promise.all([fetchTests({ lang }), fetchAttempts(user.id)]).then(([ts, as]) => {
       if (!alive) return
-      setTests(ts)
-      setAttempts(as)
+      const shown = localizeSections(ts, (number) => t('progress.chapter', { number }))
+      setTests(shown)
+      setAttempts(attemptsForShownTests(as, shown))
     })
     return () => {
       alive = false
     }
-  }, [user.id])
+  }, [user.id, lang, t])
 
   if (tests === null) {
     return <main className="page text-sm text-ink/40">{t('dashboard.loading')}</main>

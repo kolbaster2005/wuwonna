@@ -72,6 +72,7 @@ export default {
     openWithPro: 'Открыть с PRO',
     retake: 'Пройти ещё раз',
     start: 'Начать тест',
+    fallback: 'Пояснения на русском',
   },
 
   proOffer: {
@@ -263,6 +264,7 @@ export default {
     downloadPdf: 'Скачать в PDF',
     pauseHint: 'Таймер можно поставить на паузу',
     reviewHint: 'После теста — разбор каждого ответа',
+    fallbackNotice: 'Этот пробник пока не переведён — задания и пояснения на русском.',
   },
 
   breadcrumbs: {
@@ -379,6 +381,7 @@ export default {
     vocabulary: 'Словарь',
     wordsLabel: { one: 'слово', few: 'слова', many: 'слов', other: 'слова' },
     open: 'Открыть →',
+    chapter: 'Глава {number}',
   },
 
   vocabulary: {
@@ -507,6 +510,10 @@ export default {
     noUsersFunctions:
       'в базе нет функций для списка пользователей — выполни supabase/admin-users.sql в Supabase (SQL Editor)',
     noAdminRole: 'нет прав — нужна роль admin. Если роль только что выдана — выйди и войди заново.',
+    noLanguages: 'в базе ещё нет языковых версий — выполни supabase/add-languages.sql в Supabase (SQL Editor)',
+    versionExists: 'версия на этом языке уже есть',
+    deleteRussianFirst:
+      'русскую версию нельзя удалить, пока есть переводы: она показывается на языках без перевода. Сначала удали переводы.',
     supabaseNotConfigured: 'Supabase не подключен — сначала настрой .env (см. README).',
     translateNetwork: 'Не получилось связаться с сервисом перевода — проверь интернет-соединение.',
     translateUnavailable: 'Сервис перевода сейчас недоступен, попробуй чуть позже.',

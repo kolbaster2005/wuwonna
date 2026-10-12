@@ -109,12 +109,56 @@ export function saveTest(test) {
 }
 
 // Порядок пробников после перетаскивания в админке: sort_order = позиция в orderedIds.
-export function reorderTests(orderedIds) {
-  const position = new Map(orderedIds.map((id, index) => [id, index]))
+// Группа переводов: у демо-данных её нет — тогда группа = id пробника.
+const groupOf = (test) => test.translation_group ?? test.id
+
+// orderedGroups — translation_group в новом порядке.
+export function reorderTests(orderedGroups) {
+  const position = new Map(orderedGroups.map((group, index) => [group, index]))
   writeJSON(
     KEYS.tests,
-    listTests().map((t) => (position.has(t.id) ? { ...t, sort_order: position.get(t.id) } : t)),
+    listTests().map((t) => (position.has(groupOf(t)) ? { ...t, sort_order: position.get(groupOf(t)) } : t)),
   )
+}
+
+// Изменить общие поля у всех языковых версий пробника.
+export function updateGroup(test, patch) {
+  const group = groupOf(test)
+  writeJSON(
+    KEYS.tests,
+    listTests().map((t) => (groupOf(t) === group ? { ...t, ...patch } : t)),
+  )
+}
+
+// Копия пробника на другой язык — как SQL-функция create_test_translation.
+export function createTestTranslation(sourceTestId, targetLang) {
+  const source = getTest(sourceTestId)
+  if (!source) throw new Error(`test ${sourceTestId} not found`)
+  const group = groupOf(source)
+  if (listTests().some((t) => groupOf(t) === group && (t.lang ?? 'ru') === targetLang)) {
+    throw new Error('errors.versionExists')
+  }
+  const copy = { ...source, id: uid(), lang: targetLang, translation_group: group, seo_title: null, seo_description: null }
+  writeJSON(KEYS.tests, [...listTests().map((t) => (t.id === source.id ? { ...t, translation_group: group } : t)), copy])
+
+  const questionIds = new Map()
+  const questionsMap = listQuestionsMap()
+  questionsMap[copy.id] = (questionsMap[source.id] ?? []).map((q) => {
+    const id = uid()
+    questionIds.set(q.id, id)
+    return { ...q, id, test_id: copy.id }
+  })
+  writeJSON(KEYS.questions, questionsMap)
+
+  const passagesMap = listPassagesMap()
+  passagesMap[copy.id] = (passagesMap[source.id] ?? []).map((p) => ({
+    ...p,
+    id: uid(),
+    test_id: copy.id,
+    anchor_question_id: p.anchor_question_id ? (questionIds.get(p.anchor_question_id) ?? null) : null,
+  }))
+  writeJSON(KEYS.passages, passagesMap)
+  return copy.id
 }
 
 export function deleteTest(testId) {

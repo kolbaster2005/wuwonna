@@ -1,47 +1,53 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowRight, Download, ListChecks, Clock, ShieldCheck, CalendarDays, PauseCircle, Eye } from 'lucide-react'
-import { fetchTestById, fetchTestPdf } from '../lib/data'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { ArrowRight, Download, ListChecks, Clock, ShieldCheck, CalendarDays, PauseCircle, Eye, Languages } from 'lucide-react'
+import { fetchTestByPath, fetchTestPdf } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import Breadcrumbs from '../components/Breadcrumbs'
 import RichText from '../components/RichText'
 import ProLockedNotice from '../components/ProLockedNotice'
 import { useSeo } from '../lib/seo'
-import { testIdFromParam, testPath, testSeo } from '../seo/content'
+import { testExamPath, testPath, testSeo } from '../seo/content'
 import { useI18n } from '../i18n'
 
 export default function TestDetailPage() {
   // В адресе — понятный slug (или старый id), в базе — id.
-  const { slug: testParam } = useParams()
-  const { t, path } = useI18n()
-  const testId = testIdFromParam(testParam)
+  const { slug } = useParams()
+  const { t, lang, path } = useI18n()
   const navigate = useNavigate()
+  const location = useLocation()
   const { hasPro, loading: authLoading } = useAuth()
   const [test, setTest] = useState(undefined)
-  useSeo(test ? testSeo(test) : null)
+  // Русская версия на чужом языке (перевода нет) — не для поиска: noindex и
+  // canonical на русскую страницу (testSeo строит путь по языку версии).
+  useSeo(test ? { ...testSeo(test), noindex: Boolean(test.is_fallback) } : null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
-
-  // Старая ссылка с id → на адрес со slug, без лишней записи в истории.
-  useEffect(() => {
-    const canonicalPath = testPath(testId)
-    if (canonicalPath !== `/probniki/${testParam}`) navigate(canonicalPath, { replace: true })
-  }, [testId, testParam, navigate])
 
   useEffect(() => {
     let alive = true
-    fetchTestById(testId).then((data) => {
-      if (alive) setTest(data)
+    fetchTestByPath(lang, slug).then(({ test: found, redirect }) => {
+      if (!alive) return
+      // Старая ссылка с id или есть версия на языке страницы — на её адрес,
+      // без лишней записи в истории.
+      const target = redirect && testPath(redirect, lang)
+      if (target && target !== location.pathname) {
+        navigate(`${target}${location.search}`, { replace: true })
+        return
+      }
+      setTest(found)
     })
     return () => {
       alive = false
     }
-  }, [testId])
+    // location — только чтобы сравнить адрес; перезагружать на смену ?tab= не нужно
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang, slug, navigate])
 
   async function handleDownloadPdf() {
     if (downloadingPdf) return
     setDownloadingPdf(true)
     try {
-      const pdfUrl = await fetchTestPdf(testId)
+      const pdfUrl = await fetchTestPdf(test.id)
       if (!pdfUrl) return
       const a = document.createElement('a')
       a.href = pdfUrl
@@ -87,6 +93,12 @@ export default function TestDetailPage() {
     <main className="page">
       <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title }]} />
 
+      {test.is_fallback && (
+        <p className="mt-5 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <Languages size={16} className="mt-0.5 shrink-0" /> {t('testDetail.fallbackNotice')}
+        </p>
+      )}
+
       <div className="mt-6 grid grid-cols-1 gap-8 sm:mt-8 lg:grid-cols-[1fr_340px] lg:gap-12">
         {/* --- О пробнике --- */}
         <div className="min-w-0">
@@ -124,7 +136,7 @@ export default function TestDetailPage() {
               </div>
             </div>
 
-            <button onClick={() => navigate(`${testPath(test)}/exam`)} className="btn btn-primary btn-lg mt-5 w-full">
+            <button onClick={() => navigate(testExamPath(test, lang))} className="btn btn-primary btn-lg mt-5 w-full">
               {t('testCard.start')} <ArrowRight size={17} />
             </button>
 

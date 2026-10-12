@@ -68,13 +68,17 @@ async function fetchTests() {
     console.warn('prerender: Supabase не настроен — страницы пробников не создаются')
     return []
   }
+  const base = 'id,title,description,long_description,section,duration_minutes,year,is_pro'
+  const request = (columns) =>
+    fetch(`${url}/rest/v1/practice_tests?select=${columns}&order=sort_order`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+    })
   try {
-    const response = await fetch(
-      `${url}/rest/v1/practice_tests?select=id,title,description,long_description,section,duration_minutes,year,is_pro&order=sort_order`,
-      { headers: { apikey: key, Authorization: `Bearer ${key}` } },
-    )
+    let response = await request(`${base},lang,translation_group,slug,seo_title,seo_description`)
+    // supabase/add-languages.sql ещё не выполнен — без языковых колонок, всё русское.
+    if (response.status === 400) response = await request(base)
     if (!response.ok) throw new Error(`${response.status} ${await response.text()}`)
-    return await response.json()
+    return (await response.json()).map((t) => ({ ...t, lang: t.lang ?? 'ru', translation_group: t.translation_group ?? t.id }))
   } catch (error) {
     console.warn('prerender: не получилось загрузить пробники —', error.message)
     return []
@@ -489,7 +493,8 @@ Sitemap: ${SITE.url}/sitemap.xml
   writeFileSync(resolve(dist, 'robots.txt'), robots)
 }
 
-const tests = await fetchTests()
+// Пока на сайте включён только русский — только русские версии пробников.
+const tests = (await fetchTests()).filter((t) => t.lang === 'ru')
 const urls = buildPages(tests)
 writeSitemap(urls)
 writeRobots()

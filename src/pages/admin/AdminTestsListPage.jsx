@@ -1,15 +1,69 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Plus, Pencil, Trash2, FileText, Pin, Crown, Users, GripVertical } from 'lucide-react'
-import { fetchTests, fetchCategories, deleteTest, setTestProAccess, setTestCategory, reorderTests } from '../../lib/data'
+import {
+  fetchTests,
+  fetchCategories,
+  deleteTest,
+  setTestProAccess,
+  setTestCategory,
+  reorderTests,
+  createTestTranslation,
+} from '../../lib/data'
+import { LANGS } from '../../i18n/routes'
 import { reportErrors } from '../../lib/reportErrors'
 import { isSupabaseConfigured } from '../../lib/supabaseClient'
 import { originalityLabel } from '../../lib/originality'
 import { useConfirm } from '../../lib/confirmDialog'
 import { translateError } from '../../i18n/translate'
 
+// Одна строка списка = один пробник со всеми языковыми версиями (группа
+// переводов). Название и действия — по русской версии; общие поля (PRO,
+// категория, порядок) меняются сразу у всех версий.
+function groupTests(tests) {
+  const groups = new Map()
+  tests.forEach((t) => groups.set(t.translation_group, [...(groups.get(t.translation_group) ?? []), t]))
+  return [...groups.values()].map((versions) => {
+    const main = versions.find((v) => v.lang === 'ru') ?? versions[0]
+    return { ...main, id: main.id, group: main.translation_group, versions }
+  })
+}
+
+// Чипы языков: есть версия — зелёный (открыть её форму), нет — «+ DE»
+// (создать копию для перевода).
+function LanguageChips({ test, onCreate }) {
+  return (
+    <span className="flex items-center gap-1">
+      {LANGS.map((lang) => {
+        const version = test.versions.find((v) => v.lang === lang)
+        return version ? (
+          <Link
+            key={lang}
+            to={`/admin/probniki/${version.id}`}
+            title={`Открыть версию ${lang.toUpperCase()}`}
+            className="rounded-md bg-pine-600 px-1.5 py-0.5 text-[11px] font-bold text-white hover:bg-pine-700"
+          >
+            {lang.toUpperCase()}
+          </Link>
+        ) : (
+          <button
+            key={lang}
+            onClick={() => onCreate(test, lang)}
+            title={`Создать версию ${lang.toUpperCase()} — копию русской для перевода`}
+            className="rounded-md border border-dashed border-ink/25 px-1.5 py-0.5 text-[11px] font-bold text-ink/45 hover:border-ink/50 hover:text-ink"
+          >
+            + {lang.toUpperCase()}
+          </button>
+        )
+      })}
+    </span>
+  )
+}
+
 export default function AdminTestsListPage() {
   const confirmAction = useConfirm()
+  const navigate = useNavigate()
+  const [untranslated, setUntranslated] = useState('') // '' | 'de' | 'en' — фильтр «Не переведено на»
   const [tests, setTests] = useState(null)
   const [categories, setCategories] = useState([])
   const [togglingProId, setTogglingProId] = useState(null)
@@ -21,7 +75,7 @@ export default function AdminTestsListPage() {
   const [savingOrder, setSavingOrder] = useState(false)
 
   function reload() {
-    fetchTests().then(setTests)
+    fetchTests().then((all) => setTests(groupTests(all)))
   }
 
   useEffect(reload, [])
@@ -36,7 +90,7 @@ export default function AdminTestsListPage() {
     const previous = test.category_id
     setTests((prev) => prev.map((t) => (t.id === test.id ? { ...t, category_id: categoryId } : t)))
     try {
-      await setTestCategory(test.id, categoryId)
+      await setTestCategory(test, categoryId)
     } catch (err) {
       alert(`Не получилось изменить категорию: ${translateError('ru', err)}`)
       setTests((prev) => prev.map((t) => (t.id === test.id ? { ...t, category_id: previous } : t)))
@@ -77,7 +131,7 @@ export default function AdminTestsListPage() {
 
     setSavingOrder(true)
     try {
-      await reorderTests(orderedIds)
+      await reorderTests(tests.map((t) => t.group))
     } catch (err) {
       alert(`Не получилось сохранить порядок: ${translateError('ru', err)}`)
       reload()
@@ -86,10 +140,27 @@ export default function AdminTestsListPage() {
     }
   }
 
+  async function handleCreateVersion(test, lang) {
+    const ok = await confirmAction({
+      title: `Создать версию ${lang.toUpperCase()} пробника «${test.title}»?`,
+      message:
+        'Создастся копия русской версии со всеми вопросами и текстами — дальше её переводят в форме (или через «Скачать JSON» / «Загрузить перевод»).',
+      confirmLabel: 'Создать',
+    })
+    if (!ok) return
+    await reportErrors('создать языковую версию', async () => {
+      const newId = await createTestTranslation(test.id, lang)
+      navigate(`/admin/probniki/${newId}`)
+    })
+  }
+
   async function handleDelete(test) {
     const ok = await confirmAction({
-      title: `Удалить пробник «${test.title}»?`,
-      message: 'Все его вопросы и тексты тоже удалятся.',
+      title: `Удалить русскую версию пробника «${test.title}»?`,
+      message:
+        test.versions.length > 1
+          ? 'Сначала удали переводы (в форме каждой версии): русская версия показывается на языках без перевода.'
+          : 'Все его вопросы и тексты тоже удалятся.',
       confirmLabel: 'Удалить',
       danger: true,
     })
@@ -104,7 +175,7 @@ export default function AdminTestsListPage() {
     const nextIsPro = !test.is_pro
     setTogglingProId(test.id)
     try {
-      await setTestProAccess(test.id, nextIsPro)
+      await setTestProAccess(test, nextIsPro)
       setTests((prev) => prev.map((t) => (t.id === test.id ? { ...t, is_pro: nextIsPro } : t)))
     } catch (err) {
       alert(`Не получилось изменить доступ: ${translateError('ru', err)}`)
@@ -122,8 +193,20 @@ export default function AdminTestsListPage() {
         </p>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-bold">Все пробники</h2>
+        <label className="flex items-center gap-2 text-sm text-ink/60">
+          Не переведено на:
+          <select
+            value={untranslated}
+            onChange={(e) => setUntranslated(e.target.value)}
+            className="rounded-lg border border-line bg-white px-2.5 py-1.5 text-sm font-semibold focus:outline-none"
+          >
+            <option value="">все пробники</option>
+            <option value="de">DE</option>
+            <option value="en">EN</option>
+          </select>
+        </label>
         <Link
           to="/admin/probniki/new"
           className="flex items-center gap-2 rounded-xl bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
@@ -146,10 +229,12 @@ export default function AdminTestsListPage() {
           {savingOrder && <span className="ml-2 font-semibold text-pine-700">Сохраняем порядок…</span>}
         </p>
         <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-white">
-          {tests.map((test) => (
+          {tests
+            .filter((test) => !untranslated || !test.versions.some((v) => v.lang === untranslated))
+            .map((test) => (
             <li
               key={test.id}
-              draggable
+              draggable={!untranslated}
               onDragStart={(e) => handleDragStart(e, test)}
               onDragOver={(e) => handleDragOver(e, test)}
               onDrop={(e) => e.preventDefault()}
@@ -170,6 +255,9 @@ export default function AdminTestsListPage() {
                     {test.is_pinned && <Pin size={13} className="fill-pine-700 text-pine-700" />}
                     {test.title}
                   </p>
+                  <div className="mt-1">
+                    <LanguageChips test={test} onCreate={handleCreateVersion} />
+                  </div>
                   <p className="text-sm text-ink/50">
                     {test.section?.trim() && <>{test.section.trim()} · </>}
                     {test.year} · {test.questions_count} вопросов · {originalityLabel(test.originality)}

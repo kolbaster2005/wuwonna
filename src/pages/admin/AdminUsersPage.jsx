@@ -60,9 +60,9 @@ export default function AdminUsersPage() {
 
   if (!isSupabaseConfigured) {
     return (
-      <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
         Supabase не подключен — без него нет ни регистрации, ни пользователей. Заполни{' '}
-        <code className="rounded bg-amber-100 px-1">.env</code> по инструкции в README.
+        <code className="bg-amber-100 px-1">.env</code> по инструкции в README.
       </p>
     )
   }
@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
       </p>
 
       {loadError && (
-        <p className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <p className="mt-5 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
           Не получилось загрузить пользователей: {loadError}
         </p>
       )}
@@ -102,7 +102,7 @@ export default function AdminUsersPage() {
         !loadError && (
           <>
             <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:items-center">
-              <div className="flex flex-1 items-center gap-2.5 rounded-xl border border-line bg-white px-3.5 py-2.5">
+              <div className="flex flex-1 items-center gap-2.5 border border-line bg-white px-3.5 py-2.5">
                 <Search size={16} className="shrink-0 text-ink/40" />
                 <input
                   value={search}
@@ -111,12 +111,12 @@ export default function AdminUsersPage() {
                   className="w-full bg-transparent text-sm font-medium focus:outline-none"
                 />
               </div>
-              <div className="flex gap-1 rounded-xl border border-line bg-white p-1">
+              <div className="flex gap-1 border border-line bg-white p-1">
                 {FILTERS.map((f) => (
                   <button
                     key={f.value}
                     onClick={() => setFilter(f.value)}
-                    className={`rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${
+                    className={`px-3.5 py-1.5 text-sm font-semibold transition-colors ${
                       filter === f.value ? 'bg-pine-600 text-white' : 'text-ink/60 hover:bg-black/5'
                     }`}
                   >
@@ -127,18 +127,18 @@ export default function AdminUsersPage() {
             </div>
 
             {visible.length === 0 ? (
-              <p className="mt-5 rounded-xl border border-dashed border-line py-10 text-center text-sm text-ink/50">
+              <p className="mt-5 border border-dashed border-line py-10 text-center text-sm text-ink/50">
                 {users.length === 0 ? 'Пока никто не зарегистрировался.' : 'Никого не нашлось.'}
               </p>
             ) : (
-              <ul className="mt-4 divide-y divide-line rounded-xl border border-line bg-white">
+              <ul className="mt-4 divide-y divide-line border border-line bg-white">
                 {visible.map((u) => {
                   const isPro = u.plan === 'pro'
                   const isAdmin = u.role === 'admin'
                   return (
                     <li key={u.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
                           <UserRound size={16} />
                         </span>
                         <div className="min-w-0">
@@ -146,7 +146,7 @@ export default function AdminUsersPage() {
                             <span className="truncate">{u.email}</span>
                             {u.id === currentUser?.id && <span className="text-xs font-semibold text-ink/40">это ты</span>}
                             {isAdmin && (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-pine-50 px-2 py-0.5 text-xs font-bold text-pine-700">
+                              <span className="inline-flex items-center gap-1 bg-pine-50 px-2 py-0.5 text-xs font-bold text-pine-700">
                                 <ShieldCheck size={12} /> Админ
                               </span>
                             )}
@@ -161,7 +161,7 @@ export default function AdminUsersPage() {
                         onClick={() => handleTogglePro(u)}
                         disabled={savingId === u.id}
                         title={isPro ? 'Нажми, чтобы забрать PRO' : 'Нажми, чтобы выдать PRO'}
-                        className={`flex shrink-0 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
+                        className={`flex shrink-0 items-center justify-center gap-1.5 border px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
                           isPro
                             ? 'border-amber-300 bg-amber-50 text-amber-700 hover:border-amber-400'
                             : 'border-line text-ink/70 hover:border-ink/30'

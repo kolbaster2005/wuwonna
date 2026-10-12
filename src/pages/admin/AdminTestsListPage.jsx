@@ -41,7 +41,7 @@ function LanguageChips({ test, onCreate }) {
             key={lang}
             to={`/admin/probniki/${version.id}`}
             title={`Открыть версию ${lang.toUpperCase()}`}
-            className="rounded-md bg-pine-600 px-1.5 py-0.5 text-[11px] font-bold text-white hover:bg-pine-700"
+            className="bg-pine-600 px-1.5 py-0.5 text-[11px] font-bold text-white hover:bg-pine-700"
           >
             {lang.toUpperCase()}
           </Link>
@@ -50,7 +50,7 @@ function LanguageChips({ test, onCreate }) {
             key={lang}
             onClick={() => onCreate(test, lang)}
             title={`Создать версию ${lang.toUpperCase()} — копию русской для перевода`}
-            className="rounded-md border border-dashed border-ink/25 px-1.5 py-0.5 text-[11px] font-bold text-ink/45 hover:border-ink/50 hover:text-ink"
+            className="border border-dashed border-ink/25 px-1.5 py-0.5 text-[11px] font-bold text-ink/45 hover:border-ink/50 hover:text-ink"
           >
             + {lang.toUpperCase()}
           </button>
@@ -187,9 +187,9 @@ export default function AdminTestsListPage() {
   return (
     <div>
       {!isSupabaseConfigured && (
-        <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mb-5 border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           Supabase не подключен — изменения сохраняются в этом браузере (localStorage). Заполни{' '}
-          <code className="rounded bg-amber-100 px-1">.env</code>, чтобы данные хранились в настоящей базе.
+          <code className="bg-amber-100 px-1">.env</code>, чтобы данные хранились в настоящей базе.
         </p>
       )}
 
@@ -200,7 +200,7 @@ export default function AdminTestsListPage() {
           <select
             value={untranslated}
             onChange={(e) => setUntranslated(e.target.value)}
-            className="rounded-lg border border-line bg-white px-2.5 py-1.5 text-sm font-semibold focus:outline-none"
+            className="border border-line bg-white px-2.5 py-1.5 text-sm font-semibold focus:outline-none"
           >
             <option value="">все пробники</option>
             <option value="de">DE</option>
@@ -209,7 +209,7 @@ export default function AdminTestsListPage() {
         </label>
         <Link
           to="/admin/probniki/new"
-          className="flex items-center gap-2 rounded-xl bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
+          className="flex items-center gap-2 bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
         >
           <Plus size={16} /> Добавить пробник
         </Link>
@@ -218,7 +218,7 @@ export default function AdminTestsListPage() {
       {tests === null ? (
         <p className="mt-6 text-sm text-ink/40">Загрузка...</p>
       ) : tests.length === 0 ? (
-        <p className="mt-6 rounded-xl border border-dashed border-line py-10 text-center text-sm text-ink/50">
+        <p className="mt-6 border border-dashed border-line py-10 text-center text-sm text-ink/50">
           Пробников пока нет — добавь первый.
         </p>
       ) : (
@@ -228,7 +228,7 @@ export default function AdminTestsListPage() {
           в таком же порядке они показываются на странице «Пробники». Закреплённые всегда идут первыми.
           {savingOrder && <span className="ml-2 font-semibold text-pine-700">Сохраняем порядок…</span>}
         </p>
-        <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-white">
+        <ul className="mt-3 divide-y divide-line border border-line bg-white">
           {tests
             .filter((test) => !untranslated || !test.versions.some((v) => v.lang === untranslated))
             .map((test) => (
@@ -247,7 +247,7 @@ export default function AdminTestsListPage() {
                 <span className="cursor-grab px-1 text-ink/30 hover:text-ink/60 active:cursor-grabbing" title="Перетащи, чтобы поменять порядок">
                   <GripVertical size={18} />
                 </span>
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-pine-50 text-pine-700">
+                <span className="flex h-9 w-9 items-center justify-center bg-pine-50 text-pine-700">
                   <FileText size={16} />
                 </span>
                 <div>
@@ -269,7 +269,7 @@ export default function AdminTestsListPage() {
                   value={test.category_id ?? ''}
                   onChange={(e) => handleCategoryChange(test, e.target.value)}
                   title="Вкладка, в которой пробник показывается на странице «Пробники»"
-                  className="max-w-[190px] rounded-lg border border-line bg-white px-2.5 py-2 text-sm font-semibold text-ink/70 hover:border-ink/30 focus:outline-none"
+                  className="max-w-[190px] border border-line bg-white px-2.5 py-2 text-sm font-semibold text-ink/70 hover:border-ink/30 focus:outline-none"
                 >
                   {!test.category_id && <option value="">Без категории</option>}
                   {categories.map((c) => (
@@ -282,7 +282,7 @@ export default function AdminTestsListPage() {
                   onClick={() => handleToggleProAccess(test)}
                   disabled={togglingProId === test.id}
                   title={test.is_pro ? 'Сейчас только для PRO — нажми, чтобы открыть для всех' : 'Сейчас доступен всем — нажми, чтобы сделать только для PRO'}
-                  className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
+                  className={`flex items-center gap-1.5 border px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
                     test.is_pro
                       ? 'border-amber-300 bg-amber-50 text-amber-700 hover:border-amber-400'
                       : 'border-line text-ink/70 hover:border-ink/30'
@@ -293,13 +293,13 @@ export default function AdminTestsListPage() {
                 </button>
                 <Link
                   to={`/admin/probniki/${test.id}`}
-                  className="flex items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-sm font-semibold text-ink/70 hover:border-ink/30"
+                  className="flex items-center gap-1.5 border border-line px-3 py-2 text-sm font-semibold text-ink/70 hover:border-ink/30"
                 >
                   <Pencil size={14} /> Редактировать
                 </Link>
                 <button
                   onClick={() => handleDelete(test)}
-                  className="flex items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-sm font-semibold text-red-600 hover:border-red-300 hover:bg-red-50"
+                  className="flex items-center gap-1.5 border border-line px-3 py-2 text-sm font-semibold text-red-600 hover:border-red-300 hover:bg-red-50"
                 >
                   <Trash2 size={14} /> Удалить
                 </button>

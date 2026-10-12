@@ -278,7 +278,7 @@ export default function AdminTestFormPage() {
         <h2 className="text-lg font-bold">
           {isNew ? 'Новый пробник' : `Редактирование: ${form.title}`}{' '}
           {!isNew && (
-            <span className="ml-1 rounded-md bg-pine-600 px-1.5 py-0.5 align-middle text-xs font-bold text-white">
+            <span className="ml-1 bg-pine-600 px-1.5 py-0.5 align-middle text-xs font-bold text-white">
               {(form.lang ?? 'ru').toUpperCase()}
             </span>
           )}
@@ -288,11 +288,11 @@ export default function AdminTestFormPage() {
             <button
               type="button"
               onClick={handleExport}
-              className="flex items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-sm font-semibold text-ink/70 hover:border-ink/30"
+              className="flex items-center gap-1.5 border border-line px-3 py-2 text-sm font-semibold text-ink/70 hover:border-ink/30"
             >
               <Download size={14} /> Скачать JSON
             </button>
-            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-sm font-semibold text-ink/70 hover:border-ink/30">
+            <label className="flex cursor-pointer items-center gap-1.5 border border-line px-3 py-2 text-sm font-semibold text-ink/70 hover:border-ink/30">
               <Upload size={14} /> Загрузить перевод
               <input type="file" accept="application/json,.json" onChange={handleImport} className="hidden" />
             </label>
@@ -309,14 +309,14 @@ export default function AdminTestFormPage() {
             if (!version) return null
             const current = version.id === testId
             return current ? (
-              <span key={lang} className="rounded-lg bg-pine-50 px-2.5 py-1 font-bold text-pine-700">
+              <span key={lang} className="bg-pine-50 px-2.5 py-1 font-bold text-pine-700">
                 {lang.toUpperCase()}
               </span>
             ) : (
               <Link
                 key={lang}
                 to={`/admin/probniki/${version.id}`}
-                className="rounded-lg border border-line px-2.5 py-1 font-semibold text-ink/60 hover:border-ink/30"
+                className="border border-line px-2.5 py-1 font-semibold text-ink/60 hover:border-ink/30"
               >
                 {lang.toUpperCase()}
               </Link>
@@ -326,14 +326,14 @@ export default function AdminTestFormPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-4 rounded-xl border border-line bg-white p-5">
+      <form onSubmit={handleSubmit} className="mt-4 border border-line bg-white p-5">
         <div>
           <label className="text-sm font-semibold">Название</label>
           <input
             required
             value={form.title}
             onChange={(e) => update('title', e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
             placeholder="Пробник 2026"
           />
         </div>
@@ -368,7 +368,7 @@ export default function AdminTestFormPage() {
               </button>
             </div>
           ) : (
-            <label className="mt-1.5 flex w-full max-w-xs cursor-pointer items-center gap-2 rounded-lg border border-dashed border-line bg-white px-3 py-2 text-sm text-ink/50 hover:border-ink/30">
+            <label className="mt-1.5 flex w-full max-w-xs cursor-pointer items-center gap-2 border border-dashed border-line bg-white px-3 py-2 text-sm text-ink/50 hover:border-ink/30">
               <FileUp size={16} />
               Загрузить PDF
               <input type="file" accept="application/pdf" onChange={handlePdfChange} className="hidden" />
@@ -378,13 +378,13 @@ export default function AdminTestFormPage() {
 
         {/* Адрес и поиск — у каждой языковой версии свои */}
         {form.lang !== undefined && (
-          <div className="mt-4 space-y-4 rounded-lg bg-paper p-4">
+          <div className="mt-4 space-y-4 bg-paper p-4">
             <div>
               <label className="text-sm font-semibold">Адрес страницы (slug)</label>
               <input
                 value={form.slug ?? ''}
                 onChange={(e) => update('slug', e.target.value)}
-                className="mt-1.5 w-full max-w-md rounded-lg border border-line px-3 py-2 font-mono text-sm focus:outline-none"
+                className="mt-1.5 w-full max-w-md border border-line px-3 py-2 font-mono text-sm focus:outline-none"
                 placeholder="offizieller-probetest-wiso-2026"
               />
               <p className="mt-1 text-xs text-ink/40">
@@ -405,7 +405,7 @@ export default function AdminTestFormPage() {
               <input
                 value={form.seo_title ?? ''}
                 onChange={(e) => update('seo_title', e.target.value)}
-                className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+                className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
                 placeholder="Пусто — соберётся из названия автоматически"
               />
             </div>
@@ -418,7 +418,7 @@ export default function AdminTestFormPage() {
                 value={form.seo_description ?? ''}
                 onChange={(e) => update('seo_description', e.target.value)}
                 rows={2}
-                className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+                className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
                 placeholder="Пусто — возьмётся краткое описание"
               />
             </div>
@@ -434,7 +434,7 @@ export default function AdminTestFormPage() {
               type="number"
               value={form.year}
               onChange={(e) => update('year', e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+              className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
             />
           </div>
           <div>
@@ -445,7 +445,7 @@ export default function AdminTestFormPage() {
               type="number"
               value={form.duration_minutes}
               onChange={(e) => update('duration_minutes', e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+              className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
             />
           </div>
           <div>
@@ -455,7 +455,7 @@ export default function AdminTestFormPage() {
             <select
               value={form.originality}
               onChange={(e) => update('originality', e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+              className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
             >
               {ORIGINALITY_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -471,7 +471,7 @@ export default function AdminTestFormPage() {
             <select
               value={form.category_id}
               onChange={(e) => update('category_id', e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+              className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
             >
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -487,7 +487,7 @@ export default function AdminTestFormPage() {
           <input
             value={form.section ?? ''}
             onChange={(e) => update('section', e.target.value)}
-            className="mt-1.5 w-full max-w-xs rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full max-w-xs border border-line px-3 py-2 text-sm focus:outline-none"
             placeholder="например, Глава 1 / Kapitel 1 / Chapter 1"
           />
           <p className="mt-1 text-xs text-ink/40">
@@ -500,7 +500,7 @@ export default function AdminTestFormPage() {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700 disabled:opacity-50"
+            className="bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700 disabled:opacity-50"
           >
             {isNew ? 'Создать пробник' : 'Сохранить изменения'}
           </button>
@@ -525,7 +525,7 @@ export default function AdminTestFormPage() {
               {questionFormOpen === null && (
                 <button
                   onClick={() => setQuestionFormOpen('new')}
-                  className="flex items-center gap-2 rounded-xl bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
+                  className="flex items-center gap-2 bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
                 >
                   <Plus size={16} /> Добавить вопрос
                 </button>
@@ -540,7 +540,7 @@ export default function AdminTestFormPage() {
 
             <ul className="mt-4 space-y-3">
               {questions.map((q) => (
-                <li key={q.id} className="rounded-xl border border-line bg-white p-4">
+                <li key={q.id} className="border border-line bg-white p-4">
                   {questionFormOpen === q.id ? (
                     <AdminQuestionForm
                       initial={q}
@@ -552,7 +552,7 @@ export default function AdminTestFormPage() {
                       <div>
                         <div className="flex items-center gap-2">
                           {q.category && (
-                            <span className="rounded-full bg-pine-50 px-2.5 py-0.5 text-xs font-semibold text-pine-700">
+                            <span className="bg-pine-50 px-2.5 py-0.5 text-xs font-semibold text-pine-700">
                               {q.category}
                             </span>
                           )}
@@ -570,13 +570,13 @@ export default function AdminTestFormPage() {
                       <div className="flex shrink-0 items-center gap-2">
                         <button
                           onClick={() => setQuestionFormOpen(q.id)}
-                          className="rounded-lg p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
+                          className="p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
                         >
                           <Pencil size={15} />
                         </button>
                         <button
                           onClick={() => handleDeleteQuestion(q)}
-                          className="rounded-lg p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
+                          className="p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
                         >
                           <Trash2 size={15} />
                         </button>
@@ -588,7 +588,7 @@ export default function AdminTestFormPage() {
             </ul>
 
             {questions.length === 0 && questionFormOpen === null && (
-              <p className="mt-4 rounded-xl border border-dashed border-line py-8 text-center text-sm text-ink/50">
+              <p className="mt-4 border border-dashed border-line py-8 text-center text-sm text-ink/50">
                 Вопросов пока нет — добавь первый.
               </p>
             )}
@@ -606,7 +606,7 @@ export default function AdminTestFormPage() {
               {passageFormOpen === null && (
                 <button
                   onClick={() => setPassageFormOpen('new')}
-                  className="flex shrink-0 items-center gap-2 rounded-xl bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
+                  className="flex shrink-0 items-center gap-2 bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
                 >
                   <Plus size={16} /> Добавить текст
                 </button>
@@ -621,7 +621,7 @@ export default function AdminTestFormPage() {
 
             <ul className="mt-4 space-y-3">
               {passages.map((p) => (
-                <li key={p.id} className="rounded-xl border border-line bg-white p-4">
+                <li key={p.id} className="border border-line bg-white p-4">
                   {passageFormOpen === p.id ? (
                     <AdminPassageForm
                       initial={p}
@@ -633,7 +633,7 @@ export default function AdminTestFormPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-pine-50 px-2.5 py-0.5 text-xs font-semibold text-pine-700">
+                          <span className="bg-pine-50 px-2.5 py-0.5 text-xs font-semibold text-pine-700">
                             {p.category}
                           </span>
                           <span className="flex items-center gap-1 text-xs text-ink/40">
@@ -646,13 +646,13 @@ export default function AdminTestFormPage() {
                       <div className="flex shrink-0 items-center gap-2">
                         <button
                           onClick={() => setPassageFormOpen(p.id)}
-                          className="rounded-lg p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
+                          className="p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
                         >
                           <Pencil size={15} />
                         </button>
                         <button
                           onClick={() => handleDeletePassage(p)}
-                          className="rounded-lg p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
+                          className="p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
                         >
                           <Trash2 size={15} />
                         </button>
@@ -664,7 +664,7 @@ export default function AdminTestFormPage() {
             </ul>
 
             {passages.length === 0 && passageFormOpen === null && (
-              <p className="mt-4 rounded-xl border border-dashed border-line py-8 text-center text-sm text-ink/50">
+              <p className="mt-4 border border-dashed border-line py-8 text-center text-sm text-ink/50">
                 Текстов и вступлений пока нет.
               </p>
             )}

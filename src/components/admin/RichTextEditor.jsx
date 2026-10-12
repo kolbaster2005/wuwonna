@@ -49,7 +49,7 @@ export default function RichTextEditor({ value, onChange, rows = 4, placeholder 
         <button
           type="button"
           onClick={() => applyWrap('**')}
-          className="flex items-center gap-1 rounded-md border border-line px-2 py-1 text-xs font-semibold text-ink/60 hover:border-ink/30 hover:text-ink"
+          className="flex items-center gap-1 border border-line px-2 py-1 text-xs font-semibold text-ink/60 hover:border-ink/30 hover:text-ink"
           title="Выделить жирным — сначала выдели текст мышкой"
         >
           <Bold size={13} /> Жирный
@@ -57,7 +57,7 @@ export default function RichTextEditor({ value, onChange, rows = 4, placeholder 
         <button
           type="button"
           onClick={() => applyWrap('*')}
-          className="flex items-center gap-1 rounded-md border border-line px-2 py-1 text-xs font-semibold text-ink/60 hover:border-ink/30 hover:text-ink"
+          className="flex items-center gap-1 border border-line px-2 py-1 text-xs font-semibold text-ink/60 hover:border-ink/30 hover:text-ink"
           title="Выделить курсивом — сначала выдели текст мышкой"
         >
           <Italic size={13} /> Курсив
@@ -68,7 +68,7 @@ export default function RichTextEditor({ value, onChange, rows = 4, placeholder 
         <select
           value={calloutIcon}
           onChange={(e) => setCalloutIcon(e.target.value)}
-          className="rounded-md border border-line bg-white px-1.5 py-1 text-xs text-ink/60 focus:outline-none"
+          className="border border-line bg-white px-1.5 py-1 text-xs text-ink/60 focus:outline-none"
           title="Иконка сноски"
         >
           {Object.entries(CALLOUT_ICONS).map(([key, { label }]) => (
@@ -80,7 +80,7 @@ export default function RichTextEditor({ value, onChange, rows = 4, placeholder 
         <button
           type="button"
           onClick={applyCallout}
-          className="flex items-center gap-1 rounded-md border border-line px-2 py-1 text-xs font-semibold text-ink/60 hover:border-ink/30 hover:text-ink"
+          className="flex items-center gap-1 border border-line px-2 py-1 text-xs font-semibold text-ink/60 hover:border-ink/30 hover:text-ink"
           title="Сделать сноску с иконкой — сначала выдели текст (заголовок + абзац)"
         >
           <MessageSquarePlus size={13} /> Сноска
@@ -94,7 +94,7 @@ export default function RichTextEditor({ value, onChange, rows = 4, placeholder 
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+        className="w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
       />
     </div>
   )

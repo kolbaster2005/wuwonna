@@ -79,14 +79,14 @@ export default function AdminQuestionForm({ initial, onSave, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-line bg-paper/60 p-5">
+    <form onSubmit={handleSubmit} className="border border-line bg-paper/60 p-5">
       <div>
         <label className="text-sm font-semibold">Текст вопроса</label>
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           rows={2}
-          className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+          className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
           placeholder="Например: Какое из приведённых слов является паронимом к слову «адресат»?"
         />
       </div>
@@ -97,7 +97,7 @@ export default function AdminQuestionForm({ initial, onSave, onCancel }) {
           <input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
             placeholder="Например: Орфография"
           />
         </div>
@@ -109,7 +109,7 @@ export default function AdminQuestionForm({ initial, onSave, onCancel }) {
             step="0.5"
             value={points}
             onChange={(e) => setPoints(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
           />
           <p className="mt-1 text-xs text-ink/40">
             При нескольких верных ответах баллы начисляются частично — см. пояснение при прохождении.
@@ -121,7 +121,7 @@ export default function AdminQuestionForm({ initial, onSave, onCancel }) {
         <label className="text-sm font-semibold">Фото к вопросу (необязательно)</label>
         {imageUrl ? (
           <div className="mt-1.5 flex items-center gap-3">
-            <img src={imageUrl} alt="" className="h-14 w-14 rounded-lg border border-line object-cover" />
+            <img src={imageUrl} alt="" className="h-14 w-14 border border-line object-cover" />
             <button
               type="button"
               onClick={() => setImageUrl('')}
@@ -131,7 +131,7 @@ export default function AdminQuestionForm({ initial, onSave, onCancel }) {
             </button>
           </div>
         ) : (
-          <label className="mt-1.5 flex w-full cursor-pointer items-center gap-2 rounded-lg border border-dashed border-line bg-white px-3 py-2 text-sm text-ink/50 hover:border-ink/30">
+          <label className="mt-1.5 flex w-full cursor-pointer items-center gap-2 border border-dashed border-line bg-white px-3 py-2 text-sm text-ink/50 hover:border-ink/30">
             <ImagePlus size={16} />
             Загрузить фото
             <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
@@ -166,14 +166,14 @@ export default function AdminQuestionForm({ initial, onSave, onCancel }) {
               <input
                 value={opt.text}
                 onChange={(e) => updateOption(opt.id, { text: e.target.value })}
-                className="flex-1 rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+                className="flex-1 border border-line bg-white px-3 py-2 text-sm focus:outline-none"
                 placeholder="Текст варианта"
               />
               <button
                 type="button"
                 onClick={() => removeOption(opt.id)}
                 disabled={options.length <= 2}
-                className="shrink-0 rounded-lg p-2 text-ink/30 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
+                className="shrink-0 p-2 text-ink/30 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
               >
                 <Trash2 size={15} />
               </button>
@@ -188,7 +188,7 @@ export default function AdminQuestionForm({ initial, onSave, onCancel }) {
           value={explanation}
           onChange={(e) => setExplanation(e.target.value)}
           rows={2}
-          className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+          className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
           placeholder="Например: Пароним к слову «адресат» — «адресант»."
         />
       </div>
@@ -196,13 +196,13 @@ export default function AdminQuestionForm({ initial, onSave, onCancel }) {
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
       <div className="mt-5 flex items-center gap-3">
-        <button type="submit" className="rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
+        <button type="submit" className="bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
           Сохранить вопрос
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
+          className="border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
         >
           Отмена
         </button>

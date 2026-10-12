@@ -132,7 +132,7 @@ export default function PracticeTestsPage() {
         />
         <FilterSelect icon={CalendarDays} label={t('tests.filters.year')} options={years} value={year} onChange={setYear} />
 
-        <div className="flex flex-1 items-center gap-2.5 rounded-xl border border-line bg-white px-3.5 py-2.5 sm:px-4 sm:py-3">
+        <div className="flex flex-1 items-center gap-2.5 border border-line bg-white px-3.5 py-2.5 sm:px-4 sm:py-3">
           <Search size={17} className="shrink-0 text-ink/40" strokeWidth={2} />
           <input
             value={search}
@@ -147,7 +147,7 @@ export default function PracticeTestsPage() {
       {loading ? (
         <div className="mt-10 text-center text-sm text-ink/40">{t('tests.loading')}</div>
       ) : filtered.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-dashed border-line-strong py-16 text-center text-sm text-ink/50">
+        <div className="mt-6 border border-dashed border-line-strong py-16 text-center text-sm text-ink/50">
           {testsInTab.length === 0
             ? t('tests.emptyTab')
             : t('tests.nothingFound')}

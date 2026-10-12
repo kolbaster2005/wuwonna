@@ -61,7 +61,7 @@ export default function LoginPage() {
 
   return (
     <main className="page">
-      <div className="mx-auto grid max-w-5xl grid-cols-1 overflow-hidden rounded-2xl border border-line bg-white lg:grid-cols-2">
+      <div className="mx-auto grid max-w-5xl grid-cols-1 overflow-hidden border border-line bg-white lg:grid-cols-2">
         {/* --- Форма --- */}
         <div className="p-6 sm:p-10">
           <h1 className="h-page">{mode === 'signin' ? t('login.signInTitle') : t('login.signUpTitle')}</h1>
@@ -70,7 +70,7 @@ export default function LoginPage() {
           </p>
 
           {/* переключатель вход / регистрация */}
-          <div role="tablist" className="mt-7 grid grid-cols-2 gap-1 rounded-xl bg-paper p-1">
+          <div role="tablist" className="mt-7 grid grid-cols-2 gap-1 bg-paper p-1">
             {[
               ['signin', t('login.signInTab')],
               ['signup', t('login.signUpTab')],
@@ -80,7 +80,7 @@ export default function LoginPage() {
                 role="tab"
                 aria-selected={mode === id}
                 onClick={() => switchMode(id)}
-                className={`rounded-lg py-2 text-sm font-bold transition-colors ${
+                className={`py-2 text-sm font-bold transition-colors ${
                   mode === id ? 'bg-white text-ink shadow-sm' : 'text-ink/50 hover:text-ink'
                 }`}
               >
@@ -90,10 +90,10 @@ export default function LoginPage() {
           </div>
 
           {!isSupabaseConfigured && (
-            <p className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <p className="mt-5 border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               <Trans
                 text={t('login.notConfigured')}
-                mark={(chunk) => <code className="rounded bg-amber-100 px-1">{chunk}</code>}
+                mark={(chunk) => <code className="bg-amber-100 px-1">{chunk}</code>}
               />
             </p>
           )}
@@ -155,12 +155,12 @@ export default function LoginPage() {
 
         {/* --- Что даёт аккаунт (на широком экране) --- */}
         <aside className="hidden flex-col justify-center bg-pine-50 p-10 lg:flex">
-          <img src={heroIllustration} alt="" className="mx-auto w-full max-w-sm rounded-xl mix-blend-multiply" />
+          <img src={heroIllustration} alt="" className="mx-auto w-full max-w-sm mix-blend-multiply" />
           <h2 className="mt-8 text-xl font-extrabold tracking-tight">{t('login.benefitsTitle')}</h2>
           <ul className="mt-4 space-y-3">
             {benefits.map((b) => (
               <li key={b} className="flex items-center gap-3 text-sm font-medium text-ink/75">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-pine-700">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-white text-pine-700">
                   <Check size={14} strokeWidth={3} />
                 </span>
                 {b}

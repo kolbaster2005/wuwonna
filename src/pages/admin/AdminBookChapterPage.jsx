@@ -19,24 +19,24 @@ function SubchapterForm({ initial, onSave, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-line bg-paper/60 p-5">
+    <form onSubmit={handleSubmit} className="border border-line bg-paper/60 p-5">
       <label className="text-sm font-semibold">Название подглавы</label>
       <input
         autoFocus
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+        className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
         placeholder="Например: 1.1 Jeder Mensch ist Teil der Wirtschaft"
       />
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       <div className="mt-4 flex items-center gap-3">
-        <button type="submit" className="rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
+        <button type="submit" className="bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
           Сохранить
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
+          className="border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
         >
           Отмена
         </button>
@@ -111,7 +111,7 @@ export default function AdminBookChapterPage() {
         {formOpen === null && (
           <button
             onClick={() => setFormOpen('new')}
-            className="flex items-center gap-2 rounded-xl bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
+            className="flex items-center gap-2 bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
           >
             <Plus size={16} /> Добавить подглаву
           </button>
@@ -126,13 +126,13 @@ export default function AdminBookChapterPage() {
 
       <ul className="mt-4 space-y-3">
         {subchapters.map((s) => (
-          <li key={s.id} className="rounded-xl border border-line bg-white p-4">
+          <li key={s.id} className="border border-line bg-white p-4">
             {formOpen === s.id ? (
               <SubchapterForm initial={s} onSave={handleSave} onCancel={() => setFormOpen(null)} />
             ) : (
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
                     <FileStack size={15} />
                   </span>
                   <div>
@@ -143,19 +143,19 @@ export default function AdminBookChapterPage() {
                 <div className="flex shrink-0 items-center gap-2">
                   <Link
                     to={`/admin/kniga/${chapterId}/${s.id}`}
-                    className="rounded-lg border border-line px-3 py-2 text-xs font-semibold text-ink/70 hover:border-ink/30"
+                    className="border border-line px-3 py-2 text-xs font-semibold text-ink/70 hover:border-ink/30"
                   >
                     Страницы →
                   </Link>
                   <button
                     onClick={() => setFormOpen(s.id)}
-                    className="rounded-lg p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
+                    className="p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
                   >
                     <Pencil size={15} />
                   </button>
                   <button
                     onClick={() => handleDelete(s)}
-                    className="rounded-lg p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
+                    className="p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -167,7 +167,7 @@ export default function AdminBookChapterPage() {
       </ul>
 
       {subchapters.length === 0 && formOpen === null && (
-        <p className="mt-4 rounded-xl border border-dashed border-line py-8 text-center text-sm text-ink/50">
+        <p className="mt-4 border border-dashed border-line py-8 text-center text-sm text-ink/50">
           Подглав пока нет — добавь первую.
         </p>
       )}

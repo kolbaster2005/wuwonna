@@ -35,13 +35,13 @@ export default function ProModal({ onClose }) {
         aria-modal="true"
         aria-labelledby="pro-modal-title"
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative max-h-[calc(100vh-2rem)] w-full max-w-xl overflow-y-auto rounded-2xl bg-white px-5 pb-7 pt-9 text-center shadow-2xl sm:px-10 sm:pb-9 sm:pt-10"
+        className="relative max-h-[calc(100vh-2rem)] w-full max-w-xl overflow-y-auto bg-white px-5 pb-7 pt-9 text-center shadow-2xl sm:px-10 sm:pb-9 sm:pt-10"
       >
         <button
           ref={closeRef}
           onClick={onClose}
           aria-label={t('common.close')}
-          className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-line text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:right-5 sm:top-5"
+          className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center border border-line text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:right-5 sm:top-5"
         >
           <X size={20} />
         </button>
@@ -64,7 +64,7 @@ export default function ProModal({ onClose }) {
             target="_blank"
             rel="noreferrer"
             onClick={onClose}
-            className="flex flex-[2] items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-pine-600 px-5 py-4 text-sm font-bold text-white shadow-[0_10px_24px_-12px_rgba(47,122,61,0.8)] transition-colors hover:bg-pine-700"
+            className="flex flex-[2] items-center justify-center gap-2 whitespace-nowrap bg-pine-600 px-5 py-4 text-sm font-bold text-white shadow-[0_10px_24px_-12px_rgba(47,122,61,0.8)] transition-colors hover:bg-pine-700"
           >
             {t('proOffer.buy', { price: PRO_PRICE })} <ArrowRight size={16} />
           </a>
@@ -72,7 +72,7 @@ export default function ProModal({ onClose }) {
           <Link
             to={path('pro')}
             onClick={onClose}
-            className="flex flex-1 items-center justify-center rounded-2xl border-2 border-pine-600 px-5 py-3.5 text-sm font-bold text-pine-700 transition-colors hover:bg-pine-50"
+            className="flex flex-1 items-center justify-center border-2 border-pine-600 px-5 py-3.5 text-sm font-bold text-pine-700 transition-colors hover:bg-pine-50"
           >
             {t('proOffer.more')}
           </Link>

@@ -259,7 +259,7 @@ export default function TrainingPage() {
           />
         </div>
         {isLocked && (
-          <p className="-mt-2 mb-8 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm leading-relaxed text-amber-900">
+          <p className="-mt-2 mb-8 flex items-start gap-2 border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm leading-relaxed text-amber-900">
             <Crown size={16} className="mt-0.5 shrink-0" />
             <span>
               Тренировка по темам доступна в PRO. Темы можно посмотреть, а собрать тренировку —{' '}
@@ -280,7 +280,7 @@ export default function TrainingPage() {
                 const codesWithQuestions = chapter.topics.filter((t) => (counts[t.code] ?? 0) > 0).map((t) => t.code)
                 const allSelected = codesWithQuestions.length > 0 && codesWithQuestions.every((c) => selected.has(c))
                 return (
-                  <div key={chapter.chapter_number} className="rounded-2xl border border-line bg-white p-4 sm:p-5">
+                  <div key={chapter.chapter_number} className="border border-line bg-white p-4 sm:p-5">
                     <div className="flex items-center justify-between gap-3">
                       <h2 className="text-sm font-bold uppercase tracking-wide text-ink/50">
                         Глава {chapter.chapter_number} · {chapter.chapter_title}
@@ -301,7 +301,7 @@ export default function TrainingPage() {
                         return (
                           <label
                             key={topic.code}
-                            className={`flex items-start gap-2.5 rounded-xl border p-3 text-sm transition-colors ${
+                            className={`flex items-start gap-2.5 border p-3 text-sm transition-colors ${
                               disabled
                                 ? 'cursor-not-allowed border-line/60 opacity-40'
                                 : isSelected
@@ -333,7 +333,7 @@ export default function TrainingPage() {
               })}
             </div>
 
-            <div className="sticky bottom-4 mt-6 flex flex-col gap-3 rounded-2xl border border-line bg-white p-4 shadow-lg sm:mt-8 sm:p-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between">
+            <div className="sticky bottom-4 mt-6 flex flex-col gap-3 border border-line bg-white p-4 shadow-lg sm:mt-8 sm:p-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-ink/70">
                   <input
@@ -360,7 +360,7 @@ export default function TrainingPage() {
               <button
                 onClick={startTraining}
                 disabled={(!isLocked && selectedCount === 0) || starting}
-                className="flex items-center justify-center gap-2 rounded-xl bg-pine-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40"
+                className="flex items-center justify-center gap-2 bg-pine-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40"
               >
                 {isLocked && <Crown size={15} />}
                 {starting ? 'Собираем вопросы...' : isLocked ? 'Начать тренировку · PRO' : 'Начать тренировку'}
@@ -377,7 +377,7 @@ export default function TrainingPage() {
     return (
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <Breadcrumbs items={[{ label: 'Тренировка по темам', to: '/trenirovka' }, { label: 'Результат' }]} />
-        <div className="mt-6 rounded-2xl border border-line bg-white p-4 sm:mt-8 sm:p-7 lg:p-8">
+        <div className="mt-6 border border-line bg-white p-4 sm:mt-8 sm:p-7 lg:p-8">
           <ResultScreen
             kicker="Тренировка завершена"
             ratio={totalMax ? totalScore / totalMax : 0}
@@ -408,7 +408,7 @@ export default function TrainingPage() {
         <p className="text-sm text-ink/50">По выбранным темам не нашлось вопросов.</p>
         <button
           onClick={backToSetup}
-          className="mt-4 rounded-xl bg-pine-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700"
+          className="mt-4 bg-pine-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700"
         >
           Выбрать другие темы
         </button>
@@ -433,9 +433,9 @@ export default function TrainingPage() {
           onSelectStep={goTo}
         />
 
-        <div className="flex-1 rounded-2xl border border-line bg-white p-4 sm:p-7 lg:p-8">
+        <div className="flex-1 border border-line bg-white p-4 sm:p-7 lg:p-8">
           <div className="flex items-center justify-between gap-3">
-            <span className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink/70">
+            <span className="border border-line px-3 py-1.5 text-sm font-semibold text-ink/70">
               Вопрос {currentIndex + 1} из {questions.length}
               {question?.topic_code && topicByCode[question.topic_code]
                 ? ` · ${question.topic_code}`
@@ -444,7 +444,7 @@ export default function TrainingPage() {
             {completed && (
               <button
                 onClick={() => setPhase('finished')}
-                className="flex items-center gap-1.5 rounded-lg bg-pine-50 px-3 py-1.5 text-sm font-semibold text-pine-700 hover:bg-pine-100"
+                className="flex items-center gap-1.5 bg-pine-50 px-3 py-1.5 text-sm font-semibold text-pine-700 hover:bg-pine-100"
               >
                 <Eye size={15} /> Разбор · к результату
               </button>
@@ -469,7 +469,7 @@ export default function TrainingPage() {
             <img
               src={question.image_url}
               alt=""
-              className="mt-4 max-h-80 w-full rounded-xl border border-line object-contain"
+              className="mt-4 max-h-80 w-full border border-line object-contain"
             />
           )}
 
@@ -529,14 +529,14 @@ export default function TrainingPage() {
             <button
               onClick={submitAnswer}
               disabled={pendingSelection.length === 0}
-              className="mt-4 rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40"
+              className="mt-4 bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40"
             >
               Ответить
             </button>
           )}
 
           {!currentAnswer && completed && (
-            <div className="mt-6 flex items-start gap-3 rounded-xl bg-paper p-5">
+            <div className="mt-6 flex items-start gap-3 bg-paper p-5">
               <Circle size={20} className="mt-0.5 shrink-0 text-ink/35" />
               <div className="text-sm">
                 <p className="font-bold text-ink/70">Без ответа — 0 из {question.points ?? 1} баллов</p>
@@ -548,7 +548,7 @@ export default function TrainingPage() {
 
           {currentAnswer && (
             <div
-              className={`mt-6 flex items-start gap-3 rounded-xl p-5 ${
+              className={`mt-6 flex items-start gap-3 p-5 ${
                 currentAnswer.status === 'correct' ? 'bg-pine-50/70' : currentAnswer.status === 'partial' ? 'bg-amber-50' : 'bg-red-50'
               }`}
             >
@@ -581,7 +581,7 @@ export default function TrainingPage() {
             <button
               onClick={() => goTo(currentIndex - 1)}
               disabled={currentIndex === 0}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:w-auto sm:justify-start"
+              className="flex w-full items-center justify-center gap-2 border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:w-auto sm:justify-start"
             >
               <ArrowLeft size={15} /> Назад
             </button>
@@ -590,14 +590,14 @@ export default function TrainingPage() {
                 <button
                   onClick={() => goTo(currentIndex + 1)}
                   disabled={currentIndex === questions.length - 1}
-                  className="w-full rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:w-auto"
+                  className="w-full border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:w-auto"
                 >
                   Пропустить
                 </button>
               )}
               <button
                 onClick={handleNext}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:w-auto sm:justify-start"
+                className="flex w-full items-center justify-center gap-2 bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:w-auto sm:justify-start"
               >
                 {currentIndex === questions.length - 1 ? (completed ? 'К результату' : 'Завершить') : 'Далее'}{' '}
                 <ArrowRight size={15} />
@@ -625,14 +625,14 @@ const LIMIT_PRESETS = [10, 20, 30]
 function QuestionLimitPicker({ value, onChange, available }) {
   const isCustom = value !== null && !LIMIT_PRESETS.includes(value)
   const chip = (active) =>
-    `rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
+    `px-3 py-1.5 text-sm font-semibold transition-colors ${
       active ? 'bg-pine-600 text-white' : 'text-ink/60 hover:bg-black/5'
     }`
 
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-sm font-semibold text-ink/70">Вопросов:</span>
-      <div className="flex gap-1 rounded-xl border border-line p-1">
+      <div className="flex gap-1 border border-line p-1">
         {LIMIT_PRESETS.map((n) => (
           <button key={n} type="button" onClick={() => onChange(n)} className={chip(value === n)}>
             {n}
@@ -653,7 +653,7 @@ function QuestionLimitPicker({ value, onChange, available }) {
         }}
         placeholder="своё"
         aria-label="Своё количество вопросов"
-        className={`w-20 rounded-lg border px-2.5 py-1.5 text-sm focus:outline-none ${
+        className={`w-20 border px-2.5 py-1.5 text-sm focus:outline-none ${
           isCustom ? 'border-pine-600' : 'border-line'
         }`}
       />

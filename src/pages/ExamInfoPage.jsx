@@ -112,7 +112,7 @@ function GeneralTab({ lang, info }) {
         <h2 className="text-lg font-extrabold">{info.partsHeading}</h2>
         <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-4">
           {inLang(EXAM_PARTS, lang).map((part) => (
-            <div key={part.number} className="rounded-2xl border border-line bg-white p-4 sm:p-5">
+            <div key={part.number} className="border border-line bg-white p-4 sm:p-5">
               <span className="text-xs font-bold text-pine-600">{part.number}</span>
               <h3 className="mt-1 text-base font-extrabold leading-snug">{part.title}</h3>
               <p className="mt-2.5 text-sm leading-relaxed text-ink/65">{part.description}</p>
@@ -123,7 +123,7 @@ function GeneralTab({ lang, info }) {
 
       <section className="mt-8 max-w-3xl sm:mt-10">
         <h2 className="text-lg font-extrabold">{info.faqHeading}</h2>
-        <div className="mt-4 divide-y divide-line rounded-2xl border border-line bg-white">
+        <div className="mt-4 divide-y divide-line border border-line bg-white">
           {inLang(EXAM_FAQ, lang).map(({ question, answer }) => (
             <details key={question} className="group px-5 py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold">
@@ -240,7 +240,7 @@ function RegistrationTab({ lang, info }) {
             <li key={title} className="relative flex gap-4 pb-8 last:pb-0 sm:gap-5">
               {/* вертикальная линия между шагами */}
               {!isLast && <span aria-hidden="true" className="absolute left-5 top-11 bottom-0 w-px bg-line" />}
-              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pine-600 text-white">
+              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center bg-pine-600 text-white">
                 <Icon size={19} />
               </span>
               <div className="min-w-0 pt-0.5">
@@ -249,7 +249,7 @@ function RegistrationTab({ lang, info }) {
                 <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-ink/70">
                   {points.map((point) => (
                     <li key={point} className="flex gap-2.5">
-                      <span aria-hidden="true" className="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full bg-pine-600" />
+                      <span aria-hidden="true" className="mt-[0.6em] h-1.5 w-1.5 shrink-0 bg-pine-600" />
                       {point}
                     </li>
                   ))}

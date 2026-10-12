@@ -62,7 +62,7 @@ export default function Footer() {
           <div>
             <Link to={path('home')} className="flex items-center gap-2.5">
               {/* белая подложка — на тёмном футере тёмная «U» в логотипе иначе теряется */}
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-white">
                 <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" className="h-8 w-8" />
               </span>
               <span className="text-lg font-extrabold tracking-tight">
@@ -77,7 +77,7 @@ export default function Footer() {
                 href="https://t.me/wuwonna"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/15 text-white/80 transition-colors hover:border-white/30 hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border border-white/15 text-white/80 transition-colors hover:border-white/30 hover:text-white"
                 title="Telegram"
               >
                 <Send size={16} strokeWidth={2} />
@@ -86,7 +86,7 @@ export default function Footer() {
                 href="https://www.youtube.com/@wuwonna"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/15 text-white/80 transition-colors hover:border-white/30 hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border border-white/15 text-white/80 transition-colors hover:border-white/30 hover:text-white"
                 title="YouTube"
               >
                 <YoutubeIcon size={16} />

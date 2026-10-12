@@ -37,7 +37,7 @@ function SaveStatus({ status, isGuest }) {
   if (status === 'local') {
     const from = { pathname: path('progress') }
     return isGuest ? (
-      <div className="mx-auto mt-2 max-w-md rounded-2xl border border-pine-100 bg-pine-50 p-5 text-left text-sm">
+      <div className="mx-auto mt-2 max-w-md border border-pine-100 bg-pine-50 p-5 text-left text-sm">
         <p className="text-base font-extrabold text-ink">{t('testTaking.save.guestTitle')}</p>
         <p className="mt-1 leading-relaxed text-ink/65">{t('testTaking.save.guestText')}</p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row">
@@ -178,7 +178,7 @@ export default function TestTakingPage() {
     return (
       <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
         <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test, lang) }]} />
-        <div className="mt-5 rounded-2xl border border-line bg-white p-5 sm:mt-6 sm:p-8 lg:p-10">
+        <div className="mt-5 border border-line bg-white p-5 sm:mt-6 sm:p-8 lg:p-10">
           <ProLockedNotice testTitle={test.title} />
         </div>
       </main>
@@ -190,7 +190,7 @@ export default function TestTakingPage() {
     return (
       <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
         <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test, lang) }]} />
-        <div className="mt-5 rounded-2xl border border-line bg-white px-5 py-16 text-center sm:mt-6">
+        <div className="mt-5 border border-line bg-white px-5 py-16 text-center sm:mt-6">
           <h1 className="text-xl font-extrabold">{t('testTaking.noQuestions')}</h1>
           <p className="mt-2 text-sm text-ink/55">{t('testTaking.noQuestionsText')}</p>
         </div>
@@ -324,7 +324,7 @@ export default function TestTakingPage() {
           onSelectStep={goToStep}
         />
 
-        <div className="flex-1 rounded-2xl border border-line bg-white p-4 sm:p-7 lg:p-8">
+        <div className="flex-1 border border-line bg-white p-4 sm:p-7 lg:p-8">
           {finished ? (
             <ResultScreen
               kicker={t('testTaking.finished')}
@@ -343,7 +343,7 @@ export default function TestTakingPage() {
             />
           ) : currentStep.type === 'intro' ? (
             <div>
-              <span className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink/70">
+              <span className="border border-line px-3 py-1.5 text-sm font-semibold text-ink/70">
                 {t('testTaking.intro', { category: currentStep.passage.category })}
               </span>
               {currentStep.passage.title && (
@@ -355,13 +355,13 @@ export default function TestTakingPage() {
                 <button
                   onClick={() => goToStep(currentStepIndex - 1)}
                   disabled={currentStepIndex === 0}
-                  className="flex items-center gap-2 rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40"
+                  className="flex items-center gap-2 border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40"
                 >
                   <ArrowLeft size={15} /> {t('testTaking.back')}
                 </button>
                 <button
                   onClick={handleNext}
-                  className="flex items-center gap-2 rounded-xl bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700"
+                  className="flex items-center gap-2 bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700"
                 >
                   {t('testTaking.toQuestions')} <ArrowRight size={15} />
                 </button>
@@ -370,7 +370,7 @@ export default function TestTakingPage() {
           ) : (
             <div className={pinnedPassage ? 'grid grid-cols-1 gap-6 xl:grid-cols-2' : ''}>
               {pinnedPassage && (
-                <div className="max-h-[75vh] overflow-y-auto rounded-xl border border-line bg-paper/60 p-4 sm:p-5 xl:sticky xl:top-4 xl:self-start">
+                <div className="max-h-[75vh] overflow-y-auto border border-line bg-paper/60 p-4 sm:p-5 xl:sticky xl:top-4 xl:self-start">
                   <div className="flex items-center gap-2 text-sm font-semibold text-ink/50">
                     <BookOpen size={15} /> {t('testTaking.readingText')}
                   </div>
@@ -392,13 +392,13 @@ export default function TestTakingPage() {
 
               <div>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink/70">
+                  <span className="border border-line px-3 py-1.5 text-sm font-semibold text-ink/70">
                     {t('testTaking.questionOf', { number: currentQuestionNumber, total: questions.length })}
                   </span>
                   {completed && (
                     <button
                       onClick={() => setFinished(true)}
-                      className="flex items-center gap-1.5 rounded-lg bg-pine-50 px-3 py-1.5 text-sm font-semibold text-pine-700 hover:bg-pine-100"
+                      className="flex items-center gap-1.5 bg-pine-50 px-3 py-1.5 text-sm font-semibold text-pine-700 hover:bg-pine-100"
                     >
                       <Eye size={15} /> {t('testTaking.reviewToResult')}
                     </button>
@@ -423,7 +423,7 @@ export default function TestTakingPage() {
                   <img
                     src={question.image_url}
                     alt=""
-                    className="mt-4 max-h-80 w-full rounded-xl border border-line object-contain"
+                    className="mt-4 max-h-80 w-full border border-line object-contain"
                   />
                 )}
 
@@ -488,14 +488,14 @@ export default function TestTakingPage() {
                   <button
                     onClick={submitAnswer}
                     disabled={pendingSelection.length === 0}
-                    className="mt-4 rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40"
+                    className="mt-4 bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40"
                   >
                     {t('testTaking.answer')}
                   </button>
                 )}
 
                 {!currentAnswer && completed && (
-                  <div className="mt-6 flex items-start gap-3 rounded-xl bg-paper p-5">
+                  <div className="mt-6 flex items-start gap-3 bg-paper p-5">
                     <Circle size={20} className="mt-0.5 shrink-0 text-ink/35" />
                     <div className="text-sm">
                       <p className="font-bold text-ink/70">
@@ -511,7 +511,7 @@ export default function TestTakingPage() {
 
                 {currentAnswer && (
                   <div
-                    className={`mt-6 flex items-start gap-3 rounded-xl p-5 ${
+                    className={`mt-6 flex items-start gap-3 p-5 ${
                       currentAnswer.status === 'correct'
                         ? 'bg-pine-50/70'
                         : currentAnswer.status === 'partial'
@@ -554,7 +554,7 @@ export default function TestTakingPage() {
                   <button
                     onClick={() => goToStep(currentStepIndex - 1)}
                     disabled={currentStepIndex === 0}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:w-auto sm:justify-start"
+                    className="flex w-full items-center justify-center gap-2 border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:w-auto sm:justify-start"
                   >
                     <ArrowLeft size={15} /> {t('testTaking.back')}
                   </button>
@@ -562,14 +562,14 @@ export default function TestTakingPage() {
                     {!completed && (
                       <button
                         onClick={handleSkip}
-                        className="w-full rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 sm:w-auto"
+                        className="w-full border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 sm:w-auto"
                       >
                         {t('testTaking.skip')}
                       </button>
                     )}
                     <button
                       onClick={handleNext}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:w-auto sm:justify-start"
+                      className="flex w-full items-center justify-center gap-2 bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:w-auto sm:justify-start"
                     >
                       {currentStepIndex === steps.length - 1
                         ? completed

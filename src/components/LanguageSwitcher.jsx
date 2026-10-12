@@ -81,13 +81,13 @@ export function LanguageSwitcher() {
         aria-expanded={open}
         aria-haspopup="true"
         aria-label={t('language.label')}
-        className="flex h-10 items-center gap-1 rounded-2xl px-2.5 text-sm font-bold text-ink/70 transition-colors hover:bg-black/[0.04] hover:text-ink"
+        className="flex h-10 items-center gap-1 px-2.5 text-sm font-bold text-ink/70 transition-colors hover:bg-black/[0.04] hover:text-ink"
       >
         <Globe size={16} /> {lang.toUpperCase()}
         <ChevronDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <ul className="absolute right-0 top-full z-40 mt-2 w-40 rounded-2xl border border-line bg-white p-1.5 shadow-pop">
+        <ul className="absolute right-0 top-full z-40 mt-2 w-40 border border-line bg-white p-1.5 shadow-pop">
           {links.map((link) => (
             <li key={link.lang}>
               <a
@@ -99,7 +99,7 @@ export function LanguageSwitcher() {
                   setOpen(false)
                   if (link.lang !== lang) switchTo(link.lang, link.to)
                 }}
-                className={`flex items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+                className={`flex items-center justify-between px-3 py-2 text-sm font-semibold transition-colors ${
                   link.lang === lang ? 'bg-pine-50 text-pine-700' : 'text-ink/75 hover:bg-black/[0.04]'
                 }`}
               >
@@ -131,7 +131,7 @@ export function MobileLanguageSwitcher({ onDone }) {
               if (link.lang !== lang) await switchTo(link.lang, link.to)
               onDone?.()
             }}
-            className={`rounded-xl border px-3 py-2.5 text-sm font-bold transition-colors ${
+            className={`border px-3 py-2.5 text-sm font-bold transition-colors ${
               link.lang === lang ? 'border-pine-600 bg-pine-50 text-pine-700' : 'border-line text-ink/70'
             }`}
           >
@@ -220,7 +220,7 @@ export function LanguageHint() {
           onClick={dismiss}
           aria-label={translate(target, 'language.dismiss')}
           title={translate(target, 'language.dismiss')}
-          className="rounded-lg p-1 text-pine-700/60 hover:bg-pine-100 hover:text-pine-800"
+          className="p-1 text-pine-700/60 hover:bg-pine-100 hover:text-pine-800"
         >
           <X size={15} />
         </button>

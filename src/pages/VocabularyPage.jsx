@@ -108,7 +108,7 @@ export default function VocabularyPage() {
           </div>
           <ol className="space-y-5">
             <li className="flex gap-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pine-50 text-pine-700">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
                 <MousePointerClick size={19} />
               </span>
               <p className="text-sm leading-relaxed text-ink/65">
@@ -117,7 +117,7 @@ export default function VocabularyPage() {
               </p>
             </li>
             <li className="flex gap-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pine-50 text-pine-700">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
                 <Languages size={19} />
               </span>
               <p className="text-sm leading-relaxed text-ink/65">

@@ -41,7 +41,7 @@ export default function TestCard({ test, result, onPinChange }) {
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border p-5 transition-shadow sm:p-7 ${
+      className={`relative flex flex-col border p-5 transition-shadow sm:p-7 ${
         isLockedForUser
           ? 'border-line bg-paper'
           : isDone
@@ -54,7 +54,7 @@ export default function TestCard({ test, result, onPinChange }) {
           onClick={togglePin}
           disabled={pinning}
           title={test.is_pinned ? t('testCard.unpin') : t('testCard.pin')}
-          className={`absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border transition-colors sm:right-5 sm:top-5 ${
+          className={`absolute right-4 top-4 flex h-8 w-8 items-center justify-center border transition-colors sm:right-5 sm:top-5 ${
             test.is_pinned
               ? 'border-pine-600 bg-pine-50 text-pine-700'
               : 'border-line text-ink/30 hover:border-ink/30 hover:text-ink/60'
@@ -70,18 +70,18 @@ export default function TestCard({ test, result, onPinChange }) {
         {/* Значок «Пройдено» — в одной строке с иконкой, чтобы пройденная
             карточка не была выше соседних и ряд не "съезжал". */}
         <div className="flex items-center gap-3 pr-10">
-          <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700 sm:h-14 sm:w-14 ${lockedFade}`}>
+          <div className={`flex h-12 w-12 shrink-0 items-center justify-center bg-pine-50 text-pine-700 sm:h-14 sm:w-14 ${lockedFade}`}>
             <FileText size={22} strokeWidth={1.75} className="sm:hidden" />
             <FileText size={24} strokeWidth={1.75} className="hidden sm:block" />
           </div>
           {isLockedForUser && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+            <span className="inline-flex items-center gap-1.5 border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
               <Lock size={12} /> {t('testCard.proOnly')}
             </span>
           )}
           {isDone && (
             <span
-              className="inline-flex items-center gap-1.5 rounded-full bg-pine-50 px-3 py-1 text-xs font-bold text-pine-700"
+              className="inline-flex items-center gap-1.5 bg-pine-50 px-3 py-1 text-xs font-bold text-pine-700"
               title={t('testCard.bestResult', { count: result.attempts })}
             >
               <CheckCircle2 size={13} /> {t('testCard.done', { percent: Math.round(result.best * 100) })}
@@ -119,14 +119,14 @@ export default function TestCard({ test, result, onPinChange }) {
       {isLockedForUser ? (
         <button
           onClick={() => openProModal()}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-white py-3 text-sm font-bold text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:mt-6"
+          className="mt-5 flex w-full items-center justify-center gap-2 border border-line bg-white py-3 text-sm font-bold text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:mt-6"
         >
           <Lock size={14} /> {t('testCard.openWithPro')}
         </button>
       ) : (
         <Link
           to={testPath(test, lang)}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-pine-600 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:mt-6"
+          className="mt-5 flex w-full items-center justify-center gap-2 bg-pine-600 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:mt-6"
         >
           {isDone ? (
             <>

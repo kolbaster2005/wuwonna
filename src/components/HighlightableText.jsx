@@ -231,7 +231,7 @@ export default function HighlightableText({
                     }
                   : undefined
               }
-              className={`rounded px-0.5 text-inherit ${
+              className={`px-0.5 text-inherit ${
                 notesMode
                   ? `cursor-pointer ${seg.highlight.note ? 'bg-amber-300/90 underline decoration-amber-600 decoration-dotted underline-offset-2' : 'bg-amber-200/80 hover:bg-amber-300/80'}`
                   : 'bg-amber-200/80'
@@ -254,13 +254,13 @@ export default function HighlightableText({
             width: POPOVER_WIDTH,
             transform: 'translate(-50%, -100%)',
           }}
-          className="z-50 rounded-xl border border-line bg-white p-2 shadow-lg"
+          className="z-50 border border-line bg-white p-2 shadow-lg"
         >
           <div className="flex flex-wrap items-center gap-1.5">
             <button
               onClick={handleTranslate}
               disabled={translating}
-              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-ink/70 hover:bg-black/5 disabled:opacity-60"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-semibold text-ink/70 hover:bg-black/5 disabled:opacity-60"
             >
               <Languages size={15} className={translating ? 'animate-pulse' : ''} />
               {translating ? t('highlight.translating') : t('highlight.translate')}
@@ -269,7 +269,7 @@ export default function HighlightableText({
             {isSingleWord && onAddWordRequest && (
               <button
                 onClick={handleAddToVocab}
-                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-pine-700 hover:bg-pine-50"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-semibold text-pine-700 hover:bg-pine-50"
               >
                 <BookmarkPlus size={15} /> {t('highlight.addToVocabulary')}
               </button>
@@ -278,7 +278,7 @@ export default function HighlightableText({
             <button
               onClick={handleHighlight}
               disabled={highlighted}
-              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
             >
               {highlighted ? <Check size={15} /> : <Highlighter size={15} />}
               {highlighted ? t('highlight.highlighted') : t('highlight.highlight')}
@@ -304,7 +304,7 @@ export default function HighlightableText({
             width: POPOVER_WIDTH,
             transform: 'translate(-50%, -100%)',
           }}
-          className="z-50 rounded-xl border border-line bg-white p-3 shadow-lg"
+          className="z-50 border border-line bg-white p-3 shadow-lg"
         >
           <div className="flex items-center gap-1.5 text-xs font-semibold text-ink/40">
             <StickyNote size={13} /> {t('highlight.note')}
@@ -315,18 +315,18 @@ export default function HighlightableText({
             onChange={(e) => setNoteEditor((prev) => ({ ...prev, draft: e.target.value }))}
             rows={3}
             placeholder={t('highlight.notePlaceholder')}
-            className="mt-1.5 w-full rounded-lg border border-line px-2.5 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full border border-line px-2.5 py-2 text-sm focus:outline-none"
           />
           <div className="mt-2 flex items-center justify-between">
             <button
               onClick={handleDeleteHighlight}
-              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+              className="flex items-center gap-1.5 px-2 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
             >
               <Trash2 size={13} /> {t('highlight.removeHighlight')}
             </button>
             <button
               onClick={handleSaveNote}
-              className="rounded-lg bg-pine-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-pine-700"
+              className="bg-pine-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-pine-700"
             >
               {t('highlight.save')}
             </button>

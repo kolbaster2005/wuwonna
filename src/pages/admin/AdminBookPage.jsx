@@ -21,13 +21,13 @@ function ChapterForm({ initial, onSave, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-line bg-paper/60 p-5">
+    <form onSubmit={handleSubmit} className="border border-line bg-paper/60 p-5">
       <div>
         <label className="text-sm font-semibold">Название главы</label>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+          className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
           placeholder="Например: 1. Warum wir wirtschaften und was Wirtschaften bedeutet"
         />
       </div>
@@ -44,13 +44,13 @@ function ChapterForm({ initial, onSave, onCancel }) {
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
       <div className="mt-5 flex items-center gap-3">
-        <button type="submit" className="rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
+        <button type="submit" className="bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
           Сохранить главу
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
+          className="border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
         >
           Отмена
         </button>
@@ -100,7 +100,7 @@ export default function AdminBookPage() {
         {formOpen === null && (
           <button
             onClick={() => setFormOpen('new')}
-            className="flex items-center gap-2 rounded-xl bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
+            className="flex items-center gap-2 bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
           >
             <Plus size={16} /> Добавить главу
           </button>
@@ -115,13 +115,13 @@ export default function AdminBookPage() {
 
       <ul className="mt-4 space-y-3">
         {chapters.map((c) => (
-          <li key={c.id} className="rounded-xl border border-line bg-white p-4">
+          <li key={c.id} className="border border-line bg-white p-4">
             {formOpen === c.id ? (
               <ChapterForm initial={c} onSave={handleSave} onCancel={() => setFormOpen(null)} />
             ) : (
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
                     <BookOpen size={15} />
                   </span>
                   <p className="text-sm font-semibold">{c.title}</p>
@@ -129,19 +129,19 @@ export default function AdminBookPage() {
                 <div className="flex shrink-0 items-center gap-2">
                   <Link
                     to={`/admin/kniga/${c.id}`}
-                    className="rounded-lg border border-line px-3 py-2 text-xs font-semibold text-ink/70 hover:border-ink/30"
+                    className="border border-line px-3 py-2 text-xs font-semibold text-ink/70 hover:border-ink/30"
                   >
                     Подглавы →
                   </Link>
                   <button
                     onClick={() => setFormOpen(c.id)}
-                    className="rounded-lg p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
+                    className="p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
                   >
                     <Pencil size={15} />
                   </button>
                   <button
                     onClick={() => handleDelete(c)}
-                    className="rounded-lg p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
+                    className="p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -153,7 +153,7 @@ export default function AdminBookPage() {
       </ul>
 
       {chapters.length === 0 && formOpen === null && (
-        <p className="mt-4 rounded-xl border border-dashed border-line py-8 text-center text-sm text-ink/50">
+        <p className="mt-4 border border-dashed border-line py-8 text-center text-sm text-ink/50">
           Глав пока нет — добавь первую.
         </p>
       )}

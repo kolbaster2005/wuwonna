@@ -52,9 +52,9 @@ function usePrepState() {
 }
 
 const pillClass = (active) =>
-  `relative rounded-full px-3.5 py-1.5 text-[15px] font-semibold transition-colors ${
+  `relative px-3.5 py-1.5 text-[15px] font-semibold transition-colors ${
     active
-      ? 'bg-pine-50 text-pine-700 ring-1 ring-inset ring-pine-600/35 after:absolute after:-bottom-[9px] after:left-1/2 after:h-0.5 after:w-3/5 after:-translate-x-1/2 after:rounded-full after:bg-pine-600'
+      ? 'bg-pine-50 text-pine-700 ring-1 ring-inset ring-pine-600/35 after:absolute after:-bottom-[9px] after:left-1/2 after:h-0.5 after:w-3/5 after:-translate-x-1/2 after:bg-pine-600'
       : 'text-ink/75 hover:bg-black/[0.04] hover:text-ink'
   }`
 
@@ -96,18 +96,18 @@ function NavGroup({ label, items }) {
       </button>
 
       {open && (
-        <div className="absolute left-1/2 top-full z-40 mt-3 w-64 -translate-x-1/2 rounded-2xl border border-line bg-white p-1.5 shadow-pop">
+        <div className="absolute left-1/2 top-full z-40 mt-3 w-64 -translate-x-1/2 border border-line bg-white p-1.5 shadow-pop">
           {items.map(({ tab, to, label: itemLabel, hint, icon: Icon }) => {
             const active = activeTab === tab
             return (
               <Link
                 key={tab}
                 to={to}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2.5 transition-colors ${
                   active ? 'bg-pine-50' : 'hover:bg-black/[0.04]'
                 }`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-pine-50 text-pine-700">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
                   <Icon size={18} />
                 </span>
                 <span>
@@ -163,7 +163,7 @@ function MobileNavLink({ to, label, end, alsoActiveOn, onClick }) {
       end={end}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center justify-between rounded-2xl px-4 py-4 text-xl font-extrabold tracking-tight transition-colors ${
+        `flex items-center justify-between px-4 py-4 text-xl font-extrabold tracking-tight transition-colors ${
           isActive || alsoActive ? 'bg-pine-50 text-pine-700' : 'text-ink hover:bg-black/5'
         }`
       }
@@ -187,7 +187,7 @@ function MobilePrepGroup({ label, items, onClose }) {
             key={tab}
             to={to}
             onClick={onClose}
-            className={`flex items-center justify-between rounded-2xl px-4 py-4 text-xl font-extrabold tracking-tight transition-colors ${
+            className={`flex items-center justify-between px-4 py-4 text-xl font-extrabold tracking-tight transition-colors ${
               active ? 'bg-pine-50 text-pine-700' : 'text-ink hover:bg-black/5'
             }`}
           >
@@ -227,7 +227,7 @@ function MobileMenu({ onClose }) {
         <Logo />
         <button
           onClick={onClose}
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-line text-ink"
+          className="flex h-10 w-10 items-center justify-center border border-line text-ink"
           aria-label={t('header.closeMenu')}
         >
           <X size={20} />
@@ -292,7 +292,7 @@ export default function Header() {
           ) : (
             <Link
               to={path('login')}
-              className="flex h-10 shrink-0 items-center gap-2 rounded-2xl border border-line bg-white px-3.5 text-sm font-semibold text-ink shadow-[0_4px_14px_-8px_rgba(20,23,26,0.25)] transition-colors hover:border-ink/30 sm:px-5"
+              className="flex h-10 shrink-0 items-center gap-2 border border-line bg-white px-3.5 text-sm font-semibold text-ink shadow-[0_4px_14px_-8px_rgba(20,23,26,0.25)] transition-colors hover:border-ink/30 sm:px-5"
             >
               <UserRound size={16} strokeWidth={2.25} />
               {t('header.login')}
@@ -301,7 +301,7 @@ export default function Header() {
 
           <button
             onClick={() => setMobileOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-line text-ink lg:hidden"
+            className="flex h-10 w-10 items-center justify-center border border-line text-ink lg:hidden"
             aria-label={t('header.openMenu')}
           >
             <Menu size={20} />

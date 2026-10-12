@@ -11,7 +11,7 @@ export function Avatar({ email, size = 'md' }) {
   const sizes = size === 'lg' ? 'h-11 w-11 text-lg' : 'h-10 w-10 text-base'
   return (
     <span
-      className={`flex shrink-0 select-none items-center justify-center rounded-full bg-pine-600 font-extrabold text-white ${sizes}`}
+      className={`flex shrink-0 select-none items-center justify-center bg-pine-600 font-extrabold text-white ${sizes}`}
     >
       {letter}
     </span>
@@ -37,7 +37,7 @@ export function AccountInfo({ onGetPro }) {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-paper px-3.5 py-3">
+      <div className="mt-4 flex items-center justify-between gap-3 bg-paper px-3.5 py-3">
         <div>
           <p className="text-xs font-semibold text-ink/40">{t('userMenu.plan')}</p>
           {hasPro ? (
@@ -51,7 +51,7 @@ export function AccountInfo({ onGetPro }) {
         {!hasPro && (
           <button
             onClick={onGetPro}
-            className="flex shrink-0 items-center gap-1.5 rounded-lg bg-pine-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-pine-700"
+            className="flex shrink-0 items-center gap-1.5 bg-pine-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-pine-700"
           >
             <Crown size={13} /> {t('userMenu.getPro')}
           </button>
@@ -102,7 +102,7 @@ export default function UserMenu({ onSignOut }) {
         aria-label={t('userMenu.open')}
         aria-expanded={open}
         title={user.email}
-        className={`rounded-full ring-offset-2 ring-offset-paper transition-shadow ${
+        className={`ring-offset-2 ring-offset-paper transition-shadow ${
           open ? 'ring-2 ring-pine-600' : 'hover:ring-2 hover:ring-pine-600/40'
         }`}
       >
@@ -113,7 +113,7 @@ export default function UserMenu({ onSignOut }) {
           окошко сдвинуто на его ширину, чтобы правый край совпал с краем
           экрана, и не шире самого экрана. */}
       {open && (
-        <div className="absolute -right-12 top-full z-40 mt-3 w-[min(18rem,calc(100vw-2rem))] rounded-2xl lg:right-0 border border-line bg-white p-4 shadow-[0_16px_40px_-16px_rgba(20,23,26,0.25)]">
+        <div className="absolute -right-12 top-full z-40 mt-3 w-[min(18rem,calc(100vw-2rem))] lg:right-0 border border-line bg-white p-4 shadow-[0_16px_40px_-16px_rgba(20,23,26,0.25)]">
           <AccountInfo
             onGetPro={() => {
               setOpen(false)
@@ -125,7 +125,7 @@ export default function UserMenu({ onSignOut }) {
             {isAdmin && (
               <Link
                 to="/admin"
-                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-semibold text-ink/75 transition-colors hover:bg-black/5"
+                className="flex w-full items-center gap-2 px-2.5 py-2 text-sm font-semibold text-ink/75 transition-colors hover:bg-black/5"
               >
                 <Settings size={16} /> {t('userMenu.adminPanel')}
               </Link>
@@ -135,7 +135,7 @@ export default function UserMenu({ onSignOut }) {
                 setOpen(false)
                 onSignOut()
               }}
-              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+              className="flex w-full items-center gap-2 px-2.5 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
             >
               <LogOut size={16} /> {t('userMenu.signOut')}
             </button>

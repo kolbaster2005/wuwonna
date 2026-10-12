@@ -135,7 +135,7 @@ export default function BookPage() {
       <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Книга</h1>
 
       {!isSupabaseConfigured || !user ? (
-        <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm leading-relaxed text-amber-900">
+        <p className="mt-3 border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm leading-relaxed text-amber-900">
           <LogIn size={15} className="mr-1.5 inline-block shrink-0 -translate-y-px align-middle" />
           Выделения и заметки сохраняются только в этом браузере —{' '}
           <Link to="/login" className="font-semibold underline">
@@ -146,13 +146,13 @@ export default function BookPage() {
       ) : null}
 
       <div className="mt-5 flex flex-col gap-4 sm:mt-6 sm:gap-6 lg:flex-row">
-        <nav className="w-full shrink-0 rounded-2xl border border-line bg-white p-3 sm:p-4 lg:w-72">
+        <nav className="w-full shrink-0 border border-line bg-white p-3 sm:p-4 lg:w-72">
           <p className="px-2 text-xs font-bold uppercase tracking-wide text-ink/40">Оглавление</p>
           <ul className="mt-2 space-y-1">
             {chapters.map((c) => (
               <li key={c.id}>
                 <div
-                  className={`flex items-center justify-between rounded-lg ${
+                  className={`flex items-center justify-between ${
                     c.id === chapterId && !subId ? 'bg-pine-50' : 'hover:bg-black/5'
                   }`}
                 >
@@ -177,7 +177,7 @@ export default function BookPage() {
                       <li key={s.id}>
                         <button
                           onClick={() => openSubchapter(c.id, s.id)}
-                          className={`block w-full rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors ${
+                          className={`block w-full px-2.5 py-1.5 text-left text-sm transition-colors ${
                             s.id === subId ? 'bg-pine-50 font-semibold text-pine-700' : 'text-ink/60 hover:bg-black/5'
                           }`}
                         >
@@ -195,7 +195,7 @@ export default function BookPage() {
           </ul>
         </nav>
 
-        <div className="flex-1 rounded-2xl border border-line bg-white p-4 sm:p-7 lg:p-8">
+        <div className="flex-1 border border-line bg-white p-4 sm:p-7 lg:p-8">
           {subId ? (
             pages.length === 0 ? (
               <div className="py-16 text-center text-sm text-ink/45">В этой подглаве пока нет страниц.</div>
@@ -213,7 +213,7 @@ export default function BookPage() {
                   <img
                     src={page.image_url}
                     alt=""
-                    className="mt-4 max-h-96 w-full rounded-xl border border-line object-contain"
+                    className="mt-4 max-h-96 w-full border border-line object-contain"
                   />
                 )}
                 {page?.video_url && (
@@ -221,7 +221,7 @@ export default function BookPage() {
                     href={page.video_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-4 block rounded-xl border border-line bg-paper/60 px-4 py-3 text-sm font-semibold text-pine-700 hover:bg-paper"
+                    className="mt-4 block border border-line bg-paper/60 px-4 py-3 text-sm font-semibold text-pine-700 hover:bg-paper"
                   >
                     ▶ Смотреть видео к этой странице
                   </a>
@@ -245,14 +245,14 @@ export default function BookPage() {
                   <button
                     onClick={() => goToPage(pageIndex - 1)}
                     disabled={pageIndex === 0}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:flex-none sm:justify-start sm:px-5"
+                    className="flex flex-1 items-center justify-center gap-2 border border-line px-4 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:flex-none sm:justify-start sm:px-5"
                   >
                     <ArrowLeft size={15} /> Назад
                   </button>
                   <button
                     onClick={() => goToPage(pageIndex + 1)}
                     disabled={pageIndex === pages.length - 1}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-pine-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40 sm:flex-none sm:justify-start sm:px-5"
+                    className="flex flex-1 items-center justify-center gap-2 bg-pine-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40 sm:flex-none sm:justify-start sm:px-5"
                   >
                     Далее <ArrowRight size={15} />
                   </button>

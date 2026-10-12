@@ -54,7 +54,7 @@ function BuyButton({ className = '' }) {
       href={PRO_PURCHASE_URL}
       target="_blank"
       rel="noreferrer"
-      className={`flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-pine-600 px-6 py-4 text-sm font-bold text-white shadow-[0_10px_24px_-12px_rgba(47,122,61,0.8)] transition-colors hover:bg-pine-700 ${className}`}
+      className={`flex items-center justify-center gap-2 whitespace-nowrap bg-pine-600 px-6 py-4 text-sm font-bold text-white shadow-[0_10px_24px_-12px_rgba(47,122,61,0.8)] transition-colors hover:bg-pine-700 ${className}`}
     >
       {t('pro.buy', { price: PRO_PRICE })} <ArrowRight size={16} />
     </a>
@@ -68,8 +68,8 @@ function PriceCard({ user, hasPro, loading, location }) {
   const { t, path } = useI18n()
   if (!loading && hasPro) {
     return (
-      <div className={`rounded-2xl border border-line bg-white p-6 text-center sm:p-8 ${cardShadow}`}>
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pine-600 text-white">
+      <div className={`border border-line bg-white p-6 text-center sm:p-8 ${cardShadow}`}>
+        <span className="mx-auto flex h-14 w-14 items-center justify-center bg-pine-600 text-white">
           <Crown size={26} />
         </span>
         <p className="mt-4 text-xl font-extrabold">{t('pro.alreadyTitle')}</p>
@@ -77,7 +77,7 @@ function PriceCard({ user, hasPro, loading, location }) {
         <div className="mt-6 space-y-3">
           <Link
             to={path('tests')}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-pine-600 px-6 py-3.5 text-sm font-bold text-white hover:bg-pine-700"
+            className="flex items-center justify-center gap-2 bg-pine-600 px-6 py-3.5 text-sm font-bold text-white hover:bg-pine-700"
           >
             {t('pro.toTests')} <ArrowRight size={16} />
           </Link>
@@ -87,7 +87,7 @@ function PriceCard({ user, hasPro, loading, location }) {
   }
 
   return (
-    <div className={`rounded-2xl border border-line bg-white p-6 text-center sm:p-8 ${cardShadow}`}>
+    <div className={`border border-line bg-white p-6 text-center sm:p-8 ${cardShadow}`}>
       <p className="text-sm font-bold uppercase tracking-wide text-ink/40">{t('pro.oneTime')}</p>
       <div className="mt-3">
         <ProPriceTag />
@@ -138,7 +138,7 @@ export default function ProPage() {
 
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.15fr_1fr] lg:gap-16 lg:py-20">
           <div className="text-center lg:text-left">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-pine-600 px-3.5 py-1 text-xs font-bold text-white">
+            <span className="inline-flex items-center gap-1.5 bg-pine-600 px-3.5 py-1 text-xs font-bold text-white">
               <Crown size={13} /> PRO
             </span>
             {/* на десктопе заголовок слева, на телефоне — по центру */}
@@ -160,8 +160,8 @@ export default function ProPage() {
           <SectionTitle hint={t('pro.featuresHint')}>{t('pro.featuresTitle')}</SectionTitle>
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map(({ id, icon: Icon }) => (
-              <div key={id} className="rounded-2xl border border-line bg-white p-6">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pine-50 text-pine-700">
+              <div key={id} className="border border-line bg-white p-6">
+                <span className="flex h-12 w-12 items-center justify-center bg-pine-50 text-pine-700">
                   <Icon size={22} />
                 </span>
                 <h3 className="mt-4 text-lg font-extrabold tracking-tight">{t(`pro.features.${id}.title`)}</h3>
@@ -178,7 +178,7 @@ export default function ProPage() {
             <ol className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
               {STEPS.map((step, i) => (
                 <li key={step.id} className="border-t-2 border-pine-600 pt-5">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pine-600 text-base font-extrabold text-white">
+                  <span className="flex h-10 w-10 items-center justify-center bg-pine-600 text-base font-extrabold text-white">
                     {i + 1}
                   </span>
                   <h3 className="mt-4 text-lg font-extrabold tracking-tight">
@@ -200,7 +200,7 @@ export default function ProPage() {
         {/* --- Вопросы --- */}
         <section className="mx-auto max-w-3xl py-10 sm:py-14">
           <SectionTitle>{t('pro.faqTitle')}</SectionTitle>
-          <div className="mt-8 divide-y divide-line rounded-2xl border border-line bg-white">
+          <div className="mt-8 divide-y divide-line border border-line bg-white">
             {FAQ.map((id) => (
               <details key={id} className="group px-5 py-4 sm:px-6">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold [&::-webkit-details-marker]:hidden">

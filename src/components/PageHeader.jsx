@@ -9,7 +9,7 @@ export default function PageHeader({ icon: Icon, title, subtitle, actions, child
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3.5 sm:gap-4">
           {Icon && (
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pine-600 text-white sm:h-11 sm:w-11">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-pine-600 text-white sm:h-11 sm:w-11">
               <Icon size={20} />
             </span>
           )}

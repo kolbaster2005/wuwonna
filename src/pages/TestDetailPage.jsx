@@ -99,7 +99,7 @@ export default function TestDetailPage() {
       <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title }]} />
 
       {test.is_fallback && (
-        <p className="mt-5 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-5 flex items-start gap-2 border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           <Languages size={16} className="mt-0.5 shrink-0" /> {t('testDetail.fallbackNotice')}
         </p>
       )}
@@ -131,11 +131,11 @@ export default function TestDetailPage() {
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="card p-6">
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl bg-paper px-3 py-3 text-center">
+              <div className="bg-paper px-3 py-3 text-center">
                 <p className="text-2xl font-extrabold">{test.questions_count}</p>
                 <p className="text-xs text-ink/50">{t('testDetail.questionsLabel', { count: test.questions_count })}</p>
               </div>
-              <div className="rounded-xl bg-paper px-3 py-3 text-center">
+              <div className="bg-paper px-3 py-3 text-center">
                 <p className="text-2xl font-extrabold">{test.duration_minutes}</p>
                 <p className="text-xs text-ink/50">{t('testDetail.minutesLabel', { count: test.duration_minutes })}</p>
               </div>

@@ -27,21 +27,21 @@ export default function QuestionNavGrid({
   const { t } = useI18n()
 
   return (
-    <div className="w-full shrink-0 rounded-2xl border border-line bg-white p-4 sm:p-5 lg:w-[280px]">
+    <div className="w-full shrink-0 border border-line bg-white p-4 sm:p-5 lg:w-[280px]">
       <div className="flex items-center justify-between text-sm">
         <span className="font-semibold">{t('questionNav.title')}</span>
         <div className="flex items-center gap-2">
           <span className="tabular-nums text-ink/60">{formatDuration(elapsedSeconds)}</span>
           <button
             onClick={onToggleTimer}
-            className="flex h-6 w-6 items-center justify-center rounded-md border border-line text-ink/50 hover:border-ink/30 hover:text-ink"
+            className="flex h-6 w-6 items-center justify-center border border-line text-ink/50 hover:border-ink/30 hover:text-ink"
             title={isPaused ? t('questionNav.resumeTimer') : t('questionNav.pauseTimer')}
           >
             {isPaused ? <Play size={12} /> : <Pause size={12} />}
           </button>
           <button
             onClick={() => setExpanded((e) => !e)}
-            className="flex h-6 w-6 items-center justify-center rounded-md border border-line text-ink/50 hover:border-ink/30 hover:text-ink lg:hidden"
+            className="flex h-6 w-6 items-center justify-center border border-line text-ink/50 hover:border-ink/30 hover:text-ink lg:hidden"
             title={expanded ? t('questionNav.collapse') : t('questionNav.expand')}
           >
             <ChevronDown size={13} className={`transition-transform ${expanded ? 'rotate-180' : ''}`} />
@@ -51,9 +51,9 @@ export default function QuestionNavGrid({
       <p className="mt-1 text-xs text-ink/40">
         {t('questionNav.answered', { answered: answeredCount, total: totalQuestions })}
       </p>
-      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-line">
+      <div className="mt-2 h-1.5 w-full overflow-hidden bg-line">
         <div
-          className="h-full rounded-full bg-pine-600 transition-all"
+          className="h-full bg-pine-600 transition-all"
           style={{ width: `${(answeredCount / totalQuestions) * 100}%` }}
         />
       </div>
@@ -67,7 +67,7 @@ export default function QuestionNavGrid({
                 {group.introStepIndex !== null && (
                   <button
                     onClick={() => onSelectStep(group.introStepIndex)}
-                    className={`flex h-6 w-6 items-center justify-center rounded-md border transition-colors ${
+                    className={`flex h-6 w-6 items-center justify-center border transition-colors ${
                       currentStepIndex === group.introStepIndex
                         ? 'border-pine-600 text-pine-700'
                         : 'border-line text-ink/40 hover:border-ink/30'
@@ -93,7 +93,7 @@ export default function QuestionNavGrid({
                   <button
                     key={stepIndex}
                     onClick={() => onSelectStep(stepIndex)}
-                    className={`flex h-9 items-center justify-center rounded-lg border text-sm font-semibold transition-colors ${cls} ${
+                    className={`flex h-9 items-center justify-center border text-sm font-semibold transition-colors ${cls} ${
                       isCurrent ? 'ring-2 ring-pine-600 ring-offset-1' : ''
                     }`}
                   >
@@ -109,7 +109,7 @@ export default function QuestionNavGrid({
       <div className={`${expanded ? 'mt-6 space-y-2.5 border-t border-line pt-5' : 'hidden'} lg:mt-6 lg:block lg:space-y-2.5 lg:border-t lg:border-line lg:pt-5`}>
         {legend.map((item) => (
           <div key={item.label} className="flex items-center gap-2.5 text-[13px] text-ink/60">
-            <span className={`h-3.5 w-3.5 shrink-0 rounded border ${item.swatch}`} />
+            <span className={`h-3.5 w-3.5 shrink-0 border ${item.swatch}`} />
             {t(item.label)}
           </div>
         ))}

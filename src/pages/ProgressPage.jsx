@@ -53,20 +53,20 @@ const SCORE = { maximumFractionDigits: 2 }
 function Meter({ ratio, size = 'md' }) {
   return (
     <div
-      className={`w-full overflow-hidden rounded-full bg-line ${size === 'sm' ? 'h-1.5' : 'h-2.5'}`}
+      className={`w-full overflow-hidden bg-line ${size === 'sm' ? 'h-1.5' : 'h-2.5'}`}
       role="progressbar"
       aria-valuenow={Math.round(ratio * 100)}
       aria-valuemin={0}
       aria-valuemax={100}
     >
-      <div className="h-full rounded-full bg-pine-600 transition-[width]" style={{ width: percent(ratio) }} />
+      <div className="h-full bg-pine-600 transition-[width]" style={{ width: percent(ratio) }} />
     </div>
   )
 }
 
 function StatTile({ icon: Icon, label, value, hint }) {
   return (
-    <div className="rounded-2xl border border-line bg-white p-4">
+    <div className="border border-line bg-white p-4">
       <div className="flex items-center gap-2 text-[13px] font-semibold text-ink/50">
         <Icon size={16} className="text-pine-700" /> {label}
       </div>
@@ -78,7 +78,7 @@ function StatTile({ icon: Icon, label, value, hint }) {
 
 function Card({ title, icon: Icon, children }) {
   return (
-    <section className="rounded-2xl border border-line bg-white p-5">
+    <section className="border border-line bg-white p-5">
       <h2 className="flex items-center gap-2 text-base font-extrabold">
         {Icon && <Icon size={17} className="text-pine-700" />} {title}
       </h2>
@@ -90,7 +90,7 @@ function Card({ title, icon: Icon, children }) {
 function ChapterCard({ chapter, expanded, onToggle }) {
   const { t, lang, formatDate } = useI18n()
   return (
-    <div className="rounded-2xl border border-line bg-white">
+    <div className="border border-line bg-white">
       <button onClick={onToggle} aria-expanded={expanded} className="w-full px-5 py-4 text-left">
         <div className="flex items-baseline justify-between gap-3">
           <h3 className="text-base font-extrabold tracking-tight">{chapter.title}</h3>
@@ -126,7 +126,7 @@ function ChapterCard({ chapter, expanded, onToggle }) {
                 <span className="w-10 text-right text-sm font-bold tabular-nums">{attempts > 0 ? percent(best) : '—'}</span>
                 <Link
                   to={testPath(test, lang)}
-                  className="shrink-0 rounded-lg border border-line px-2.5 py-1.5 text-xs font-bold text-ink/70 hover:border-ink/30"
+                  className="shrink-0 border border-line px-2.5 py-1.5 text-xs font-bold text-ink/70 hover:border-ink/30"
                 >
                   {attempts > 0 ? t('progress.again') : t('progress.take')}
                 </Link>
@@ -229,7 +229,7 @@ export default function ProgressPage() {
             <p className="text-xs text-ink/45">{t('progress.chaptersHint')}</p>
           </div>
           {chapters.length === 0 ? (
-            <p className="mt-4 rounded-2xl border border-dashed border-line py-12 text-center text-sm text-ink/50">
+            <p className="mt-4 border border-dashed border-line py-12 text-center text-sm text-ink/50">
               {t('progress.noChapters')}
             </p>
           ) : (
@@ -273,7 +273,7 @@ export default function ProgressPage() {
                 )}
                 <Link
                   to={testExamPath(lastTest, lang)}
-                  className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
+                  className="mt-4 flex items-center justify-center gap-2 border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
                 >
                   <RotateCcw size={15} /> {t('testCard.retake')}
                 </Link>
@@ -292,7 +292,7 @@ export default function ProgressPage() {
               <p className="mt-1 font-bold">{next.title}</p>
               <Link
                 to={testPath(next, lang)}
-                className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-pine-600 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
+                className="mt-4 flex items-center justify-center gap-2 bg-pine-600 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
               >
                 {t('dashboard.start')} <ArrowRight size={15} />
               </Link>

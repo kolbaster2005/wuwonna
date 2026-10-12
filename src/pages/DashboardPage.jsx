@@ -110,7 +110,7 @@ function ChaptersMap({ chapters }) {
                       to={testPath(item.test, lang)}
                       title={`${item.test.title} — ${status}`}
                       aria-label={`${item.test.title}: ${status}`}
-                      className={`h-6 w-6 rounded-md transition-transform hover:scale-110 hover:ring-2 hover:ring-pine-600/40 ${levelClass(item)}`}
+                      className={`h-6 w-6 transition-transform hover:scale-110 hover:ring-2 hover:ring-pine-600/40 ${levelClass(item)}`}
                     />
                   )
                 })}
@@ -123,7 +123,7 @@ function ChaptersMap({ chapters }) {
       <ul className="mt-auto flex flex-wrap gap-x-5 gap-y-2 border-t border-line pt-5 text-xs text-ink/55">
         {LEVELS.map((l) => (
           <li key={l.id} className="flex items-center gap-1.5">
-            <span className={`h-3 w-3 rounded ${l.className}`} /> {t(`dashboard.levels.${l.id}`)}
+            <span className={`h-3 w-3 ${l.className}`} /> {t(`dashboard.levels.${l.id}`)}
           </li>
         ))}
       </ul>
@@ -172,12 +172,12 @@ function TileLink({ to, icon: Icon, title, subtitle, dark = false }) {
   return (
     <Link
       to={to}
-      className={`group flex flex-col justify-between gap-4 rounded-2xl p-5 transition-shadow hover:shadow-pop ${
+      className={`group flex flex-col justify-between gap-4 p-5 transition-shadow hover:shadow-pop ${
         dark ? 'bg-pine-700 text-white' : 'border border-pine-100 bg-pine-50'
       }`}
     >
       <div className="flex items-start justify-between">
-        <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${dark ? 'bg-white/10' : 'bg-white text-pine-700'}`}>
+        <span className={`flex h-10 w-10 items-center justify-center ${dark ? 'bg-white/10' : 'bg-white text-pine-700'}`}>
           <Icon size={19} />
         </span>
         <ChevronRight size={18} className={`transition-transform group-hover:translate-x-0.5 ${dark ? 'text-white/70' : 'text-ink/40'}`} />

@@ -35,7 +35,7 @@ export default function AdminPassageForm({ initial, questions, onSave, onCancel 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-line bg-paper/60 p-5">
+    <form onSubmit={handleSubmit} className="border border-line bg-paper/60 p-5">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className="text-sm font-semibold">Категория</label>
@@ -43,7 +43,7 @@ export default function AdminPassageForm({ initial, questions, onSave, onCancel 
             list="passage-categories"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
             placeholder="Например: Понимание немецкого текста"
           />
           <datalist id="passage-categories">
@@ -57,7 +57,7 @@ export default function AdminPassageForm({ initial, questions, onSave, onCancel 
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
           >
             <option value="intro">Вступление (один раз, перед первым вопросом раздела)</option>
             <option value="pinned">Текст для чтения (закреплён рядом с вопросами)</option>
@@ -71,7 +71,7 @@ export default function AdminPassageForm({ initial, questions, onSave, onCancel 
           <select
             value={anchorQuestionId}
             onChange={(e) => setAnchorQuestionId(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
           >
             <option value="">Не выбрано — весь раздел (если текст один)</option>
             {questionsInCategory.map((q) => (
@@ -92,7 +92,7 @@ export default function AdminPassageForm({ initial, questions, onSave, onCancel 
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+          className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
         />
       </div>
 
@@ -115,13 +115,13 @@ export default function AdminPassageForm({ initial, questions, onSave, onCancel 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
       <div className="mt-5 flex items-center gap-3">
-        <button type="submit" className="rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
+        <button type="submit" className="bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
           Сохранить
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
+          className="border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
         >
           Отмена
         </button>

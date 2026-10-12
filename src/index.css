@@ -7,8 +7,8 @@
    Цвет: тёмный текст (ink) на светло-сером фоне (paper), белые поверхности,
    один акцент — зелёный pine. Статусы — стандартные amber/red Tailwind и
    всегда с иконкой, не только цветом.
-   Радиусы: карточки 16px (rounded-2xl), кнопки/поля 12px (rounded-xl),
-   капсулы — rounded-full. Крупнее — только у модалок (rounded-2xl тоже).
+   Углы: везде острые — у карточек, кнопок, полей, плашек, модалок и
+   аватарки скруглений нет (классы rounded-* не используем).
    Тени: только у того, что лежит поверх (выпадашки, модалки) и у главной
    кнопки первого экрана; обычные карточки — рамка без тени.
    ========================================================================== */
@@ -70,18 +70,18 @@ body {
 
   /* Поверхности */
   .card {
-    @apply rounded-2xl border border-line bg-white;
+    @apply border border-line bg-white;
   }
 
   /* Кнопки: .btn + вариант (+ .btn-sm / .btn-lg) */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-45;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-45;
   }
   .btn-sm {
-    @apply rounded-lg px-3 py-2 text-xs;
+    @apply px-3 py-2 text-xs;
   }
   .btn-lg {
-    @apply rounded-xl px-7 py-4;
+    @apply px-7 py-4;
   }
   .btn-primary {
     @apply bg-pine-600 text-white hover:bg-pine-700 disabled:hover:bg-pine-600;
@@ -101,7 +101,7 @@ body {
 
   /* Поля ввода */
   .input {
-    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/35 transition-colors outline-none focus:border-pine-600 focus:ring-4 focus:ring-pine-600/10;
+    @apply w-full border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/35 transition-colors outline-none focus:border-pine-600 focus:ring-4 focus:ring-pine-600/10;
   }
   .label {
     @apply mb-1.5 block text-sm font-semibold text-ink;
@@ -109,7 +109,7 @@ body {
 
   /* Небольшая метка-капсула (PRO, статусы) */
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold;
+    @apply inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold;
   }
 }
 

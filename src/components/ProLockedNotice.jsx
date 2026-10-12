@@ -15,7 +15,7 @@ export default function ProLockedNotice({ testTitle }) {
 
   return (
     <div className="mx-auto max-w-lg py-6 text-center sm:py-10">
-      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-600 sm:h-16 sm:w-16">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center bg-amber-50 text-amber-600 sm:h-16 sm:w-16">
         <Crown size={26} />
       </span>
       <h1 className="mt-5 text-2xl font-extrabold tracking-tight sm:text-3xl">{t('proLocked.title')}</h1>
@@ -35,7 +35,7 @@ export default function ProLockedNotice({ testTitle }) {
         href={PRO_PURCHASE_URL}
         target="_blank"
         rel="noreferrer"
-        className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-pine-600 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:w-auto sm:py-3.5"
+        className="mt-7 inline-flex w-full items-center justify-center gap-2 bg-pine-600 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:w-auto sm:py-3.5"
       >
         <Crown size={16} /> {t('proLocked.getPro')}
       </a>

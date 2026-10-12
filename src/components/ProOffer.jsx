@@ -63,7 +63,7 @@ export function Squiggle({ children }) {
 
 // Подсвеченная фраза внутри пункта списка.
 export function Mark({ children }) {
-  return <span className="rounded-md bg-pine-100/70 px-1.5 py-0.5 font-semibold text-pine-800">{children}</span>
+  return <span className="bg-pine-100/70 px-1.5 py-0.5 font-semibold text-pine-800">{children}</span>
 }
 
 // Три коротких пункта "что даёт PRO" с галочками — для модалки и страницы.
@@ -76,7 +76,7 @@ export function ProPerkList({ className = '' }) {
     <ul className={`w-fit space-y-3 text-left text-[15px] font-medium text-ink/80 ${className}`}>
       {PERKS.map((perk, i) => (
         <li key={i} className="flex items-center gap-3">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
             <Check size={14} strokeWidth={3} />
           </span>
           <span>
@@ -94,7 +94,7 @@ export function ProPriceTag() {
     <div className="flex items-center justify-center gap-3">
       <Sparks />
       <span className="relative inline-block px-6 sm:px-7">
-        <span aria-hidden="true" className="absolute inset-x-0 inset-y-1 -rotate-2 rounded-[1.25rem] bg-pine-50" />
+        <span aria-hidden="true" className="absolute inset-x-0 inset-y-1 -rotate-2 bg-pine-50" />
         <span className="relative text-5xl font-extrabold tracking-tight sm:text-6xl">{PRO_PRICE}</span>
       </span>
       <Sparks mirrored />
@@ -111,7 +111,7 @@ export function ProForeverTitle({ id, as: Tag = 'h2', align = 'center', classNam
       {t('proOffer.title')}
       <span className={`mt-2 flex items-center gap-2 sm:gap-3 ${align === 'left' ? 'justify-start' : 'justify-center'}`}>
         <Sparks />
-        <span className="rounded-full bg-pine-600 px-5 pb-1.5 pt-1 text-white sm:px-6">{t('proOffer.forever')}</span>
+        <span className="bg-pine-600 px-5 pb-1.5 pt-1 text-white sm:px-6">{t('proOffer.forever')}</span>
         <Sparks mirrored />
       </span>
     </Tag>

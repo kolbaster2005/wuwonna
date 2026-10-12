@@ -30,7 +30,7 @@ function PageForm({ initial, onSave, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-line bg-paper/60 p-5">
+    <form onSubmit={handleSubmit} className="border border-line bg-paper/60 p-5">
       <label className="text-sm font-semibold">Текст страницы</label>
       <div className="mt-1.5">
         <RichTextEditor value={content} onChange={setContent} rows={10} placeholder="Текст страницы..." />
@@ -41,7 +41,7 @@ function PageForm({ initial, onSave, onCancel }) {
           <label className="text-sm font-semibold">Фото (необязательно)</label>
           {imageUrl ? (
             <div className="mt-1.5 flex items-center gap-3">
-              <img src={imageUrl} alt="" className="h-14 w-14 rounded-lg border border-line object-cover" />
+              <img src={imageUrl} alt="" className="h-14 w-14 border border-line object-cover" />
               <button
                 type="button"
                 onClick={() => setImageUrl('')}
@@ -51,7 +51,7 @@ function PageForm({ initial, onSave, onCancel }) {
               </button>
             </div>
           ) : (
-            <label className="mt-1.5 flex w-full cursor-pointer items-center gap-2 rounded-lg border border-dashed border-line bg-white px-3 py-2 text-sm text-ink/50 hover:border-ink/30">
+            <label className="mt-1.5 flex w-full cursor-pointer items-center gap-2 border border-dashed border-line bg-white px-3 py-2 text-sm text-ink/50 hover:border-ink/30">
               <ImagePlus size={16} />
               Загрузить фото
               <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
@@ -64,7 +64,7 @@ function PageForm({ initial, onSave, onCancel }) {
           <input
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none"
+            className="mt-1.5 w-full border border-line bg-white px-3 py-2 text-sm focus:outline-none"
             placeholder="YouTube/Vimeo или прямая ссылка на файл"
           />
           <p className="mt-1 text-xs text-ink/40">Видео не загружается на сайт — только ссылка на внешний хостинг.</p>
@@ -74,13 +74,13 @@ function PageForm({ initial, onSave, onCancel }) {
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
       <div className="mt-5 flex items-center gap-3">
-        <button type="submit" className="rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
+        <button type="submit" className="bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
           Сохранить страницу
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
+          className="border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
         >
           Отмена
         </button>
@@ -147,7 +147,7 @@ export default function AdminBookSubchapterPage() {
         {formOpen === null && (
           <button
             onClick={() => setFormOpen('new')}
-            className="flex items-center gap-2 rounded-xl bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
+            className="flex items-center gap-2 bg-pine-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
           >
             <Plus size={16} /> Добавить страницу
           </button>
@@ -162,14 +162,14 @@ export default function AdminBookSubchapterPage() {
 
       <ul className="mt-4 space-y-3">
         {pages.map((p, i) => (
-          <li key={p.id} className="rounded-xl border border-line bg-white p-4">
+          <li key={p.id} className="border border-line bg-white p-4">
             {formOpen === p.id ? (
               <PageForm initial={p} onSave={handleSave} onCancel={() => setFormOpen(null)} />
             ) : (
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-pine-50 px-2.5 py-0.5 text-xs font-semibold text-pine-700">
+                    <span className="bg-pine-50 px-2.5 py-0.5 text-xs font-semibold text-pine-700">
                       Страница {i + 1}
                     </span>
                     {p.image_url && (
@@ -188,13 +188,13 @@ export default function AdminBookSubchapterPage() {
                 <div className="flex shrink-0 items-center gap-2">
                   <button
                     onClick={() => setFormOpen(p.id)}
-                    className="rounded-lg p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
+                    className="p-2 text-ink/40 hover:bg-black/5 hover:text-ink"
                   >
                     <Pencil size={15} />
                   </button>
                   <button
                     onClick={() => handleDelete(p, i)}
-                    className="rounded-lg p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
+                    className="p-2 text-ink/40 hover:bg-red-50 hover:text-red-600"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -206,7 +206,7 @@ export default function AdminBookSubchapterPage() {
       </ul>
 
       {pages.length === 0 && formOpen === null && (
-        <p className="mt-4 rounded-xl border border-dashed border-line py-8 text-center text-sm text-ink/50">
+        <p className="mt-4 border border-dashed border-line py-8 text-center text-sm text-ink/50">
           Страниц пока нет — добавь первую.
         </p>
       )}

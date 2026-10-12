@@ -58,7 +58,7 @@ export default function AdmissionGuidePage() {
           </div>
         </section>
 
-        <section className="rounded-2xl bg-pine-50 p-5 text-sm leading-relaxed text-ink/70">
+        <section className="bg-pine-50 p-5 text-sm leading-relaxed text-ink/70">
           <p>{inLang(DISCLAIMER, lang)}</p>
           <a
             href={OFFICIAL_WU_URL}

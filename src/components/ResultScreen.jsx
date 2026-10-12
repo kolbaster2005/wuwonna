@@ -43,7 +43,7 @@ export default function ResultScreen({
 
   return (
     <div className="mx-auto max-w-xl py-4 text-center sm:py-8">
-      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pine-50 text-pine-700">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center bg-pine-50 text-pine-700">
         <Trophy size={26} />
       </span>
       <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-ink/40">{kicker}</p>
@@ -51,13 +51,13 @@ export default function ResultScreen({
 
       <p className="mt-5 text-6xl font-extrabold tracking-tight">{pct}%</p>
       <div
-        className="mx-auto mt-3 h-2.5 max-w-sm overflow-hidden rounded-full bg-line"
+        className="mx-auto mt-3 h-2.5 max-w-sm overflow-hidden bg-line"
         role="progressbar"
         aria-valuenow={pct}
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        <div className="h-full rounded-full bg-pine-600" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-pine-600" style={{ width: `${pct}%` }} />
       </div>
       <p className="mt-3 flex items-center justify-center gap-3 text-sm text-ink/55">
         <span>{t('result.score', { score: formatNumber(score, SCORE), max: formatNumber(maxScore, SCORE), count: maxScore })}</span>
@@ -73,7 +73,7 @@ export default function ResultScreen({
 
       <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         {tiles.map(({ key, value, icon: Icon, color }) => (
-          <div key={key} className="rounded-xl border border-line px-3 py-3">
+          <div key={key} className="border border-line px-3 py-3">
             <p className="flex items-center justify-center gap-1.5 text-xs font-semibold text-ink/50">
               <Icon size={14} className={color} /> {t(`result.tiles.${key}`)}
             </p>
@@ -85,7 +85,7 @@ export default function ResultScreen({
       <div className="mt-7 flex flex-col flex-wrap justify-center gap-3 sm:flex-row">
         <button
           onClick={onReview}
-          className="flex items-center justify-center gap-2 rounded-xl bg-pine-600 px-6 py-3 text-sm font-bold text-white hover:bg-pine-700"
+          className="flex items-center justify-center gap-2 bg-pine-600 px-6 py-3 text-sm font-bold text-white hover:bg-pine-700"
         >
           <Eye size={16} /> {t('result.review')}
         </button>
@@ -100,4 +100,4 @@ export default function ResultScreen({
 // Класс второстепенной кнопки рядом с «Разобрать ответы» — чтобы страницы
 // оформляли свои действия одинаково.
 export const secondaryActionClass =
-  'flex items-center justify-center gap-2 rounded-xl border border-line px-6 py-3 text-sm font-bold text-ink/70 hover:border-ink/30'
+  'flex items-center justify-center gap-2 border border-line px-6 py-3 text-sm font-bold text-ink/70 hover:border-ink/30'

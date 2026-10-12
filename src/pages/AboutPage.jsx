@@ -30,7 +30,7 @@ export default function AboutPage() {
             const Icon = FEATURE_ICONS[i] ?? Sparkles
             return (
               <li key={title}>
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-pine-50 text-pine-700">
+                <span className="flex h-11 w-11 items-center justify-center bg-pine-50 text-pine-700">
                   <Icon size={21} />
                 </span>
                 <h3 className="mt-3.5 text-base font-extrabold">{title}</h3>
@@ -66,7 +66,7 @@ export default function AboutPage() {
         )}
       </section>
 
-      <section className="mt-14 flex flex-col items-start gap-5 rounded-2xl bg-pine-50 p-6 sm:mt-16 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+      <section className="mt-14 flex flex-col items-start gap-5 bg-pine-50 p-6 sm:mt-16 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <div>
           <h2 className="text-xl font-extrabold tracking-tight">{about.startTitle}</h2>
           <p className="mt-1 text-ink/65">{about.startText}</p>

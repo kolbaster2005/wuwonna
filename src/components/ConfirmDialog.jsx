@@ -36,10 +36,10 @@ export default function ConfirmDialog({ title, message, confirmLabel, cancelLabe
         aria-labelledby="confirm-dialog-title"
         aria-describedby={message ? 'confirm-dialog-message' : undefined}
         onMouseDown={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-pop sm:p-7"
+        className="w-full max-w-md bg-white p-6 shadow-pop sm:p-7"
       >
         <span
-          className={`flex h-12 w-12 items-center justify-center rounded-full ${
+          className={`flex h-12 w-12 items-center justify-center ${
             danger ? 'bg-red-50 text-red-600' : 'bg-pine-50 text-pine-700'
           }`}
         >
@@ -57,14 +57,14 @@ export default function ConfirmDialog({ title, message, confirmLabel, cancelLabe
         <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
           <button
             onClick={onCancel}
-            className="rounded-xl border border-line px-5 py-3 text-sm font-bold text-ink/70 transition-colors hover:border-ink/30"
+            className="border border-line px-5 py-3 text-sm font-bold text-ink/70 transition-colors hover:border-ink/30"
           >
             {cancelLabel}
           </button>
           <button
             ref={confirmRef}
             onClick={onConfirm}
-            className={`rounded-xl px-5 py-3 text-sm font-bold text-white transition-colors ${
+            className={`px-5 py-3 text-sm font-bold text-white transition-colors ${
               danger ? 'bg-red-600 hover:bg-red-700' : 'bg-pine-600 hover:bg-pine-700'
             }`}
           >

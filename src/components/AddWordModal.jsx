@@ -63,11 +63,11 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onMouseDown={onClose}>
       <div
         onMouseDown={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border border-line bg-white p-5 shadow-xl sm:p-6"
+        className="w-full max-w-md border border-line bg-white p-5 shadow-xl sm:p-6"
       >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-extrabold">{isEditing ? t('addWord.editTitle') : t('addWord.addTitle')}</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-ink/40 hover:bg-black/5 hover:text-ink">
+          <button onClick={onClose} className="p-1.5 text-ink/40 hover:bg-black/5 hover:text-ink">
             <X size={18} />
           </button>
         </div>
@@ -80,14 +80,14 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
                 autoFocus
                 value={word}
                 onChange={(e) => setWord(e.target.value)}
-                className="flex-1 rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+                className="flex-1 border border-line px-3 py-2 text-sm focus:outline-none"
                 placeholder={t('addWord.wordPlaceholder')}
               />
               <button
                 type="button"
                 onClick={handleTranslateWord}
                 disabled={translatingWord}
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-xs font-semibold text-ink/60 hover:border-ink/30 disabled:opacity-50"
+                className="flex shrink-0 items-center gap-1.5 border border-line px-3 py-2 text-xs font-semibold text-ink/60 hover:border-ink/30 disabled:opacity-50"
               >
                 <Languages size={14} /> {translatingWord ? '...' : t('addWord.translate')}
               </button>
@@ -99,7 +99,7 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
             <input
               value={translation}
               onChange={(e) => setTranslation(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+              className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
               placeholder={t('addWord.translationPlaceholder')}
             />
           </div>
@@ -113,7 +113,7 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
                 setExamplePreview(null)
               }}
               rows={2}
-              className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+              className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
               placeholder={t('addWord.examplePlaceholder')}
             />
             {example.trim() && (
@@ -126,7 +126,7 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
                 <Languages size={13} /> {translatingExample ? t('addWord.translating') : t('addWord.translateExample')}
               </button>
             )}
-            {examplePreview && <p className="mt-1.5 rounded-lg bg-paper px-3 py-2 text-xs text-ink/60">{examplePreview}</p>}
+            {examplePreview && <p className="mt-1.5 bg-paper px-3 py-2 text-xs text-ink/60">{examplePreview}</p>}
           </div>
 
           <div>
@@ -135,7 +135,7 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
               list="vocab-categories"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none"
+              className="mt-1.5 w-full border border-line px-3 py-2 text-sm focus:outline-none"
               placeholder={t('addWord.categoryPlaceholder')}
             />
             <datalist id="vocab-categories">
@@ -148,13 +148,13 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
           {error && <p className="text-sm text-red-600">{error}</p>}
 
           <div className="flex items-center gap-3 pt-1">
-            <button type="submit" className="rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
+            <button type="submit" className="bg-pine-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-pine-700">
               {t('addWord.save')}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
+              className="border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
             >
               {t('common.cancel')}
             </button>

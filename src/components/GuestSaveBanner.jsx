@@ -10,7 +10,7 @@ export default function GuestSaveBanner({ children, className = '' }) {
   const { t, path } = useI18n()
   return (
     <div
-      className={`flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 sm:flex-row sm:items-center sm:justify-between ${className}`}
+      className={`flex flex-col gap-3 border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 sm:flex-row sm:items-center sm:justify-between ${className}`}
     >
       <p className="flex items-start gap-2 leading-relaxed">
         <LogIn size={16} className="mt-0.5 shrink-0" />

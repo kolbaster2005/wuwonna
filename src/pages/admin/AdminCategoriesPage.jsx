@@ -48,7 +48,7 @@ export default function AdminCategoriesPage() {
   return (
     <div>
       {!isSupabaseConfigured && (
-        <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mb-5 border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           Supabase не подключен — категории сохраняются в этом браузере (localStorage).
         </p>
       )}
@@ -63,19 +63,19 @@ export default function AdminCategoriesPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Название категории, например «Понимание экономики»"
-          className="flex-1 rounded-xl border border-line bg-white px-4 py-3 text-sm focus:outline-none"
+          className="flex-1 border border-line bg-white px-4 py-3 text-sm focus:outline-none"
         />
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 rounded-xl bg-pine-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-50"
+          className="flex items-center gap-2 bg-pine-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-50"
         >
           <Plus size={16} /> Добавить
         </button>
       </form>
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
-      <ul className="mt-6 divide-y divide-line rounded-xl border border-line bg-white">
+      <ul className="mt-6 divide-y divide-line border border-line bg-white">
         {categories.map((cat) => (
           <li key={cat.id} className="px-5 py-3.5 text-sm">
             <div className="flex items-center justify-between">
@@ -94,7 +94,7 @@ export default function AdminCategoriesPage() {
                     onChange={(e) => updateName(cat.id, field, e.target.value)}
                     onBlur={() => saveNames(cat)}
                     placeholder={cat.name}
-                    className="w-full rounded-lg border border-line px-2.5 py-1.5 text-sm text-ink focus:outline-none"
+                    className="w-full border border-line px-2.5 py-1.5 text-sm text-ink focus:outline-none"
                   />
                 </label>
               ))}

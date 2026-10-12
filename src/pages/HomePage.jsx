@@ -82,7 +82,7 @@ function Landing() {
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
               {features.map((f) => (
                 <Link key={f.id} to={path(f.route)} className="group flex items-start gap-3">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-pine-50 text-pine-700 transition-colors group-hover:bg-pine-100">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center bg-pine-50 text-pine-700 transition-colors group-hover:bg-pine-100">
                     <f.icon size={22} />
                   </span>
                   <span className="pt-0.5">
@@ -98,13 +98,13 @@ function Landing() {
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Link
                 to={path('tests')}
-                className="flex items-center justify-center gap-2.5 rounded-2xl bg-pine-600 px-7 py-4 text-sm font-bold text-white shadow-[0_12px_28px_-12px_rgba(47,122,61,0.8)] transition-colors hover:bg-pine-700"
+                className="flex items-center justify-center gap-2.5 bg-pine-600 px-7 py-4 text-sm font-bold text-white shadow-[0_12px_28px_-12px_rgba(47,122,61,0.8)] transition-colors hover:bg-pine-700"
               >
                 <FileText size={17} /> {t('home.toTests')} <ArrowRight size={17} />
               </Link>
               <Link
                 to={path('examInfo')}
-                className="flex items-center justify-center gap-2.5 rounded-2xl border border-line bg-white px-7 py-4 text-sm font-bold text-ink transition-colors hover:border-ink/30"
+                className="flex items-center justify-center gap-2.5 border border-line bg-white px-7 py-4 text-sm font-bold text-ink transition-colors hover:border-ink/30"
               >
                 <Info size={17} /> {t('home.examInfo')}
               </Link>
@@ -138,7 +138,7 @@ function Landing() {
             {steps.map(({ id, icon: Icon }, i) => (
               <li key={id} className="relative">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-pine-700">
+                  <span className="flex h-11 w-11 items-center justify-center bg-white text-pine-700">
                     <Icon size={21} />
                   </span>
                   <span className="text-sm font-extrabold text-pine-700">{t('home.step', { number: i + 1 })}</span>

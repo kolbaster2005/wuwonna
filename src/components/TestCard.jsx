@@ -5,9 +5,9 @@ import { setTestPinned } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
 import { useProModal } from '../lib/proModal'
-import { originalityLabel } from '../lib/originality'
 import RichText from './RichText'
 import { testPath } from '../seo/content'
+import { useI18n } from '../i18n'
 
 // result — { best (0..1), attempts } по этому тесту, если человек его уже
 // проходил (см. statsByTest в lib/progress.js). Пройденная карточка
@@ -16,6 +16,7 @@ export default function TestCard({ test, result, onPinChange }) {
   const [pinning, setPinning] = useState(false)
   const { hasPro, isAdmin, loading: authLoading } = useAuth()
   const { openProModal } = useProModal()
+  const { t, errorText } = useI18n()
   // Закреплять/откреплять может только админ. Без Supabase входа нет вообще —
   // тогда, как и в админке (RequireAuth), не мешаем локальной разработке.
   const canPin = isAdmin || !isSupabaseConfigured
@@ -32,7 +33,7 @@ export default function TestCard({ test, result, onPinChange }) {
       await setTestPinned(test.id, !test.is_pinned)
       onPinChange?.()
     } catch (err) {
-      alert(`Не получилось закрепить: ${err.message}`)
+      alert(t('testCard.pinFailed', { error: errorText(err) }))
     } finally {
       setPinning(false)
     }
@@ -52,7 +53,7 @@ export default function TestCard({ test, result, onPinChange }) {
         <button
           onClick={togglePin}
           disabled={pinning}
-          title={test.is_pinned ? 'Открепить' : 'Закрепить наверху'}
+          title={test.is_pinned ? t('testCard.unpin') : t('testCard.pin')}
           className={`absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border transition-colors sm:right-5 sm:top-5 ${
             test.is_pinned
               ? 'border-pine-600 bg-pine-50 text-pine-700'
@@ -75,15 +76,15 @@ export default function TestCard({ test, result, onPinChange }) {
           </div>
           {isLockedForUser && (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-              <Lock size={12} /> Только в PRO
+              <Lock size={12} /> {t('testCard.proOnly')}
             </span>
           )}
           {isDone && (
             <span
               className="inline-flex items-center gap-1.5 rounded-full bg-pine-50 px-3 py-1 text-xs font-bold text-pine-700"
-              title={`Лучший результат, попыток: ${result.attempts}`}
+              title={t('testCard.bestResult', { count: result.attempts })}
             >
-              <CheckCircle2 size={13} /> Пройдено · {Math.round(result.best * 100)}%
+              <CheckCircle2 size={13} /> {t('testCard.done', { percent: Math.round(result.best * 100) })}
             </span>
           )}
         </div>
@@ -95,13 +96,13 @@ export default function TestCard({ test, result, onPinChange }) {
 
         <div className={`mt-auto flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-line pt-4 text-[13px] text-ink/55 sm:pt-5 ${lockedFade}`}>
           <span className="flex items-center gap-1.5">
-            <ListChecks size={15} /> {test.questions_count} заданий
+            <ListChecks size={15} /> {t('testCard.questions', { count: test.questions_count })}
           </span>
           <span className="flex items-center gap-1.5">
-            <Clock size={15} /> {test.duration_minutes} мин
+            <Clock size={15} /> {t('common.minutes', { count: test.duration_minutes })}
           </span>
           <span className="flex items-center gap-1.5">
-            <ShieldCheck size={15} /> {originalityLabel(test.originality)}
+            <ShieldCheck size={15} /> {t(`originality.${test.originality === 'unofficial' ? 'unofficial' : 'official'}`)}
           </span>
         </div>
       </div>
@@ -114,7 +115,7 @@ export default function TestCard({ test, result, onPinChange }) {
           onClick={() => openProModal()}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-white py-3 text-sm font-bold text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:mt-6"
         >
-          <Lock size={14} /> Открыть с PRO
+          <Lock size={14} /> {t('testCard.openWithPro')}
         </button>
       ) : (
         <Link
@@ -123,10 +124,10 @@ export default function TestCard({ test, result, onPinChange }) {
         >
           {isDone ? (
             <>
-              <RotateCcw size={15} /> Пройти ещё раз
+              <RotateCcw size={15} /> {t('testCard.retake')}
             </>
           ) : (
-            'Начать тест'
+            t('testCard.start')
           )}
         </Link>
       )}

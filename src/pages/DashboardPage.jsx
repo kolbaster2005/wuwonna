@@ -7,6 +7,7 @@ import { useVocabulary } from '../lib/useVocabulary'
 import { TOPICS } from '../data/topics'
 import { useAuth } from '../lib/authContext'
 import { testPath } from '../seo/content'
+import { useI18n } from '../i18n'
 
 // Главная для вошедшего. Сетка 2 колонки × 3 строки (на компьютере всё на
 // первом экране):
@@ -23,28 +24,16 @@ function percent(ratio) {
   return `${Math.round(ratio * 100)}%`
 }
 
-function plural(n, one, few, many) {
-  const mod10 = n % 10
-  const mod100 = n % 100
-  if (mod10 === 1 && mod100 !== 11) return one
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few
-  return many
-}
-
-function formatDate(value) {
-  return new Date(value).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
-}
-
 function chapterNumber(chapter) {
   return Number(chapter.title.match(/\d+/)?.[0])
 }
 
-// Цвет квадратика подглавы по лучшему результату.
+// Цвет квадратика подглавы по лучшему результату (подпись — dashboard.levels.<id>).
 const LEVELS = [
-  { label: 'Не начато', className: 'bg-line', test: (t) => t.attempts === 0 },
-  { label: 'До 50%', className: 'bg-pine-200', test: (t) => t.best < 0.5 },
-  { label: 'До 85%', className: 'bg-pine-500', test: (t) => t.best < 0.85 },
-  { label: '85% и выше', className: 'bg-pine-700', test: () => true },
+  { id: 'notStarted', className: 'bg-line', test: (t) => t.attempts === 0 },
+  { id: 'below50', className: 'bg-pine-200', test: (t) => t.best < 0.5 },
+  { id: 'below85', className: 'bg-pine-500', test: (t) => t.best < 0.85 },
+  { id: 'above85', className: 'bg-pine-700', test: () => true },
 ]
 
 function levelClass(item) {
@@ -78,17 +67,18 @@ function Ring({ ratio, size = 64 }) {
 // --- слева: карта прогресса по главам ---
 
 function ChaptersMap({ chapters }) {
+  const { t } = useI18n()
   const overall = chapters.reduce((sum, c) => sum + c.ratio, 0) / chapters.length
   return (
     <section className="card flex flex-col p-6 sm:p-8 lg:row-span-3">
       <div className="flex items-start justify-between gap-6">
         <div>
-          <h2 className="h-section">Прогресс по главам</h2>
-          <p className="mt-1 text-sm text-ink/50">Каждый квадратик — подглава. Нажми, чтобы пройти её.</p>
+          <h2 className="h-section">{t('dashboard.chapters.title')}</h2>
+          <p className="mt-1 text-sm text-ink/50">{t('dashboard.chapters.hint')}</p>
         </div>
         <p className="text-right">
           <span className="text-3xl font-extrabold tracking-tight">{percent(overall)}</span>
-          <span className="block text-xs text-ink/45">общий прогресс</span>
+          <span className="block text-xs text-ink/45">{t('dashboard.chapters.overall')}</span>
         </p>
       </div>
 
@@ -104,7 +94,7 @@ function ChaptersMap({ chapters }) {
               <span className="text-right text-sm font-extrabold tabular-nums">{percent(chapter.ratio)}</span>
               <div className="col-span-2 flex flex-wrap gap-1.5">
                 {chapter.tests.map((item) => {
-                  const status = item.attempts > 0 ? percent(item.best) : 'не начато'
+                  const status = item.attempts > 0 ? percent(item.best) : t('dashboard.notStarted')
                   return (
                     <Link
                       key={item.test.id}
@@ -123,8 +113,8 @@ function ChaptersMap({ chapters }) {
 
       <ul className="mt-auto flex flex-wrap gap-x-5 gap-y-2 border-t border-line pt-5 text-xs text-ink/55">
         {LEVELS.map((l) => (
-          <li key={l.label} className="flex items-center gap-1.5">
-            <span className={`h-3 w-3 rounded ${l.className}`} /> {l.label}
+          <li key={l.id} className="flex items-center gap-1.5">
+            <span className={`h-3 w-3 rounded ${l.className}`} /> {t(`dashboard.levels.${l.id}`)}
           </li>
         ))}
       </ul>
@@ -135,29 +125,30 @@ function ChaptersMap({ chapters }) {
 // --- справа, 1-я строка: последний результат + «Продолжить» ---
 
 function LastResultCard({ last, lastTest, next }) {
+  const { t, formatDate } = useI18n()
   const button = next && (
     <Link to={testPath(next)} className="btn btn-primary shrink-0">
-      {last ? 'Продолжить' : 'Начать'} <ArrowRight size={16} />
+      {last ? t('dashboard.continue') : t('dashboard.start')} <ArrowRight size={16} />
     </Link>
   )
   return (
     <section className="card order-first flex flex-col justify-center p-6 lg:order-none">
-      <p className="eyebrow">{last ? 'Последний результат' : 'С чего начать'}</p>
+      <p className="eyebrow">{last ? t('dashboard.lastResult') : t('dashboard.whereToStart')}</p>
       {last && lastTest ? (
         <div className="mt-3 flex items-center gap-4">
           <Ring ratio={attemptRatio(last)} />
           <div className="min-w-0">
             <p className="truncate text-lg font-extrabold">{lastTest.title}</p>
-            <p className="text-sm text-ink/50">{formatDate(last.completed_at)}</p>
+            <p className="text-sm text-ink/50">{formatDate(last.completed_at, { day: 'numeric', month: 'long' })}</p>
           </div>
         </div>
       ) : (
-        <p className="mt-2 text-sm text-ink/55">Здесь появится результат первого теста.</p>
+        <p className="mt-2 text-sm text-ink/55">{t('dashboard.firstResultHint')}</p>
       )}
       {next && (
         <div className="mt-4 flex items-center justify-between gap-3 border-t border-line pt-4">
           <p className="min-w-0 text-sm text-ink/55">
-            Дальше: <span className="font-bold text-ink">{next.title}</span>
+            {t('dashboard.next')} <span className="font-bold text-ink">{next.title}</span>
           </p>
           {button}
         </div>
@@ -192,6 +183,7 @@ function TileLink({ to, icon: Icon, title, subtitle, dark = false }) {
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const { t, path } = useI18n()
   const [tests, setTests] = useState(null)
   const [attempts, setAttempts] = useState([])
   const wordsCount = useVocabulary().entries.length
@@ -209,7 +201,7 @@ export default function DashboardPage() {
   }, [user.id])
 
   if (tests === null) {
-    return <main className="page text-sm text-ink/40">Загружаем…</main>
+    return <main className="page text-sm text-ink/40">{t('dashboard.loading')}</main>
   }
 
   const chapters = chapterProgress(tests, attempts)
@@ -231,16 +223,16 @@ export default function DashboardPage() {
         <LastResultCard last={last} lastTest={lastTest} next={next} />
         <div className="grid grid-cols-2 gap-6">
           <TileLink
-            to="/slovar"
+            to={path('vocabulary')}
             icon={BookOpen}
-            title="Словарь"
-            subtitle={`${wordsCount} ${plural(wordsCount, 'слово', 'слова', 'слов')}`}
+            title={t('dashboard.vocabulary')}
+            subtitle={t('dashboard.words', { count: wordsCount })}
           />
           <TileLink
-            to="/progress"
+            to={path('progress')}
             icon={TrendingUp}
-            title="Мой прогресс"
-            subtitle={`${stats.testsTaken} из ${stats.testsTotal} тестов`}
+            title={t('dashboard.progress')}
+            subtitle={t('dashboard.testsTaken', { taken: stats.testsTaken, total: stats.testsTotal })}
             dark
           />
         </div>

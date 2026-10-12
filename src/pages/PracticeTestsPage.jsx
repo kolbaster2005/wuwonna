@@ -9,12 +9,14 @@ import TestCard from '../components/TestCard'
 import FilterSelect from '../components/FilterSelect'
 import PageHeader from '../components/PageHeader'
 import Tabs from '../components/Tabs'
+import { useI18n } from '../i18n'
 
 // Вкладки (slug категории), где полоска фильтров не нужна — там пробники и так
 // разложены по главам.
 const TABS_WITHOUT_FILTERS = ['основы-экономики']
 
 export default function PracticeTestsPage() {
+  const { t } = useI18n()
   const [categories, setCategories] = useState([])
   const [tests, setTests] = useState([])
   const [loading, setLoading] = useState(true)
@@ -99,8 +101,8 @@ export default function PracticeTestsPage() {
     <main className="page">
       <PageHeader
         icon={ClipboardList}
-        title="Пробники"
-        subtitle="Выбери пробный тест и проверь свои знания"
+        title={t('tests.title')}
+        subtitle={t('tests.subtitle')}
       >
         {categories.length > 0 && (
           <Tabs
@@ -116,19 +118,19 @@ export default function PracticeTestsPage() {
       <div className="card flex flex-col gap-2.5 p-3 sm:flex-row sm:items-center sm:gap-3 sm:p-4">
         <FilterSelect
           icon={ShieldCheck}
-          label="Официальность"
-          options={ORIGINALITY_OPTIONS}
+          label={t('tests.filters.originality')}
+          options={ORIGINALITY_OPTIONS.map((o) => ({ value: o.value, label: t(`originality.${o.value}`) }))}
           value={originality}
           onChange={setOriginality}
         />
-        <FilterSelect icon={CalendarDays} label="Год" options={years} value={year} onChange={setYear} />
+        <FilterSelect icon={CalendarDays} label={t('tests.filters.year')} options={years} value={year} onChange={setYear} />
 
         <div className="flex flex-1 items-center gap-2.5 rounded-xl border border-line bg-white px-3.5 py-2.5 sm:px-4 sm:py-3">
           <Search size={17} className="shrink-0 text-ink/40" strokeWidth={2} />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Поиск пробников..."
+            placeholder={t('tests.filters.search')}
             className="w-full bg-transparent text-sm font-medium text-ink placeholder:text-ink/40 focus:outline-none"
           />
         </div>
@@ -136,12 +138,12 @@ export default function PracticeTestsPage() {
       )}
 
       {loading ? (
-        <div className="mt-10 text-center text-sm text-ink/40">Загружаем пробники…</div>
+        <div className="mt-10 text-center text-sm text-ink/40">{t('tests.loading')}</div>
       ) : filtered.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-line-strong py-16 text-center text-sm text-ink/50">
           {testsInTab.length === 0
-            ? 'В этом разделе пока нет пробников.'
-            : 'Ничего не нашлось — попробуй изменить фильтры или запрос.'}
+            ? t('tests.emptyTab')
+            : t('tests.nothingFound')}
         </div>
       ) : (
         <div className={`space-y-10 sm:space-y-12 ${showFilters ? 'mt-6 sm:mt-8' : ''}`}>

@@ -63,10 +63,9 @@ const MISSING_COLUMN = '42703'
 
 // Если RLS запрещает update, Supabase не возвращает ошибку — просто ничего
 // не обновляется (0 строк). Без этой проверки сохранение "молча" не работало бы.
+// Сообщения ошибок — ключи словаря (src/i18n), текст подставляет компонент.
 function notAllowedError() {
-  return new Error(
-    'изменение не сохранилось — нет прав на запись. Нужна роль admin (см. README, «Защита админки»); если роль только что выдана — выйди и войди заново.',
-  )
+  return new Error('errors.notAllowed')
 }
 
 async function selectTests(buildQuery) {
@@ -218,7 +217,7 @@ export async function reorderTests(orderedIds) {
   )
   const failed = results.find((r) => r.error)
   if (failed?.error.code === MISSING_COLUMN) {
-    throw new Error('в базе ещё нет колонки sort_order — выполни supabase/add-test-order.sql в Supabase (SQL Editor)')
+    throw new Error('errors.noSortOrder')
   }
   if (failed) throw failed.error
   if (results.some((r) => r.data.length === 0)) throw notAllowedError()
@@ -658,10 +657,10 @@ export async function fetchQuestionsByTopics(topicCodes) {
 // PGRST202 — PostgREST не нашёл функцию: значит admin-users.sql ещё не выполнен.
 function usersRpcError(error) {
   if (error.code === 'PGRST202') {
-    return new Error('в базе нет функций для списка пользователей — выполни supabase/admin-users.sql в Supabase (SQL Editor)')
+    return new Error('errors.noUsersFunctions')
   }
   if (error.code === '42501') {
-    return new Error('нет прав — нужна роль admin. Если роль только что выдана — выйди и войди заново.')
+    return new Error('errors.noAdminRole')
   }
   return error
 }

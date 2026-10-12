@@ -22,8 +22,10 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
+  ABOUT,
   DISCLAIMER,
   EXAM_FAQ,
+  EXAM_INFO,
   EXAM_PARTS,
   EXAM_STATS_2026,
   FREE_PROBNIK_PATH,
@@ -31,11 +33,11 @@ import {
   LANDING_ALTERNATES,
   LANGUAGE_NAMES,
   OFFICIAL_WU_URL,
+  OG_LOCALES,
   PAGES,
   REGISTRATION_STEPS,
   SITE,
   SITE_SUMMARY,
-  SITE_SUMMARY_DE,
   testPath,
   testSeo,
 } from '../src/seo/content.js'
@@ -108,7 +110,7 @@ ${link('/probniki', 'Пробники')} · ${link('/exam-info', 'Об экза�
 // В футере — описание проекта и отказ от связи с WU на языке страницы.
 function footer(lang) {
   return `<footer class="mx-auto max-w-6xl px-4 py-8 text-sm sm:px-6">
-<p>${esc(lang === 'ru' ? SITE_SUMMARY : SITE_SUMMARY_DE)}</p>
+<p>${esc(lang === 'ru' ? SITE_SUMMARY.ru : SITE_SUMMARY.de)}</p>
 <p>${link(SITE.youtube, 'YouTube @wuwonna')} · ${link(SITE.telegram, 'Telegram @wuwonna')}</p>
 <p>${esc(DISCLAIMER[lang])}</p>
 </footer>`
@@ -131,7 +133,7 @@ const baseGraph = [
     alternateName: SITE.alternateNames,
     url: SITE.url,
     logo: `${SITE.url}${SITE.logo}`,
-    description: SITE_SUMMARY,
+    description: SITE_SUMMARY.ru,
     // Прямо говорим поисковикам и нейросетям: это не университет.
     disambiguatingDescription: DISCLAIMER.en,
     knowsAbout: ['WiSo Aufnahmeprüfung', 'WU Wien Aufnahmeverfahren', 'Wirtschaftsuniversität Wien'],
@@ -172,7 +174,7 @@ function breadcrumbs(items) {
 // hreflang-версии страницы (адрес → список языков) — и для <head>, и для sitemap.
 const alternatesByUrl = new Map()
 
-function render({ path, title, description, body, schema = [], lang = 'ru', locale = SITE.locale, alternates = [] }) {
+function render({ path, title, description, body, schema = [], lang = 'ru', locale = OG_LOCALES.ru, alternates = [] }) {
   const url = `${SITE.url}${path}`
   if (alternates.length) alternatesByUrl.set(url, alternates)
   const head = [
@@ -245,9 +247,9 @@ function buildPages(tests) {
   urls.push(
     render({
       path: '/',
-      ...PAGES['/'],
+      ...PAGES.ru.home,
       body: `<h1 class="h-page">Подготовка к экзамену WU Wien — WiSo Aufnahmeprüfung</h1>
-<p class="lead">${esc(SITE_SUMMARY)}</p>
+<p class="lead">${esc(SITE_SUMMARY.ru)}</p>
 <h2 class="h-section">Что есть на платформе</h2>
 <ul>
 <li>Пробники в формате реального экзамена — с таймером, частичными баллами и разбором каждого ответа.</li>
@@ -263,9 +265,9 @@ ${exams.length ? `<h2 class="h-section">Пробники</h2>\n${testList(exams)
   urls.push(
     render({
       path: '/probniki',
-      ...PAGES['/probniki'],
+      ...PAGES.ru.tests,
       body: `<h1 class="h-page">Пробники к экзамену WU Wien (WiSo Aufnahmeprüfung)</h1>
-<p class="lead">${esc(PAGES['/probniki'].description)}</p>
+<p class="lead">${esc(PAGES.ru.tests.description)}</p>
 ${exams.length ? `<h2 class="h-section">Пробники в формате экзамена</h2>\n${testList(exams)}` : ''}
 ${chapters.length ? '<h2 class="h-section">Основы экономики — тесты по главам книги WU</h2>' : ''}
 ${chapters.map(([title, list]) => `<h3>${esc(title)}</h3>\n${testList(list)}`).join('\n')}`,
@@ -303,33 +305,12 @@ ${paragraphs(test.long_description || test.description)}
   urls.push(
     render({
       path: '/exam-info',
-      ...PAGES['/exam-info'],
-      body: `<h1 class="h-page">Об экзамене WU Wien (WiSo Aufnahmeprüfung)</h1>
-<h2 class="h-section">Краткая информация</h2>
-<ul>
-<li>Продолжительность экзамена: 2 часа без перерыва.</li>
-<li>Экзамен WISO состоит из трёх частей: понимание основ экономики, чтение немецкого текста и математика.</li>
-<li>Все задания — в формате Multiple Choice.</li>
-<li>Экзамен проводится один раз в год очно; выбрать дату нельзя.</li>
-</ul>
-<h2 class="h-section">Части экзамена</h2>
-${EXAM_PARTS.map((p) => `<h3>${esc(p.number)}. ${esc(p.title)}</h3>\n<p>${esc(p.description)}</p>`).join('\n')}
-<h2 class="h-section">Статистика и проходной балл 2026</h2>
-<ul>
-<li>Примерный проходной балл: ${esc(EXAM_STATS_2026.passingScore)}</li>
-<li>Количество мест: ${esc(EXAM_STATS_2026.places)}</li>
-<li>Количество участников: ${esc(EXAM_STATS_2026.participants)}</li>
-</ul>
-<h2 class="h-section">Процесс регистрации</h2>
-<ol>
-${REGISTRATION_STEPS.map((s) => `<li><strong>${esc(s.title)}</strong><ul>${s.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></li>`).join('\n')}
-</ol>
-<h2 class="h-section">Частые вопросы</h2>
-${EXAM_FAQ.map((f) => `<h3>${esc(f.question)}</h3>\n<p>${esc(f.answer)}</p>`).join('\n')}`,
+      ...PAGES.ru.examInfo,
+      body: examInfoBody('ru'),
       schema: [
         {
           '@type': 'FAQPage',
-          mainEntity: EXAM_FAQ.map((f) => ({
+          mainEntity: EXAM_FAQ.ru.map((f) => ({
             '@type': 'Question',
             name: f.question,
             acceptedAnswer: { '@type': 'Answer', text: f.answer },
@@ -343,12 +324,9 @@ ${EXAM_FAQ.map((f) => `<h3>${esc(f.question)}</h3>\n<p>${esc(f.answer)}</p>`).jo
   urls.push(
     render({
       path: '/about',
-      ...PAGES['/about'],
-      body: `<h1 class="h-page">О проекте WU WONNA</h1>
-<p>${esc(SITE_SUMMARY)}</p>
-<p>Название — это WU и английское «wanna» («хочу»): «хочу в WU». Кроме сайта, мы ведём YouTube-канал и Telegram-канал WU WONNA — рассказываем, как устроен экзамен, как к нему готовиться и как проходит поступление.</p>
-<p>${link(SITE.youtube, 'YouTube — @wuwonna')} · ${link(SITE.telegram, 'Telegram — @wuwonna')}</p>
-<section lang="de"><h2 class="h-section">Über WU WONNA</h2><p>${esc(SITE_SUMMARY_DE)}</p></section>`,
+      ...PAGES.ru.about,
+      body: `${aboutBody('ru')}
+<section lang="de"><h2 class="h-section">Über WU WONNA</h2><p>${esc(SITE_SUMMARY.de)}</p></section>`,
       schema: [
         { '@type': 'AboutPage', url: `${SITE.url}/about`, about: { '@id': ORG_ID }, inLanguage: 'ru' },
         breadcrumbs([['WU WONNA', '/'], ['О проекте', '/about']]),
@@ -359,9 +337,9 @@ ${EXAM_FAQ.map((f) => `<h3>${esc(f.question)}</h3>\n<p>${esc(f.answer)}</p>`).jo
   urls.push(
     render({
       path: '/pro',
-      ...PAGES['/pro'],
+      ...PAGES.ru.pro,
       body: `<h1 class="h-page">WU WONNA PRO</h1>
-<p class="lead">${esc(PAGES['/pro'].description)}</p>
+<p class="lead">${esc(PAGES.ru.pro.description)}</p>
 ${chapters.length ? `<p>В PRO входят тесты по всем главам книги WU: ${chapters.map(([t]) => esc(t)).join(', ')}.</p>` : ''}`,
     }),
   )
@@ -369,6 +347,49 @@ ${chapters.length ? `<p>В PRO входят тесты по всем глава�
   for (const [path, landing] of Object.entries(LANDINGS)) urls.push(renderLanding(path, landing))
 
   return urls
+}
+
+// Строка из content.js: **жирный** и [ссылка на официальный сайт WU].
+function contentHtml(text) {
+  return esc(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]/g, (_, label) => `<a href="${esc(OFFICIAL_WU_URL)}">${label}</a>`)
+}
+
+// «Об экзамене» — те же тексты, что на странице (EXAM_INFO и др.), все
+// вкладки подряд.
+function examInfoBody(lang) {
+  const info = EXAM_INFO[lang]
+  return `<h1 class="h-page">${esc(info.h1)}</h1>
+<p class="lead">${esc(info.subtitle)}</p>
+<h2 class="h-section">${esc(info.summaryHeading)}</h2>
+<ul>${info.facts.map((fact) => `<li>${contentHtml(fact)}</li>`).join('')}</ul>
+<h2 class="h-section">${esc(info.howItGoesHeading)}</h2>
+${paragraphs(info.howItGoes)}
+<h2 class="h-section">${esc(info.registrationHeading)}</h2>
+${info.registration.map((p) => `<p>${contentHtml(p)}</p>`).join('\n')}
+<h2 class="h-section">${esc(info.partsHeading)}</h2>
+${EXAM_PARTS[lang].map((p) => `<h3>${esc(p.number)}. ${esc(p.title)}</h3>\n<p>${esc(p.description)}</p>`).join('\n')}
+<h2 class="h-section">${esc(info.statsHeading)}</h2>
+<ul>${['passingScore', 'places', 'participants'].map((id) => `<li>${esc(info.stats[id])}: ${esc(EXAM_STATS_2026[id])}</li>`).join('')}</ul>
+<h2 class="h-section">${esc(info.tabs.registration)}</h2>
+<p>${contentHtml(info.registrationIntro)}</p>
+<ol>
+${REGISTRATION_STEPS[lang].map((s) => `<li><strong>${esc(s.title)}</strong><ul>${s.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></li>`).join('\n')}
+</ol>
+<h2 class="h-section">${esc(info.faqHeading)}</h2>
+${EXAM_FAQ[lang].map((f) => `<h3>${esc(f.question)}</h3>\n<p>${esc(f.answer)}</p>`).join('\n')}`
+}
+
+// «О проекте» — тексты из ABOUT.
+function aboutBody(lang) {
+  const about = ABOUT[lang]
+  return `<h1 class="h-page">${esc(about.h1)}</h1>
+<h2 class="h-section">${esc(about.heading)}</h2>
+${about.paragraphs.map((p) => `<p>${esc(p)}</p>`).join('\n')}
+<ul>${about.features.map((f) => `<li><strong>${esc(f.title)}</strong> — ${esc(f.description)}</li>`).join('')}</ul>
+<h2 class="h-section">${esc(about.socialHeading)}</h2>
+<p>${link(SITE.youtube, 'YouTube — @wuwonna')} · ${link(SITE.telegram, 'Telegram — @wuwonna')}</p>`
 }
 
 // Посадочная страница на своём языке (RU/DE/EN) — тексты из LANDINGS.

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Crown, Send } from 'lucide-react'
 import { DISCLAIMER } from '../seo/content'
+import { useI18n } from '../i18n'
 
 // В lucide-react 1.x брендовых иконок (YouTube и т.п.) больше нет — рисуем
 // свою в том же контурном стиле, что и остальные иконки.
@@ -26,36 +27,41 @@ function YoutubeIcon({ size = 16 }) {
 // Те же разделы, что и в шапке (Header.jsx), плюс то, что в шапке спрятано
 // глубже: вкладка «Основы экономики», «О проекте», PRO.
 // Книга пока скрыта с сайта — её здесь тоже нет.
-const columns = [
-  {
-    title: 'Подготовка',
-    links: [
-      { label: 'Пробники', to: '/probniki?tab=probniki' },
-      { label: 'Основы экономики', to: '/probniki?tab=основы-экономики' },
-      { label: 'Словарь', to: '/slovar' },
-      { label: 'Мой прогресс', to: '/progress' },
-    ],
-  },
-  {
-    title: 'Проект',
-    links: [
-      { label: 'Об экзамене', to: '/exam-info' },
-      { label: 'Как поступить в WU', to: '/postuplenie-v-wu' },
-      { label: 'О проекте', to: '/about' },
-      { label: 'PRO-доступ', to: '/pro', pro: true }, // с короной
-      { label: 'Deutsch', to: '/de', lang: 'de' },
-      { label: 'English', to: '/en', lang: 'en' },
-    ],
-  },
-]
+function useColumns() {
+  const { t, path } = useI18n()
+  return [
+    {
+      title: t('footer.prep'),
+      links: [
+        { label: t('footer.tests'), to: path('tests', { tab: 'probniki' }) },
+        { label: t('footer.economics'), to: path('tests', { tab: 'основы-экономики' }) },
+        { label: t('footer.vocabulary'), to: path('vocabulary') },
+        { label: t('footer.progress'), to: path('progress') },
+      ],
+    },
+    {
+      title: t('footer.project'),
+      links: [
+        { label: t('footer.examInfo'), to: path('examInfo') },
+        { label: t('footer.admissionGuide'), to: path('admissionGuide') },
+        { label: t('footer.about'), to: path('about') },
+        { label: t('footer.pro'), to: path('pro'), pro: true }, // с короной
+        { label: 'Deutsch', to: '/de', lang: 'de' },
+        { label: 'English', to: '/en', lang: 'en' },
+      ],
+    },
+  ]
+}
 
 export default function Footer() {
+  const { t, path, lang } = useI18n()
+  const columns = useColumns()
   return (
     <footer className="bg-ink text-white">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10">
           <div>
-            <Link to="/" className="flex items-center gap-2.5">
+            <Link to={path('home')} className="flex items-center gap-2.5">
               {/* белая подложка — на тёмном футере тёмная «U» в логотипе иначе теряется */}
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white">
                 <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" className="h-8 w-8" />
@@ -65,7 +71,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mt-4 max-w-[30ch] text-sm leading-relaxed text-white/60">
-              Онлайн-платформа для подготовки к экзаменам в WU.
+              {t('footer.tagline')}
             </p>
             <div className="mt-5 flex items-center gap-3">
               <a
@@ -111,19 +117,22 @@ export default function Footer() {
         </div>
 
         <div className="mt-9 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/40 sm:mt-12 sm:flex-row sm:items-center sm:justify-between">
-          <span>© {new Date().getFullYear()} WU WONNA. Все права защищены.</span>
+          <span>{t('footer.rights', { year: new Date().getFullYear() })}</span>
           <div className="flex gap-4">
-            <Link to="/" className="hover:text-white/70">Политика конфиденциальности</Link>
-            <Link to="/" className="hover:text-white/70">Пользовательское соглашение</Link>
+            <Link to={path('home')} className="hover:text-white/70">{t('footer.privacy')}</Link>
+            <Link to={path('home')} className="hover:text-white/70">{t('footer.terms')}</Link>
           </div>
         </div>
 
         {/* Не выдаём себя за университет — и людям, и поисковикам */}
         <p className="mt-4 max-w-3xl text-xs leading-relaxed text-white/40">
-          {DISCLAIMER.ru}
-          <span lang="de" className="mt-1 block">
-            {DISCLAIMER.de}
-          </span>
+          {DISCLAIMER[lang]}
+          {/* На русской версии — ещё и по-немецки: её читают и в Австрии */}
+          {lang !== 'de' && (
+            <span lang="de" className="mt-1 block">
+              {DISCLAIMER.de}
+            </span>
+          )}
         </p>
       </div>
     </footer>

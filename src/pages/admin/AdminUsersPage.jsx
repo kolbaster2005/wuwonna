@@ -4,6 +4,7 @@ import { fetchUsers, setUserPlan } from '../../lib/data'
 import { isSupabaseConfigured } from '../../lib/supabaseClient'
 import { useAuth } from '../../lib/authContext'
 import { useConfirm } from '../../lib/confirmDialog'
+import { translateError } from '../../i18n/translate'
 
 function formatDate(value) {
   if (!value) return '—'
@@ -29,7 +30,7 @@ export default function AdminUsersPage() {
     fetchUsers()
       .then(setUsers)
       .catch((err) => {
-        setLoadError(err.message)
+        setLoadError(translateError('ru', err))
         setUsers([])
       })
   }, [])
@@ -51,7 +52,7 @@ export default function AdminUsersPage() {
       await setUserPlan(user.id, nextPlan)
       setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, plan: nextPlan } : u)))
     } catch (err) {
-      alert(`Не получилось изменить PRO: ${err.message}`)
+      alert(`Не получилось изменить PRO: ${translateError('ru', err)}`)
     } finally {
       setSavingId(null)
     }

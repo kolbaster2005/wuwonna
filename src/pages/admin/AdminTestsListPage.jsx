@@ -6,6 +6,7 @@ import { reportErrors } from '../../lib/reportErrors'
 import { isSupabaseConfigured } from '../../lib/supabaseClient'
 import { originalityLabel } from '../../lib/originality'
 import { useConfirm } from '../../lib/confirmDialog'
+import { translateError } from '../../i18n/translate'
 
 export default function AdminTestsListPage() {
   const confirmAction = useConfirm()
@@ -37,7 +38,7 @@ export default function AdminTestsListPage() {
     try {
       await setTestCategory(test.id, categoryId)
     } catch (err) {
-      alert(`Не получилось изменить категорию: ${err.message}`)
+      alert(`Не получилось изменить категорию: ${translateError('ru', err)}`)
       setTests((prev) => prev.map((t) => (t.id === test.id ? { ...t, category_id: previous } : t)))
     }
   }
@@ -78,7 +79,7 @@ export default function AdminTestsListPage() {
     try {
       await reorderTests(orderedIds)
     } catch (err) {
-      alert(`Не получилось сохранить порядок: ${err.message}`)
+      alert(`Не получилось сохранить порядок: ${translateError('ru', err)}`)
       reload()
     } finally {
       setSavingOrder(false)
@@ -106,7 +107,7 @@ export default function AdminTestsListPage() {
       await setTestProAccess(test.id, nextIsPro)
       setTests((prev) => prev.map((t) => (t.id === test.id ? { ...t, is_pro: nextIsPro } : t)))
     } catch (err) {
-      alert(`Не получилось изменить доступ: ${err.message}`)
+      alert(`Не получилось изменить доступ: ${translateError('ru', err)}`)
     } finally {
       setTogglingProId(null)
     }

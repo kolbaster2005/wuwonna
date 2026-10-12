@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Languages, BookmarkPlus, Highlighter, Check, StickyNote, Trash2 } from 'lucide-react'
 import { translateText } from '../data/translations'
+import { useI18n } from '../i18n'
 
 // Считает смещение (node, offset) в абсолютный индекс символа внутри
 // всего текста контейнера — работает независимо от того, сколько там уже
@@ -55,6 +56,7 @@ export default function HighlightableText({
   const popoverRef = useRef(null)
   const noteRef = useRef(null)
   const notesMode = Boolean(onCreateHighlight)
+  const { t, lang, errorText } = useI18n()
 
   // popover: { top, left, start, end, phrase } — сам жёлтый маркер (mark)
   // сюда НЕ применяется автоматически, только по кнопке «Выделить».
@@ -130,10 +132,10 @@ export default function HighlightableText({
     setTranslating(true)
     setTranslation(null)
     try {
-      const result = await translateText(popover.phrase)
+      const result = await translateText(popover.phrase, lang)
       setTranslation(result)
     } catch (err) {
-      setTranslation(err.message ?? 'Не получилось перевести — попробуй ещё раз.')
+      setTranslation(errorText(err) || t('highlight.translateFailed'))
     } finally {
       setTranslating(false)
     }
@@ -234,7 +236,7 @@ export default function HighlightableText({
                   ? `cursor-pointer ${seg.highlight.note ? 'bg-amber-300/90 underline decoration-amber-600 decoration-dotted underline-offset-2' : 'bg-amber-200/80 hover:bg-amber-300/80'}`
                   : 'bg-amber-200/80'
               }`}
-              title={notesMode ? seg.highlight.note || 'Нажми, чтобы добавить заметку' : undefined}
+              title={notesMode ? seg.highlight.note || t('highlight.addNoteHint') : undefined}
             >
               {content}
             </mark>
@@ -261,7 +263,7 @@ export default function HighlightableText({
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-ink/70 hover:bg-black/5 disabled:opacity-60"
             >
               <Languages size={15} className={translating ? 'animate-pulse' : ''} />
-              {translating ? 'Переводим…' : 'Перевести'}
+              {translating ? t('highlight.translating') : t('highlight.translate')}
             </button>
 
             {isSingleWord && onAddWordRequest && (
@@ -269,7 +271,7 @@ export default function HighlightableText({
                 onClick={handleAddToVocab}
                 className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-pine-700 hover:bg-pine-50"
               >
-                <BookmarkPlus size={15} /> Добавить в словарь
+                <BookmarkPlus size={15} /> {t('highlight.addToVocabulary')}
               </button>
             )}
 
@@ -279,7 +281,7 @@ export default function HighlightableText({
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
             >
               {highlighted ? <Check size={15} /> : <Highlighter size={15} />}
-              {highlighted ? 'Выделено' : 'Выделить'}
+              {highlighted ? t('highlight.highlighted') : t('highlight.highlight')}
             </button>
           </div>
 
@@ -305,14 +307,14 @@ export default function HighlightableText({
           className="z-50 rounded-xl border border-line bg-white p-3 shadow-lg"
         >
           <div className="flex items-center gap-1.5 text-xs font-semibold text-ink/40">
-            <StickyNote size={13} /> Заметка
+            <StickyNote size={13} /> {t('highlight.note')}
           </div>
           <textarea
             autoFocus
             value={noteEditor.draft}
             onChange={(e) => setNoteEditor((prev) => ({ ...prev, draft: e.target.value }))}
             rows={3}
-            placeholder="Что тут важно запомнить?"
+            placeholder={t('highlight.notePlaceholder')}
             className="mt-1.5 w-full rounded-lg border border-line px-2.5 py-2 text-sm focus:outline-none"
           />
           <div className="mt-2 flex items-center justify-between">
@@ -320,13 +322,13 @@ export default function HighlightableText({
               onClick={handleDeleteHighlight}
               className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
             >
-              <Trash2 size={13} /> Убрать выделение
+              <Trash2 size={13} /> {t('highlight.removeHighlight')}
             </button>
             <button
               onClick={handleSaveNote}
               className="rounded-lg bg-pine-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-pine-700"
             >
-              Сохранить
+              {t('highlight.save')}
             </button>
           </div>
         </div>

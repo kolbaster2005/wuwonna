@@ -23,13 +23,13 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function signIn(email, password) {
-    if (!isSupabaseConfigured) throw new Error('Supabase не подключен — сначала настрой .env (см. README).')
+    if (!isSupabaseConfigured) throw new Error('errors.supabaseNotConfigured')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
   }
 
   async function signUp(email, password) {
-    if (!isSupabaseConfigured) throw new Error('Supabase не подключен — сначала настрой .env (см. README).')
+    if (!isSupabaseConfigured) throw new Error('errors.supabaseNotConfigured')
     const { error } = await supabase.auth.signUp({ email, password })
     if (error) throw error
   }

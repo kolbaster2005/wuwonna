@@ -16,6 +16,7 @@ import LandingPage from './pages/LandingPage'
 import RequireAuth from './components/RequireAuth'
 import { RouteSeo } from './components/Seo'
 import { LANDINGS } from './seo/content'
+import { ENABLED_LANGS, ROUTES } from './i18n/routes'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminTestsListPage from './pages/admin/AdminTestsListPage'
 import AdminTestFormPage from './pages/admin/AdminTestFormPage'
@@ -24,6 +25,35 @@ import AdminUsersPage from './pages/admin/AdminUsersPage'
 import AdminBookPage from './pages/admin/AdminBookPage'
 import AdminBookChapterPage from './pages/admin/AdminBookChapterPage'
 import AdminBookSubchapterPage from './pages/admin/AdminBookSubchapterPage'
+
+// Страница для каждого ключа маршрута (src/i18n/routes.js). Маршруты
+// создаются на каждом языке из ROUTES — сами страницы не дублируются, язык
+// они берут из адреса (useI18n).
+//
+// Режим тренировки пока скрыт. Чтобы вернуть: импорт TrainingPage из
+// './pages/TrainingPage', маршрут /trenirovka и входы на него (кнопка на
+// «Пробниках», футер, плитка на главной, PRO).
+// Книга пока скрыта с сайта. Чтобы вернуть: импорт BookPage из
+// './pages/BookPage', маршрут /kniga и пункт в навигации Header.jsx.
+// Наполнять её можно в /admin/kniga.
+const PAGES = {
+  home: HomePage,
+  tests: PracticeTestsPage,
+  test: TestDetailPage,
+  testExam: TestTakingPage,
+  vocabulary: VocabularyPage,
+  progress: ProgressPage,
+  pro: ProPage,
+  examInfo: ExamInfoPage,
+  about: AboutPage,
+  login: LoginPage,
+}
+
+const pageRoutes = ENABLED_LANGS.flatMap((lang) =>
+  Object.entries(PAGES).map(([key, Page]) => (
+    <Route key={`${lang}:${key}`} path={ROUTES[key][lang]} element={<Page />} />
+  )),
+)
 
 export default function App() {
   return (
@@ -34,26 +64,11 @@ export default function App() {
           аватарка/«Войти» h-10 + граница), поэтому футер всегда ниже первого экрана. */}
       <div className="min-h-[calc(100svh-4.5rem-1px)] flex-1">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/probniki" element={<PracticeTestsPage />} />
-          <Route path="/probniki/:testId" element={<TestDetailPage />} />
-          <Route path="/probniki/:testId/exam" element={<TestTakingPage />} />
-          {/* Режим тренировки пока скрыт. Чтобы вернуть: импорт TrainingPage из
-              './pages/TrainingPage', маршрут <Route path="/trenirovka" element={<TrainingPage />} />
-              и входы на него (кнопка на «Пробниках», футер, плитка на главной, PRO). */}
-          <Route path="/slovar" element={<VocabularyPage />} />
-          {/* Книга пока скрыта с сайта. Чтобы вернуть: импорт BookPage из
-              './pages/BookPage', маршрут <Route path="/kniga" element={<BookPage />} />
-              и пункт в навигации Header.jsx. Наполнять её можно в /admin/kniga. */}
-          <Route path="/progress" element={<ProgressPage />} />
-          <Route path="/pro" element={<ProPage />} />
-          <Route path="/exam-info" element={<ExamInfoPage />} />
-          <Route path="/about" element={<AboutPage />} />
+          {pageRoutes}
           {/* Посадочные страницы под поисковые запросы (RU/DE/EN) — тексты в src/seo/content.js */}
           {Object.keys(LANDINGS).map((path) => (
             <Route key={path} path={path} element={<LandingPage path={path} />} />
           ))}
-          <Route path="/login" element={<LoginPage />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/admin" element={<AdminLayout />}>

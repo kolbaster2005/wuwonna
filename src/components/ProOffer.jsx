@@ -1,4 +1,6 @@
 import { Check } from 'lucide-react'
+import { useI18n } from '../i18n'
+import Trans from '../i18n/Trans'
 
 // Всё про предложение PRO в одном месте: цена, ссылка на покупку, пункты
 // "что входит" и общий декор. Используется и в PRO-модалке (ProModal.jsx),
@@ -65,17 +67,11 @@ export function Mark({ children }) {
 }
 
 // Три коротких пункта "что даёт PRO" с галочками — для модалки и страницы.
-const PERKS = [
-  <>Все PRO-пробники и материалы</>,
-  <>
-    Новые материалы — <Mark>без доплат</Mark>
-  </>,
-  <>
-    <Mark>Без подписки</Mark> и автопродлений
-  </>,
-]
+// Подсвеченная фраза в строке — **...**.
+const PERKS = ['proOffer.perkAll', 'proOffer.perkNew', 'proOffer.perkNoSubscription']
 
 export function ProPerkList({ className = '' }) {
+  const { t } = useI18n()
   return (
     <ul className={`w-fit space-y-3 text-left text-[15px] font-medium text-ink/80 ${className}`}>
       {PERKS.map((perk, i) => (
@@ -83,7 +79,9 @@ export function ProPerkList({ className = '' }) {
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
             <Check size={14} strokeWidth={3} />
           </span>
-          <span>{perk}</span>
+          <span>
+            <Trans text={t(perk)} mark={(chunk) => <Mark>{chunk}</Mark>} />
+          </span>
         </li>
       ))}
     </ul>
@@ -107,12 +105,13 @@ export function ProPriceTag() {
 // Заголовок "Полный доступ к PRO / навсегда" с плашкой и лучиками.
 // align="left" — для страницы /pro, где заголовок стоит в левой колонке.
 export function ProForeverTitle({ id, as: Tag = 'h2', align = 'center', className = '' }) {
+  const { t } = useI18n()
   return (
     <Tag id={id} className={`text-[28px] font-extrabold leading-tight tracking-tight sm:text-4xl ${className}`}>
-      Полный доступ к PRO
+      {t('proOffer.title')}
       <span className={`mt-2 flex items-center gap-2 sm:gap-3 ${align === 'left' ? 'justify-start' : 'justify-center'}`}>
         <Sparks />
-        <span className="rounded-full bg-pine-600 px-5 pb-1.5 pt-1 text-white sm:px-6">навсегда</span>
+        <span className="rounded-full bg-pine-600 px-5 pb-1.5 pt-1 text-white sm:px-6">{t('proOffer.forever')}</span>
         <Sparks mirrored />
       </span>
     </Tag>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { fetchCategories, createCategory } from '../../lib/data'
 import { isSupabaseConfigured } from '../../lib/supabaseClient'
+import { translateError } from '../../i18n/translate'
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([])
@@ -25,7 +26,7 @@ export default function AdminCategoriesPage() {
       setCategories((prev) => [...prev, created])
       setName('')
     } catch (err) {
-      setError(err.message)
+      setError(translateError('ru', err))
     } finally {
       setSaving(false)
     }

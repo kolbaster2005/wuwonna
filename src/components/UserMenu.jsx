@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Crown, LogOut, Settings, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../lib/authContext'
 import { useProModal } from '../lib/proModal'
+import { useI18n } from '../i18n'
 
 // Кружок с первой буквой почты — пока у пользователей нет своих фото.
 export function Avatar({ email, size = 'md' }) {
@@ -22,13 +23,14 @@ export function Avatar({ email, size = 'md' }) {
 // кого PRO нет).
 export function AccountInfo({ onGetPro }) {
   const { user, hasPro, isAdmin } = useAuth()
+  const { t } = useI18n()
 
   return (
     <div>
       <div className="flex items-center gap-3">
         <Avatar email={user.email} size="lg" />
         <div className="min-w-0">
-          <p className="text-xs font-semibold text-ink/40">Аккаунт</p>
+          <p className="text-xs font-semibold text-ink/40">{t('userMenu.account')}</p>
           <p className="truncate text-sm font-bold" title={user.email}>
             {user.email}
           </p>
@@ -37,13 +39,13 @@ export function AccountInfo({ onGetPro }) {
 
       <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-paper px-3.5 py-3">
         <div>
-          <p className="text-xs font-semibold text-ink/40">Тариф</p>
+          <p className="text-xs font-semibold text-ink/40">{t('userMenu.plan')}</p>
           {hasPro ? (
             <p className="mt-0.5 flex items-center gap-1.5 text-sm font-extrabold text-pine-700">
-              <Crown size={15} /> PRO <span className="font-semibold text-ink/45">· навсегда</span>
+              <Crown size={15} /> PRO <span className="font-semibold text-ink/45">{t('userMenu.forever')}</span>
             </p>
           ) : (
-            <p className="mt-0.5 text-sm font-extrabold">Базовый</p>
+            <p className="mt-0.5 text-sm font-extrabold">{t('userMenu.basic')}</p>
           )}
         </div>
         {!hasPro && (
@@ -51,14 +53,14 @@ export function AccountInfo({ onGetPro }) {
             onClick={onGetPro}
             className="flex shrink-0 items-center gap-1.5 rounded-lg bg-pine-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-pine-700"
           >
-            <Crown size={13} /> Получить PRO
+            <Crown size={13} /> {t('userMenu.getPro')}
           </button>
         )}
       </div>
 
       {isAdmin && (
         <p className="mt-3 flex items-center gap-1.5 px-1 text-xs font-semibold text-ink/50">
-          <ShieldCheck size={14} className="text-pine-700" /> Администратор
+          <ShieldCheck size={14} className="text-pine-700" /> {t('userMenu.admin')}
         </p>
       )}
     </div>
@@ -69,6 +71,7 @@ export function AccountInfo({ onGetPro }) {
 export default function UserMenu({ onSignOut }) {
   const { user, isAdmin } = useAuth()
   const { openProModal } = useProModal()
+  const { t } = useI18n()
   const location = useLocation()
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
@@ -96,7 +99,7 @@ export default function UserMenu({ onSignOut }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label="Личный кабинет"
+        aria-label={t('userMenu.open')}
         aria-expanded={open}
         title={user.email}
         className={`rounded-full ring-offset-2 ring-offset-paper transition-shadow ${
@@ -124,7 +127,7 @@ export default function UserMenu({ onSignOut }) {
                 to="/admin"
                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-semibold text-ink/75 transition-colors hover:bg-black/5"
               >
-                <Settings size={16} /> Админка
+                <Settings size={16} /> {t('userMenu.adminPanel')}
               </Link>
             )}
             <button
@@ -134,7 +137,7 @@ export default function UserMenu({ onSignOut }) {
               }}
               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
             >
-              <LogOut size={16} /> Выйти
+              <LogOut size={16} /> {t('userMenu.signOut')}
             </button>
           </div>
         </div>

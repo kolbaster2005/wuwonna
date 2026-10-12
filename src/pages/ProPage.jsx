@@ -9,70 +9,46 @@ import {
   ProPriceTag,
   Squiggle,
 } from '../components/ProOffer'
+import { useI18n } from '../i18n'
+import Trans from '../i18n/Trans'
 
-// --- Тексты страницы (меняй здесь) ---
+// Тексты страницы — в словарях (pro.*), здесь только порядок и иконки.
 
 // Что открывает PRO — только то, что реально есть на сайте.
 const FEATURES = [
-  {
-    icon: ClipboardList,
-    title: 'Все PRO-пробники',
-    text: 'Пробники с пометкой PRO открываются сразу — проходи сколько угодно раз, с разбором ответов.',
-  },
-  {
-    icon: Sparkles,
-    title: 'Новые материалы',
-    text: 'Всё, что появится на сайте с пометкой PRO позже, откроется без доплат.',
-  },
-  {
-    icon: InfinityIcon,
-    title: 'Навсегда',
-    text: 'Один платёж — без подписки, продлений и автоматических списаний.',
-  },
+  { id: 'allTests', icon: ClipboardList },
+  { id: 'newMaterials', icon: Sparkles },
+  { id: 'forever', icon: InfinityIcon },
 ]
 
-const STEPS = [
-  { title: 'Зарегистрируйся', text: 'PRO выдаётся на аккаунт — так он будет на любом устройстве.' },
-  { title: 'Напиши нам в Telegram', text: 'Укажи почту своего аккаунта — мы включим PRO после оплаты.', telegram: true },
-  { title: 'Перезайди на сайт', text: 'PRO появится после повторного входа (или сам в течение часа).' },
-]
+const STEPS = [{ id: 'register' }, { id: 'telegram', telegram: true }, { id: 'relogin' }]
 
-// Ссылка «напиши нам в Telegram» — ведёт туда же, куда и кнопки покупки.
-function TelegramLink() {
+const FAQ = ['subscription', 'forever', 'howToGet', 'account']
+
+// Ссылка «напиши нам в Telegram» (в строке словаря — **...**) — ведёт туда
+// же, куда и кнопки покупки.
+function WithTelegramLink({ text }) {
   return (
-    <a href={PRO_PURCHASE_URL} target="_blank" rel="noreferrer" className="font-semibold text-pine-700 underline hover:text-pine-800">
-      напиши нам в Telegram
-    </a>
+    <Trans
+      text={text}
+      mark={(chunk) => (
+        <a
+          href={PRO_PURCHASE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="font-semibold text-pine-700 underline hover:text-pine-800"
+        >
+          {chunk}
+        </a>
+      )}
+    />
   )
 }
-
-const FAQ = [
-  {
-    q: 'Это подписка?',
-    a: 'Нет. Платишь один раз — PRO остаётся у тебя навсегда, без продлений и автоматических списаний.',
-  },
-  {
-    q: 'Что значит «навсегда»?',
-    a: 'PRO привязан к твоему аккаунту и не истекает. Всё, что появится на сайте с пометкой PRO позже, откроется без доплат.',
-  },
-  {
-    q: 'Как получить PRO после оплаты?',
-    a: (
-      <>
-        Пока оплата проходит вручную: <TelegramLink /> и укажи почту своего аккаунта — мы включим PRO. Он появится
-        после повторного входа на сайт (или сам в течение часа).
-      </>
-    ),
-  },
-  {
-    q: 'Нужен ли аккаунт?',
-    a: 'Да — PRO выдаётся на аккаунт, поэтому сначала зарегистрируйся на сайте. Так доступ будет на любом устройстве.',
-  },
-]
 
 // --- части страницы ---
 
 function BuyButton({ className = '' }) {
+  const { t } = useI18n()
   return (
     <a
       href={PRO_PURCHASE_URL}
@@ -80,7 +56,7 @@ function BuyButton({ className = '' }) {
       rel="noreferrer"
       className={`flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-pine-600 px-6 py-4 text-sm font-bold text-white shadow-[0_10px_24px_-12px_rgba(47,122,61,0.8)] transition-colors hover:bg-pine-700 ${className}`}
     >
-      Получить PRO за {PRO_PRICE} <ArrowRight size={16} />
+      {t('pro.buy', { price: PRO_PRICE })} <ArrowRight size={16} />
     </a>
   )
 }
@@ -89,20 +65,21 @@ const cardShadow = 'shadow-pop'
 
 // Карточка с ценой справа на первом экране (или «у тебя уже PRO»).
 function PriceCard({ user, hasPro, loading, location }) {
+  const { t, path } = useI18n()
   if (!loading && hasPro) {
     return (
       <div className={`rounded-2xl border border-line bg-white p-6 text-center sm:p-8 ${cardShadow}`}>
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pine-600 text-white">
           <Crown size={26} />
         </span>
-        <p className="mt-4 text-xl font-extrabold">У тебя уже есть PRO</p>
-        <p className="mt-1 text-sm text-ink/55">навсегда — все PRO-материалы открыты</p>
+        <p className="mt-4 text-xl font-extrabold">{t('pro.alreadyTitle')}</p>
+        <p className="mt-1 text-sm text-ink/55">{t('pro.alreadyText')}</p>
         <div className="mt-6 space-y-3">
           <Link
-            to="/probniki"
+            to={path('tests')}
             className="flex items-center justify-center gap-2 rounded-2xl bg-pine-600 px-6 py-3.5 text-sm font-bold text-white hover:bg-pine-700"
           >
-            К пробникам <ArrowRight size={16} />
+            {t('pro.toTests')} <ArrowRight size={16} />
           </Link>
         </div>
       </div>
@@ -111,25 +88,26 @@ function PriceCard({ user, hasPro, loading, location }) {
 
   return (
     <div className={`rounded-2xl border border-line bg-white p-6 text-center sm:p-8 ${cardShadow}`}>
-      <p className="text-sm font-bold uppercase tracking-wide text-ink/40">Единоразово</p>
+      <p className="text-sm font-bold uppercase tracking-wide text-ink/40">{t('pro.oneTime')}</p>
       <div className="mt-3">
         <ProPriceTag />
       </div>
       <p className="mt-3 text-sm font-medium text-ink/50">
-        один платёж <span className="mx-1 text-pine-600">•</span> <Squiggle>доступ навсегда</Squiggle>
+        {t('pro.onePayment')} <span className="mx-1 text-pine-600">•</span>{' '}
+        <Squiggle>{t('proOffer.accessForever')}</Squiggle>
       </p>
       <BuyButton className="mt-7 w-full" />
       <p className="mt-3 flex items-start justify-center gap-1.5 text-xs leading-relaxed text-ink/45">
         <Send size={13} className="mt-0.5 shrink-0" />
         <span>
-          Оплата пока вручную: <TelegramLink /> — выдадим PRO на твой аккаунт.
+          <WithTelegramLink text={t('pro.manualPayment')} />
         </span>
       </p>
       {!loading && !user && (
         <p className="mt-4 border-t border-line pt-4 text-sm text-ink/55">
-          PRO выдаётся на аккаунт —{' '}
-          <Link to="/login" state={{ from: location }} className="font-semibold text-pine-700 hover:underline">
-            сначала войди или зарегистрируйся
+          {t('pro.needAccount')}{' '}
+          <Link to={path('login')} state={{ from: location }} className="font-semibold text-pine-700 hover:underline">
+            {t('pro.signInFirst')}
           </Link>
         </p>
       )}
@@ -149,6 +127,7 @@ function SectionTitle({ children, hint }) {
 export default function ProPage() {
   const { user, hasPro, loading } = useAuth()
   const location = useLocation()
+  const { t } = useI18n()
   const showSales = loading || !hasPro
 
   return (
@@ -166,7 +145,7 @@ export default function ProPage() {
             <ProForeverTitle as="h1" align="left" className="mt-5 hidden lg:block lg:text-5xl" />
             <ProForeverTitle as="h1" className="mt-5 lg:hidden" />
             <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-ink/65 lg:mx-0">
-              Один платёж — и все PRO-материалы твои <Squiggle>навсегда.</Squiggle>
+              {t('pro.lead')} <Squiggle>{t('pro.leadForever')}</Squiggle>
             </p>
             <ProPerkList className="mx-auto mt-7 lg:mx-0" />
           </div>
@@ -178,15 +157,15 @@ export default function ProPage() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* --- Что открывает PRO --- */}
         <section className="py-10 sm:py-14">
-          <SectionTitle hint="Всё, что отмечено на сайте значком PRO">Что открывает PRO</SectionTitle>
+          <SectionTitle hint={t('pro.featuresHint')}>{t('pro.featuresTitle')}</SectionTitle>
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="rounded-2xl border border-line bg-white p-6">
+            {FEATURES.map(({ id, icon: Icon }) => (
+              <div key={id} className="rounded-2xl border border-line bg-white p-6">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pine-50 text-pine-700">
                   <Icon size={22} />
                 </span>
-                <h3 className="mt-4 text-lg font-extrabold tracking-tight">{title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink/60">{text}</p>
+                <h3 className="mt-4 text-lg font-extrabold tracking-tight">{t(`pro.features.${id}.title`)}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-ink/60">{t(`pro.features.${id}.text`)}</p>
               </div>
             ))}
           </div>
@@ -195,23 +174,23 @@ export default function ProPage() {
         {/* --- Как получить --- */}
         {showSales && (
           <section className="py-10 sm:py-14">
-            <SectionTitle hint="Оплата пока проходит вручную — это займёт пару минут">Как получить PRO</SectionTitle>
+            <SectionTitle hint={t('pro.stepsHint')}>{t('pro.stepsTitle')}</SectionTitle>
             <ol className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
               {STEPS.map((step, i) => (
-                <li key={step.title} className="border-t-2 border-pine-600 pt-5">
+                <li key={step.id} className="border-t-2 border-pine-600 pt-5">
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pine-600 text-base font-extrabold text-white">
                     {i + 1}
                   </span>
                   <h3 className="mt-4 text-lg font-extrabold tracking-tight">
                     {step.telegram ? (
                       <a href={PRO_PURCHASE_URL} target="_blank" rel="noreferrer" className="hover:text-pine-700">
-                        {step.title} <ArrowRight size={16} className="inline -translate-y-px" />
+                        {t(`pro.steps.${step.id}.title`)} <ArrowRight size={16} className="inline -translate-y-px" />
                       </a>
                     ) : (
-                      step.title
+                      t(`pro.steps.${step.id}.title`)
                     )}
                   </h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink/60">{step.text}</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink/60">{t(`pro.steps.${step.id}.text`)}</p>
                 </li>
               ))}
             </ol>
@@ -220,15 +199,17 @@ export default function ProPage() {
 
         {/* --- Вопросы --- */}
         <section className="mx-auto max-w-3xl py-10 sm:py-14">
-          <SectionTitle>Частые вопросы</SectionTitle>
+          <SectionTitle>{t('pro.faqTitle')}</SectionTitle>
           <div className="mt-8 divide-y divide-line rounded-2xl border border-line bg-white">
-            {FAQ.map((item) => (
-              <details key={item.q} className="group px-5 py-4 sm:px-6">
+            {FAQ.map((id) => (
+              <details key={id} className="group px-5 py-4 sm:px-6">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold [&::-webkit-details-marker]:hidden">
-                  {item.q}
+                  {t(`pro.faq.${id}.q`)}
                   <ChevronDown size={18} className="shrink-0 text-ink/40 transition-transform group-open:rotate-180" />
                 </summary>
-                <p className="mt-2 text-sm leading-relaxed text-ink/60">{item.a}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink/60">
+                  <WithTelegramLink text={t(`pro.faq.${id}.a`)} />
+                </p>
               </details>
             ))}
           </div>

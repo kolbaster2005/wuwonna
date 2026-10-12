@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, X } from 'lucide-react'
 import { PRO_PRICE, PRO_PURCHASE_URL, ProForeverTitle, ProPerkList, ProPriceTag, Squiggle } from './ProOffer'
+import { useI18n } from '../i18n'
 
 // Сама модалка. Открывать не напрямую, а через useProModal() из lib/proModal.jsx.
 export default function ProModal({ onClose }) {
   const closeRef = useRef(null)
+  const { t, path } = useI18n()
 
   // Esc закрывает, фон под модалкой не прокручивается, фокус — на крестик
   // (чтобы с клавиатуры можно было сразу закрыть или пройти Tab'ом к кнопкам).
@@ -38,7 +40,7 @@ export default function ProModal({ onClose }) {
         <button
           ref={closeRef}
           onClick={onClose}
-          aria-label="Закрыть"
+          aria-label={t('common.close')}
           className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-line text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:right-5 sm:top-5"
         >
           <X size={20} />
@@ -52,7 +54,8 @@ export default function ProModal({ onClose }) {
           <ProPriceTag />
         </div>
         <p className="mt-3 text-sm font-medium text-ink/50">
-          Единоразовый платёж <span className="mx-1 text-pine-600">•</span> <Squiggle>доступ навсегда</Squiggle>
+          {t('proOffer.oneTimePayment')} <span className="mx-1 text-pine-600">•</span>{' '}
+          <Squiggle>{t('proOffer.accessForever')}</Squiggle>
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -63,15 +66,15 @@ export default function ProModal({ onClose }) {
             onClick={onClose}
             className="flex flex-[2] items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-pine-600 px-5 py-4 text-sm font-bold text-white shadow-[0_10px_24px_-12px_rgba(47,122,61,0.8)] transition-colors hover:bg-pine-700"
           >
-            Получить полный доступ за {PRO_PRICE} <ArrowRight size={16} />
+            {t('proOffer.buy', { price: PRO_PRICE })} <ArrowRight size={16} />
           </a>
           {/* Подробности — на странице /pro (там же вопросы и подсказка войти). */}
           <Link
-            to="/pro"
+            to={path('pro')}
             onClick={onClose}
             className="flex flex-1 items-center justify-center rounded-2xl border-2 border-pine-600 px-5 py-3.5 text-sm font-bold text-pine-700 transition-colors hover:bg-pine-50"
           >
-            Подробнее
+            {t('proOffer.more')}
           </Link>
         </div>
       </div>

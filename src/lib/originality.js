@@ -1,3 +1,5 @@
+// Подписи — для админки (она только на русском). На сайте подпись берётся из
+// словаря по значению: t(`originality.${value}`).
 export const ORIGINALITY_OPTIONS = [
   { value: 'official', label: 'Официальный' },
   { value: 'unofficial', label: 'Неофициальный' },

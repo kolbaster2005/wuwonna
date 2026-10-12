@@ -3,11 +3,16 @@
 // Ошибка дальше не пробрасывается, поэтому код после await внутри fn
 // (закрыть форму, перезагрузить список) при сбое просто не выполнится —
 // форма остаётся открытой, введённое не пропадает.
+//
+// Админка только на русском, поэтому ключи ошибок из lib/data.js
+// (errors.notAllowed…) переводим на русский.
+import { translateError } from '../i18n/translate'
+
 export async function reportErrors(action, fn) {
   try {
     return await fn()
   } catch (err) {
     console.error(`Не получилось ${action}:`, err)
-    alert(`Не получилось ${action}: ${err?.message ?? err}`)
+    alert(`Не получилось ${action}: ${translateError('ru', err)}`)
   }
 }

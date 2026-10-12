@@ -16,57 +16,50 @@ import ProLockedNotice from '../components/ProLockedNotice'
 import ResultScreen, { secondaryActionClass } from '../components/ResultScreen'
 import { useConfirm } from '../lib/confirmDialog'
 import { testIdFromParam, testPath } from '../seo/content'
+import { useI18n } from '../i18n'
 
 // Строка под результатом: сохранился ли результат и где.
 function SaveStatus({ status, isGuest }) {
-  if (status === 'saving') return 'Сохраняем результат…'
-  if (status === 'error') return 'Не получилось сохранить результат.'
+  const { t, path } = useI18n()
+  if (status === 'saving') return t('testTaking.save.saving')
+  if (status === 'error') return t('testTaking.save.error')
   if (status === 'saved') {
     return (
       <>
-        Результат сохранён —{' '}
-        <Link to="/progress" className="font-semibold text-pine-700 hover:underline">
-          смотри «Мой прогресс»
+        {t('testTaking.save.saved')}{' '}
+        <Link to={path('progress')} className="font-semibold text-pine-700 hover:underline">
+          {t('testTaking.save.seeProgress')}
         </Link>
       </>
     )
   }
   if (status === 'local') {
+    const from = { pathname: path('progress') }
     return isGuest ? (
       <div className="mx-auto mt-2 max-w-md rounded-2xl border border-pine-100 bg-pine-50 p-5 text-left text-sm">
-        <p className="text-base font-extrabold text-ink">Сохрани результат в аккаунте</p>
-        <p className="mt-1 leading-relaxed text-ink/65">
-          Сейчас он только в этом браузере. С аккаунтом прогресс по главам и словарь будут с тобой на любом
-          устройстве — всё, что уже сохранено здесь, перенесётся само.
-        </p>
+        <p className="text-base font-extrabold text-ink">{t('testTaking.save.guestTitle')}</p>
+        <p className="mt-1 leading-relaxed text-ink/65">{t('testTaking.save.guestText')}</p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-          <Link to="/login" state={{ from: { pathname: '/progress' }, mode: 'signup' }} className="btn btn-primary btn-sm px-4 py-2.5">
-            Создать аккаунт
+          <Link to={path('login')} state={{ from, mode: 'signup' }} className="btn btn-primary btn-sm px-4 py-2.5">
+            {t('testTaking.save.signUp')}
           </Link>
-          <Link to="/login" state={{ from: { pathname: '/progress' } }} className="btn btn-secondary btn-sm px-4 py-2.5">
-            У меня есть аккаунт
+          <Link to={path('login')} state={{ from }} className="btn btn-secondary btn-sm px-4 py-2.5">
+            {t('testTaking.save.haveAccount')}
           </Link>
         </div>
       </div>
     ) : (
-      'Сохранить в аккаунт пока не получилось — результат временно сохранён в этом браузере и перенесётся в аккаунт автоматически.'
+      t('testTaking.save.local')
     )
   }
   return null
 }
 
-function pluralQuestions(n) {
-  const mod10 = n % 10
-  const mod100 = n % 100
-  if (mod10 === 1 && mod100 !== 11) return 'вопрос'
-  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'вопроса'
-  return 'вопросов'
-}
-
 export default function TestTakingPage() {
   const vocabulary = useVocabulary()
   const confirmAction = useConfirm()
-  const testId = testIdFromParam(useParams().testId) // в адресе — slug или старый id
+  const { t, path, formatNumber } = useI18n()
+  const testId = testIdFromParam(useParams().slug) // в адресе — slug или старый id
   const { user, hasPro, loading: authLoading } = useAuth()
   const [test, setTest] = useState(undefined)
   const [questions, setQuestions] = useState([])
@@ -148,13 +141,13 @@ export default function TestTakingPage() {
   }, [currentStepIndex, currentAnswer])
 
   if (test === undefined || authLoading) {
-    return <main className="mx-auto max-w-6xl px-6 py-12 text-sm text-ink/40">Загружаем тест...</main>
+    return <main className="mx-auto max-w-6xl px-6 py-12 text-sm text-ink/40">{t('testTaking.loading')}</main>
   }
   if (test === null) {
     return (
       <main className="mx-auto max-w-6xl px-6 py-24 text-center">
-        <h1 className="text-2xl font-extrabold">Пробник не найден</h1>
-        <p className="mt-2 text-ink/55">Возможно, он был удалён или ссылка устарела.</p>
+        <h1 className="text-2xl font-extrabold">{t('testDetail.notFound')}</h1>
+        <p className="mt-2 text-ink/55">{t('testDetail.notFoundText')}</p>
       </main>
     )
   }
@@ -162,7 +155,7 @@ export default function TestTakingPage() {
   if (test?.is_pro && !hasPro) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
-        <Breadcrumbs items={[{ label: 'Пробники', to: '/probniki' }, { label: test.title, to: testPath(test) }]} />
+        <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test) }]} />
         <div className="mt-5 rounded-2xl border border-line bg-white p-5 sm:mt-6 sm:p-8 lg:p-10">
           <ProLockedNotice testTitle={test.title} />
         </div>
@@ -174,10 +167,10 @@ export default function TestTakingPage() {
   if (questions.length === 0) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
-        <Breadcrumbs items={[{ label: 'Пробники', to: '/probniki' }, { label: test.title, to: testPath(test) }]} />
+        <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test) }]} />
         <div className="mt-5 rounded-2xl border border-line bg-white px-5 py-16 text-center sm:mt-6">
-          <h1 className="text-xl font-extrabold">В этом пробнике пока нет вопросов</h1>
-          <p className="mt-2 text-sm text-ink/55">Загляни попозже — их скоро добавят.</p>
+          <h1 className="text-xl font-extrabold">{t('testTaking.noQuestions')}</h1>
+          <p className="mt-2 text-sm text-ink/55">{t('testTaking.noQuestionsText')}</p>
         </div>
       </main>
     )
@@ -219,10 +212,10 @@ export default function TestTakingPage() {
       if (answeredCount < questions.length) {
         const unanswered = questions.length - answeredCount
         const confirmed = await confirmAction({
-          title: 'Завершить тест?',
-          message: `Без ответа ${unanswered} ${pluralQuestions(unanswered)} из ${questions.length} — они засчитаются в 0 баллов.`,
-          confirmLabel: 'Завершить',
-          cancelLabel: 'Вернуться к вопросам',
+          title: t('testTaking.finishConfirm.title'),
+          message: t('testTaking.finishConfirm.message', { count: unanswered, total: questions.length }),
+          confirmLabel: t('testTaking.finishConfirm.confirm'),
+          cancelLabel: t('testTaking.finishConfirm.cancel'),
         })
         if (!confirmed) return
       }
@@ -280,17 +273,17 @@ export default function TestTakingPage() {
   // вкладки, иначе — к остальным пробникам этой вкладки.
   const testCategory = categories.find((c) => c.id === test.category_id)
   const backToList = {
-    to: testCategory ? `/probniki?tab=${encodeURIComponent(testCategory.slug)}` : '/probniki',
-    label: test.section?.trim() ? 'К остальным главам' : 'К остальным пробникам',
+    to: path('tests', { tab: testCategory?.slug }),
+    label: test.section?.trim() ? t('testTaking.backToChapters') : t('testTaking.backToTests'),
   }
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
       <Breadcrumbs
         items={[
-          { label: 'Пробники', to: '/probniki' },
+          { label: t('breadcrumbs.tests'), to: path('tests') },
           { label: test.title, to: testPath(test) },
-          { label: 'Выполнение' },
+          { label: t('testTaking.breadcrumb') },
         ]}
       />
 
@@ -310,7 +303,7 @@ export default function TestTakingPage() {
         <div className="flex-1 rounded-2xl border border-line bg-white p-4 sm:p-7 lg:p-8">
           {finished ? (
             <ResultScreen
-              kicker="Тест завершён"
+              kicker={t('testTaking.finished')}
               ratio={totalMax ? totalScore / totalMax : 0}
               score={Math.round(totalScore * 100) / 100}
               maxScore={totalMax}
@@ -327,7 +320,7 @@ export default function TestTakingPage() {
           ) : currentStep.type === 'intro' ? (
             <div>
               <span className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink/70">
-                Вступление · {currentStep.passage.category}
+                {t('testTaking.intro', { category: currentStep.passage.category })}
               </span>
               {currentStep.passage.title && (
                 <h2 className="mt-5 text-2xl font-extrabold tracking-tight">{currentStep.passage.title}</h2>
@@ -340,13 +333,13 @@ export default function TestTakingPage() {
                   disabled={currentStepIndex === 0}
                   className="flex items-center gap-2 rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40"
                 >
-                  <ArrowLeft size={15} /> Назад
+                  <ArrowLeft size={15} /> {t('testTaking.back')}
                 </button>
                 <button
                   onClick={handleNext}
                   className="flex items-center gap-2 rounded-xl bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700"
                 >
-                  К вопросам <ArrowRight size={15} />
+                  {t('testTaking.toQuestions')} <ArrowRight size={15} />
                 </button>
               </div>
             </div>
@@ -355,7 +348,7 @@ export default function TestTakingPage() {
               {pinnedPassage && (
                 <div className="max-h-[75vh] overflow-y-auto rounded-xl border border-line bg-paper/60 p-4 sm:p-5 xl:sticky xl:top-4 xl:self-start">
                   <div className="flex items-center gap-2 text-sm font-semibold text-ink/50">
-                    <BookOpen size={15} /> Текст для чтения
+                    <BookOpen size={15} /> {t('testTaking.readingText')}
                   </div>
                   {pinnedPassage.title && <h3 className="mt-2 text-lg font-bold">{pinnedPassage.title}</h3>}
                   <div className="mt-3">
@@ -369,28 +362,26 @@ export default function TestTakingPage() {
                       className="space-y-3 text-[15px] leading-relaxed text-ink/80"
                     />
                   </div>
-                  <p className="mt-3 text-xs text-ink/35">
-                    Выдели слово или фразу, чтобы перевести её или добавить в словарь.
-                  </p>
+                  <p className="mt-3 text-xs text-ink/35">{t('testTaking.selectHintPassage')}</p>
                 </div>
               )}
 
               <div>
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink/70">
-                    Вопрос {currentQuestionNumber} из {questions.length}
+                    {t('testTaking.questionOf', { number: currentQuestionNumber, total: questions.length })}
                   </span>
                   {completed && (
                     <button
                       onClick={() => setFinished(true)}
                       className="flex items-center gap-1.5 rounded-lg bg-pine-50 px-3 py-1.5 text-sm font-semibold text-pine-700 hover:bg-pine-100"
                     >
-                      <Eye size={15} /> Разбор · к результату
+                      <Eye size={15} /> {t('testTaking.reviewToResult')}
                     </button>
                   )}
                 </div>
 
-                <h2 className="mt-5 text-sm font-bold uppercase tracking-wide text-ink/40 sm:mt-6">Вопрос</h2>
+                <h2 className="mt-5 text-sm font-bold uppercase tracking-wide text-ink/40 sm:mt-6">{t('testTaking.question')}</h2>
                 <div className="mt-2">
                   <HighlightableText
                     text={question.prompt}
@@ -402,9 +393,7 @@ export default function TestTakingPage() {
                     className="text-lg font-semibold leading-snug"
                   />
                 </div>
-                <p className="mt-1.5 text-xs text-ink/35">
-                  Выдели слово или фразу мышкой, чтобы перевести её или добавить слово в словарь.
-                </p>
+                <p className="mt-1.5 text-xs text-ink/35">{t('testTaking.selectHint')}</p>
 
                 {question.image_url && (
                   <img
@@ -415,7 +404,8 @@ export default function TestTakingPage() {
                 )}
 
                 <h3 className="mt-5 text-sm font-bold uppercase tracking-wide text-ink/40 sm:mt-6">
-                  Варианты ответов <span className="normal-case text-ink/35">(можно выбрать несколько)</span>
+                  {t('testTaking.options')}{' '}
+                  <span className="normal-case text-ink/35">{t('testTaking.optionsMultiple')}</span>
                 </h3>
                 <div className="mt-3 space-y-3">
                   {question.options.map((opt) => {
@@ -476,7 +466,7 @@ export default function TestTakingPage() {
                     disabled={pendingSelection.length === 0}
                     className="mt-4 rounded-lg bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 disabled:opacity-40"
                   >
-                    Ответить
+                    {t('testTaking.answer')}
                   </button>
                 )}
 
@@ -484,8 +474,10 @@ export default function TestTakingPage() {
                   <div className="mt-6 flex items-start gap-3 rounded-xl bg-paper p-5">
                     <Circle size={20} className="mt-0.5 shrink-0 text-ink/35" />
                     <div className="text-sm">
-                      <p className="font-bold text-ink/70">Без ответа — 0 из {question.points ?? 1} баллов</p>
-                      <p className="mt-1 text-ink/55">Верные варианты отмечены зелёным.</p>
+                      <p className="font-bold text-ink/70">
+                        {t('testTaking.unansweredScore', { max: question.points ?? 1, count: question.points ?? 1 })}
+                      </p>
+                      <p className="mt-1 text-ink/55">{t('testTaking.correctMarked')}</p>
                       {question.explanation && (
                         <p className="mt-1 whitespace-pre-line text-ink/70">{question.explanation}</p>
                       )}
@@ -520,12 +512,12 @@ export default function TestTakingPage() {
                               : 'text-red-700'
                         }`}
                       >
-                        {currentAnswer.status === 'correct'
-                          ? 'Правильно!'
-                          : currentAnswer.status === 'partial'
-                            ? 'Частично верно'
-                            : 'Неправильно'}{' '}
-                        — {currentAnswer.score} из {currentAnswer.max} баллов
+                        {t(`testTaking.status.${currentAnswer.status}`)}{' '}
+                        {t('testTaking.answerScore', {
+                          score: formatNumber(currentAnswer.score, { maximumFractionDigits: 2 }),
+                          max: currentAnswer.max,
+                          count: currentAnswer.max,
+                        })}
                       </p>
                       {question.explanation && (
                         <p className="mt-1 whitespace-pre-line text-ink/70">{question.explanation}</p>
@@ -540,7 +532,7 @@ export default function TestTakingPage() {
                     disabled={currentStepIndex === 0}
                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:w-auto sm:justify-start"
                   >
-                    <ArrowLeft size={15} /> Назад
+                    <ArrowLeft size={15} /> {t('testTaking.back')}
                   </button>
                   <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
                     {!completed && (
@@ -548,14 +540,18 @@ export default function TestTakingPage() {
                         onClick={handleSkip}
                         className="w-full rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 sm:w-auto"
                       >
-                        Пропустить
+                        {t('testTaking.skip')}
                       </button>
                     )}
                     <button
                       onClick={handleNext}
                       className="flex w-full items-center justify-center gap-2 rounded-xl bg-pine-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:w-auto sm:justify-start"
                     >
-                      {currentStepIndex === steps.length - 1 ? (completed ? 'К результату' : 'Завершить') : 'Далее'}{' '}
+                      {currentStepIndex === steps.length - 1
+                        ? completed
+                          ? t('testTaking.toResult')
+                          : t('testTaking.finish')
+                        : t('testTaking.next')}{' '}
                       <ArrowRight size={15} />
                     </button>
                   </div>

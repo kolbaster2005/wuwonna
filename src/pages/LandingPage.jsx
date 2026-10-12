@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ExternalLink, Info } from 'lucide-react'
 import {
@@ -12,28 +11,12 @@ import {
 
 // Посадочная страница под поисковые запросы (/postuplenie-v-wu, /de, /en).
 // Тексты — в src/seo/content.js (LANDINGS): те же уходят в готовый HTML для
-// поисковиков (scripts/prerender.mjs). Заголовок и описание вкладки ставит
-// RouteSeo, здесь — только язык страницы (<html lang>).
-
-const OFFICIAL_LINK_LABEL = {
-  ru: 'Официальная страница WU о поступлении',
-  de: 'Offizielle WU-Seite zum Aufnahmeverfahren',
-  en: 'Official WU admission page',
-}
-
-const FAQ_HEADING = { ru: 'Частые вопросы', de: 'Häufige Fragen', en: 'FAQ' }
+// поисковиков (scripts/prerender.mjs). Заголовок, описание и язык страницы
+// (<html lang>) ставит RouteSeo.
 
 export default function LandingPage({ path }) {
   const landing = LANDINGS[path]
   const { lang } = landing
-
-  useEffect(() => {
-    document.documentElement.lang = lang
-    // Остальной сайт — на русском: возвращаем язык при уходе со страницы.
-    return () => {
-      document.documentElement.lang = 'ru'
-    }
-  }, [lang])
 
   // Переключатель языка — без x-default (это та же английская страница).
   const languageLinks = LANDING_ALTERNATES.filter((item) => item.lang !== 'x-default')
@@ -92,7 +75,7 @@ export default function LandingPage({ path }) {
         })}
 
         <section>
-          <h2 className="h-section">{FAQ_HEADING[lang]}</h2>
+          <h2 className="h-section">{landing.faqHeading}</h2>
           <div className="mt-3 space-y-5">
             {landing.faq.map((item) => (
               <div key={item.question}>
@@ -111,7 +94,7 @@ export default function LandingPage({ path }) {
             rel="noreferrer"
             className="mt-2 inline-flex items-center gap-1.5 font-semibold text-pine-700 underline hover:text-pine-800"
           >
-            {OFFICIAL_LINK_LABEL[lang]} <ExternalLink size={14} />
+            {landing.officialLink} <ExternalLink size={14} />
           </a>
         </section>
       </div>

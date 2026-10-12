@@ -3,38 +3,50 @@ import { createPortal } from 'react-dom'
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom'
 import { UserRound, Menu, X, ChevronRight, ChevronDown, ClipboardList, BookOpenCheck } from 'lucide-react'
 import { useAuth } from '../lib/authContext'
+import { useI18n } from '../i18n'
+import { matchRoute } from '../i18n/routes'
 import UserMenu from './UserMenu'
 
 // «О проекте» — только в футере. «Книга» и «Режим тренировки» пока скрыты с
 // сайта (маршруты отключены в App.jsx). «Админка» — в личном кабинете
 // (аватарка), только админу.
 //
-// «Подготовка» — выпадающий пункт: две вкладки страницы /probniki. tab —
+// «Подготовка» — выпадающий пункт: две вкладки страницы «Пробники». tab —
 // служебное имя категории (slug в админке); если вкладки переименуют —
 // поправить здесь и в Footer.jsx.
-const prepItems = [
-  { tab: 'probniki', label: 'Пробники', hint: 'Полные пробные экзамены', icon: ClipboardList },
-  { tab: 'основы-экономики', label: 'Основы экономики', hint: 'Тесты по главам книги', icon: BookOpenCheck },
+const PREP_ITEMS = [
+  { tab: 'probniki', label: 'header.prep.tests', hint: 'header.prep.testsHint', icon: ClipboardList },
+  { tab: 'основы-экономики', label: 'header.prep.economics', hint: 'header.prep.economicsHint', icon: BookOpenCheck },
 ]
 
-const navItems = [
-  { to: '/', label: 'Главная', end: true },
-  { group: 'Подготовка', items: prepItems },
-  { to: '/slovar', label: 'Словарь' },
-  { to: '/progress', label: 'Мой прогресс' },
-  { to: '/exam-info', label: 'Об экзамене' },
-]
-
-const prepHref = (tab) => `/probniki?tab=${encodeURIComponent(tab)}`
+// Пункты меню на языке страницы: label/hint — уже переведённые строки, to —
+// ссылка на текущем языке.
+function useNavItems() {
+  const { t, path } = useI18n()
+  const prepItems = PREP_ITEMS.map((item) => ({
+    ...item,
+    label: t(item.label),
+    hint: t(item.hint),
+    to: path('tests', { tab: item.tab }),
+  }))
+  return [
+    { to: path('home'), label: t('header.nav.home'), end: true },
+    { group: t('header.nav.prep'), items: prepItems },
+    { to: path('vocabulary'), label: t('header.nav.vocabulary') },
+    { to: path('progress'), label: t('header.nav.progress') },
+    { to: path('examInfo'), label: t('header.nav.examInfo') },
+  ]
+}
 
 // Какая вкладка «Подготовки» сейчас открыта: по ?tab=, без него — первая.
-// На странице отдельного пробника (/probniki/<id>) ни одна не выделена, но
-// сам пункт «Подготовка» подсвечен.
+// На странице отдельного пробника ни одна не выделена, но сам пункт
+// «Подготовка» подсвечен.
 function usePrepState() {
   const { pathname, search } = useLocation()
-  const inPrep = pathname.startsWith('/probniki')
-  const onList = pathname === '/probniki'
-  const tab = new URLSearchParams(search).get('tab') ?? prepItems[0].tab
+  const key = matchRoute(pathname)?.key
+  const inPrep = key === 'tests' || key === 'test' || key === 'testExam'
+  const onList = key === 'tests'
+  const tab = new URLSearchParams(search).get('tab') ?? PREP_ITEMS[0].tab
   return { inPrep, activeTab: onList ? tab : null }
 }
 
@@ -84,12 +96,12 @@ function NavGroup({ label, items }) {
 
       {open && (
         <div className="absolute left-1/2 top-full z-40 mt-3 w-64 -translate-x-1/2 rounded-2xl border border-line bg-white p-1.5 shadow-pop">
-          {items.map(({ tab, label: itemLabel, hint, icon: Icon }) => {
+          {items.map(({ tab, to, label: itemLabel, hint, icon: Icon }) => {
             const active = activeTab === tab
             return (
               <Link
                 key={tab}
-                to={prepHref(tab)}
+                to={to}
                 className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${
                   active ? 'bg-pine-50' : 'hover:bg-black/[0.04]'
                 }`}
@@ -131,8 +143,9 @@ function NavItem({ to, label, end, alsoActiveOn }) {
 }
 
 function Logo() {
+  const { path } = useI18n()
   return (
-    <Link to="/" className="flex shrink-0 items-center gap-2.5 justify-self-start">
+    <Link to={path('home')} className="flex shrink-0 items-center gap-2.5 justify-self-start">
       <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" className="h-9 w-9 sm:h-10 sm:w-10" />
       <span className="text-lg font-extrabold tracking-tight sm:text-xl">
         WU <span className="text-pine-600">WONNA</span>
@@ -166,12 +179,12 @@ function MobilePrepGroup({ label, items, onClose }) {
   return (
     <div className="py-1">
       <p className="eyebrow px-4 pb-1 pt-2">{label}</p>
-      {items.map(({ tab, label: itemLabel, icon: Icon }) => {
+      {items.map(({ tab, to, label: itemLabel, icon: Icon }) => {
         const active = activeTab === tab
         return (
           <Link
             key={tab}
-            to={prepHref(tab)}
+            to={to}
             onClick={onClose}
             className={`flex items-center justify-between rounded-2xl px-4 py-4 text-xl font-extrabold tracking-tight transition-colors ${
               active ? 'bg-pine-50 text-pine-700' : 'text-ink hover:bg-black/5'
@@ -192,6 +205,8 @@ function MobilePrepGroup({ label, items, onClose }) {
 // у шапки есть backdrop-blur, а он делает её "контейнером" для fixed-элементов —
 // без портала меню растянулось бы только на высоту шапки.
 function MobileMenu({ onClose }) {
+  const { t } = useI18n()
+  const navItems = useNavItems()
   useEffect(() => {
     function onKeyDown(e) {
       if (e.key === 'Escape') onClose()
@@ -206,13 +221,13 @@ function MobileMenu({ onClose }) {
   }, [onClose])
 
   return createPortal(
-    <div role="dialog" aria-modal="true" aria-label="Меню" className="fixed inset-0 z-50 flex flex-col bg-paper lg:hidden">
+    <div role="dialog" aria-modal="true" aria-label={t('header.menu')} className="fixed inset-0 z-50 flex flex-col bg-paper lg:hidden">
       <div className="flex items-center justify-between border-b border-line px-4 py-4">
         <Logo />
         <button
           onClick={onClose}
           className="flex h-10 w-10 items-center justify-center rounded-lg border border-line text-ink"
-          aria-label="Закрыть меню"
+          aria-label={t('header.closeMenu')}
         >
           <X size={20} />
         </button>
@@ -235,6 +250,8 @@ function MobileMenu({ onClose }) {
 
 export default function Header() {
   const { user, signOut } = useAuth()
+  const { t, path } = useI18n()
+  const navItems = useNavItems()
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -243,7 +260,7 @@ export default function Header() {
 
   async function handleSignOut() {
     await signOut()
-    navigate('/')
+    navigate(path('home'))
   }
 
   return (
@@ -271,18 +288,18 @@ export default function Header() {
             <UserMenu onSignOut={handleSignOut} />
           ) : (
             <Link
-              to="/login"
+              to={path('login')}
               className="flex h-10 shrink-0 items-center gap-2 rounded-2xl border border-line bg-white px-3.5 text-sm font-semibold text-ink shadow-[0_4px_14px_-8px_rgba(20,23,26,0.25)] transition-colors hover:border-ink/30 sm:px-5"
             >
               <UserRound size={16} strokeWidth={2.25} />
-              Войти
+              {t('header.login')}
             </Link>
           )}
 
           <button
             onClick={() => setMobileOpen(true)}
             className="flex h-10 w-10 items-center justify-center rounded-lg border border-line text-ink lg:hidden"
-            aria-label="Открыть меню"
+            aria-label={t('header.openMenu')}
           >
             <Menu size={20} />
           </button>

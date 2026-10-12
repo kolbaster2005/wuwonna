@@ -19,6 +19,7 @@ import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
 import PageHeader from '../components/PageHeader'
 import GuestSaveBanner from '../components/GuestSaveBanner'
+import { useI18n } from '../i18n'
 
 // --- форматирование ---
 
@@ -26,29 +27,16 @@ function percent(ratio) {
   return `${Math.round(ratio * 100)}%`
 }
 
-function plural(n, one, few, many) {
-  const mod10 = n % 10
-  const mod100 = n % 100
-  if (mod10 === 1 && mod100 !== 11) return one
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few
-  return many
-}
-
-function formatStudyTime(totalSeconds) {
+function formatStudyTime(t, totalSeconds) {
   const minutes = Math.round(totalSeconds / 60)
-  if (minutes < 60) return `${minutes} мин`
+  if (minutes < 60) return t('common.minutes', { count: minutes })
   const h = Math.floor(minutes / 60)
   const m = minutes % 60
-  return m ? `${h} ч ${m} мин` : `${h} ч`
+  return m ? t('progress.hoursMinutes', { hours: h, minutes: m }) : t('progress.hours', { hours: h })
 }
 
-function formatDate(value) {
-  return new Date(value).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
-}
-
-function formatScore(value) {
-  return Math.round(Number(value) * 100) / 100
-}
+const DATE = { day: 'numeric', month: 'long' }
+const SCORE = { maximumFractionDigits: 2 }
 
 // --- мелкие части ---
 
@@ -91,6 +79,7 @@ function Card({ title, icon: Icon, children }) {
 }
 
 function ChapterCard({ chapter, expanded, onToggle }) {
+  const { t, formatDate } = useI18n()
   return (
     <div className="rounded-2xl border border-line bg-white">
       <button onClick={onToggle} aria-expanded={expanded} className="w-full px-5 py-4 text-left">
@@ -105,7 +94,7 @@ function ChapterCard({ chapter, expanded, onToggle }) {
           <Meter ratio={chapter.ratio} />
         </div>
         <p className="mt-2 text-sm text-ink/50">
-          Пройдено {chapter.done} из {chapter.total} {plural(chapter.total, 'теста', 'тестов', 'тестов')}
+          {t('progress.chapterDone', { done: chapter.done, count: chapter.total })}
         </p>
       </button>
 
@@ -117,8 +106,8 @@ function ChapterCard({ chapter, expanded, onToggle }) {
                 <p className="truncate text-sm font-bold">{test.title}</p>
                 <p className="mt-0.5 text-xs text-ink/45">
                   {attempts > 0
-                    ? `${attempts} ${plural(attempts, 'попытка', 'попытки', 'попыток')} · последняя ${formatDate(last.completed_at)}`
-                    : 'Ещё не проходил'}
+                    ? t('progress.attempts', { count: attempts, date: formatDate(last.completed_at, DATE) })
+                    : t('progress.notTaken')}
                 </p>
               </div>
               <div className="flex items-center gap-3 sm:w-64">
@@ -130,7 +119,7 @@ function ChapterCard({ chapter, expanded, onToggle }) {
                   to={testPath(test)}
                   className="shrink-0 rounded-lg border border-line px-2.5 py-1.5 text-xs font-bold text-ink/70 hover:border-ink/30"
                 >
-                  {attempts > 0 ? 'Ещё раз' : 'Пройти'}
+                  {attempts > 0 ? t('progress.again') : t('progress.take')}
                 </Link>
               </div>
             </li>
@@ -147,6 +136,7 @@ export default function ProgressPage() {
   const [attempts, setAttempts] = useState([])
   const [expanded, setExpanded] = useState(() => new Set())
   const vocabularyCount = useVocabulary().entries.length
+  const { t, path, formatDate, formatNumber } = useI18n()
 
   useEffect(() => {
     if (authLoading) return
@@ -171,7 +161,7 @@ export default function ProgressPage() {
   }
 
   if (tests === null) {
-    return <main className="page text-sm text-ink/40">Загружаем прогресс…</main>
+    return <main className="page text-sm text-ink/40">{t('progress.loading')}</main>
   }
 
   const stats = summary(tests, attempts)
@@ -183,11 +173,11 @@ export default function ProgressPage() {
 
   return (
     <main className="page">
-      <PageHeader icon={TrendingUp} title="Мой прогресс" subtitle="Как продвигается подготовка — по главам и тестам" />
+      <PageHeader icon={TrendingUp} title={t('progress.title')} subtitle={t('progress.subtitle')} />
 
       {(!isSupabaseConfigured || !user) && (
         <GuestSaveBanner className="-mt-2 mb-8">
-          Прогресс сохраняется только в этом браузере — войди, чтобы он был в аккаунте и на любом устройстве.
+          {t('progress.guestBanner')}
         </GuestSaveBanner>
       )}
 
@@ -195,22 +185,27 @@ export default function ProgressPage() {
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatTile
           icon={ListChecks}
-          label="Пройдено тестов"
+          label={t('progress.stats.taken')}
           value={stats.testsTaken}
-          hint={`из ${stats.testsTotal}`}
+          hint={t('progress.stats.takenOf', { total: stats.testsTotal })}
         />
         <StatTile
           icon={Target}
-          label="Средний результат"
+          label={t('progress.stats.average')}
           value={stats.averageBest === null ? '—' : percent(stats.averageBest)}
-          hint="по лучшей попытке"
+          hint={t('progress.stats.averageHint')}
         />
-        <StatTile icon={Clock} label="Время подготовки" value={formatStudyTime(stats.totalSeconds)} hint="по таймеру тестов" />
+        <StatTile
+          icon={Clock}
+          label={t('progress.stats.time')}
+          value={formatStudyTime(t, stats.totalSeconds)}
+          hint={t('progress.stats.timeHint')}
+        />
         <StatTile
           icon={Flame}
-          label="Дней подряд"
+          label={t('progress.stats.streak')}
           value={stats.streak}
-          hint={stats.streak > 0 ? 'не прерывай серию' : 'пройди тест сегодня'}
+          hint={stats.streak > 0 ? t('progress.stats.streakKeep') : t('progress.stats.streakStart')}
         />
       </div>
 
@@ -218,12 +213,12 @@ export default function ProgressPage() {
         {/* --- Прогресс по главам --- */}
         <div className="lg:col-span-2">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="text-xl font-extrabold tracking-tight">Прогресс по главам</h2>
-            <p className="text-xs text-ink/45">по лучшему результату каждой подглавы</p>
+            <h2 className="text-xl font-extrabold tracking-tight">{t('progress.chapters')}</h2>
+            <p className="text-xs text-ink/45">{t('progress.chaptersHint')}</p>
           </div>
           {chapters.length === 0 ? (
             <p className="mt-4 rounded-2xl border border-dashed border-line py-12 text-center text-sm text-ink/50">
-              Главы пока не размечены.
+              {t('progress.noChapters')}
             </p>
           ) : (
             <div className="mt-4 space-y-3">
@@ -241,52 +236,60 @@ export default function ProgressPage() {
 
         <div className="space-y-6">
           {/* --- Последний тест --- */}
-          <Card title="Последний тест" icon={RotateCcw}>
+          <Card title={t('progress.lastTest')} icon={RotateCcw}>
             {last && lastTest ? (
               <>
                 <p className="font-bold">{lastTest.title}</p>
-                <p className="mt-0.5 text-xs text-ink/45">{formatDate(last.completed_at)}</p>
+                <p className="mt-0.5 text-xs text-ink/45">{formatDate(last.completed_at, DATE)}</p>
                 <div className="mt-4 flex items-baseline justify-between">
                   <span className="text-3xl font-extrabold tracking-tight">{percent(attemptRatio(last))}</span>
                   <span className="text-sm text-ink/50">
-                    {formatScore(last.score)} из {formatScore(last.max_score)} баллов
+                    {t('result.score', {
+                      score: formatNumber(Number(last.score), SCORE),
+                      max: formatNumber(Number(last.max_score), SCORE),
+                      count: Number(last.max_score),
+                    })}
                   </span>
                 </div>
                 <div className="mt-2">
                   <Meter ratio={attemptRatio(last)} />
                 </div>
                 {last.duration_seconds > 0 && (
-                  <p className="mt-2 text-xs text-ink/45">Время: {formatStudyTime(last.duration_seconds)}</p>
+                  <p className="mt-2 text-xs text-ink/45">
+                    {t('progress.duration', { time: formatStudyTime(t, last.duration_seconds) })}
+                  </p>
                 )}
                 <Link
                   to={`${testPath(lastTest)}/exam`}
                   className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
                 >
-                  <RotateCcw size={15} /> Пройти ещё раз
+                  <RotateCcw size={15} /> {t('testCard.retake')}
                 </Link>
               </>
             ) : (
-              <p className="text-sm text-ink/50">Здесь появится результат, как только завершишь первый тест.</p>
+              <p className="text-sm text-ink/50">{t('progress.lastTestEmpty')}</p>
             )}
           </Card>
 
           {/* --- Что дальше --- */}
           {next && (
-            <Card title="Что дальше" icon={ArrowRight}>
-              <p className="text-sm text-ink/55">{next.section ? `${next.section} · следующий по порядку` : 'Следующий по порядку'}</p>
+            <Card title={t('progress.whatNext')} icon={ArrowRight}>
+              <p className="text-sm text-ink/55">
+                {next.section ? t('progress.nextInSection', { section: next.section }) : t('progress.nextInOrder')}
+              </p>
               <p className="mt-1 font-bold">{next.title}</p>
               <Link
                 to={testPath(next)}
                 className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-pine-600 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
               >
-                Начать <ArrowRight size={15} />
+                {t('dashboard.start')} <ArrowRight size={15} />
               </Link>
             </Card>
           )}
 
           {/* --- Стоит повторить --- */}
           {weakest.length > 0 && (
-            <Card title="Стоит повторить" icon={Target}>
+            <Card title={t('progress.repeat')} icon={Target}>
               <ul className="space-y-3">
                 {weakest.map(({ test, best }) => (
                   <li key={test.id}>
@@ -306,14 +309,14 @@ export default function ProgressPage() {
           )}
 
           {/* --- Словарь --- */}
-          <Card title="Словарь" icon={BookOpen}>
+          <Card title={t('progress.vocabulary')} icon={BookOpen}>
             <div className="flex items-center justify-between gap-3">
               <p>
                 <span className="text-3xl font-extrabold tracking-tight">{vocabularyCount}</span>{' '}
-                <span className="text-sm text-ink/50">{plural(vocabularyCount, 'слово', 'слова', 'слов')}</span>
+                <span className="text-sm text-ink/50">{t('progress.wordsLabel', { count: vocabularyCount })}</span>
               </p>
-              <Link to="/slovar" className="text-sm font-bold text-pine-700 hover:text-pine-800">
-                Открыть →
+              <Link to={path('vocabulary')} className="text-sm font-bold text-pine-700 hover:text-pine-800">
+                {t('progress.open')}
               </Link>
             </div>
           </Card>

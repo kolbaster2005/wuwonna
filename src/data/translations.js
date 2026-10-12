@@ -32,13 +32,16 @@ function detectSourceLang(text) {
   return 'de'
 }
 
-export async function translateText(phrase) {
-  const cached = glossary[cleanKey(phrase)]
+// Переводим на язык интерфейса (uiLang). Если фрагмент уже на нём — на
+// английский (немецкий интерфейс: немецкий текст -> английский).
+// Ошибки — ключами словаря (errors.translate*), текст подставляет компонент.
+export async function translateText(phrase, uiLang = 'ru') {
+  // Глоссарий — русские пояснения, поэтому только для русского интерфейса.
+  const cached = uiLang === 'ru' ? glossary[cleanKey(phrase)] : null
   if (cached) return cached
 
   const source = detectSourceLang(phrase)
-  const target = source === 'ru' ? 'en' : 'ru'
-  if (source === target) return 'Текст уже на этом языке.'
+  const target = source === uiLang ? 'en' : uiLang
 
   const url = `${MYMEMORY_URL}?q=${encodeURIComponent(phrase)}&langpair=${source}|${target}`
 
@@ -46,16 +49,16 @@ export async function translateText(phrase) {
   try {
     response = await fetch(url)
   } catch {
-    throw new Error('Не получилось связаться с сервисом перевода — проверь интернет-соединение.')
+    throw new Error('errors.translateNetwork')
   }
   if (!response.ok) {
-    throw new Error('Сервис перевода сейчас недоступен, попробуй чуть позже.')
+    throw new Error('errors.translateUnavailable')
   }
 
   const data = await response.json()
   const translated = data?.responseData?.translatedText
   if (!translated || data?.responseStatus === 403) {
-    throw new Error('Не получилось перевести этот фрагмент — попробуй выделить его чуть иначе.')
+    throw new Error('errors.translateFailed')
   }
   return translated
 }

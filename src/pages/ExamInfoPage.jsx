@@ -19,22 +19,27 @@ import {
 import RichText from '../components/RichText'
 import PageHeader from '../components/PageHeader'
 import Tabs from '../components/Tabs'
-import { EXAM_FAQ, EXAM_PARTS, EXAM_STATS_2026, REGISTRATION_STEPS } from '../seo/content'
+import {
+  EXAM_FAQ,
+  EXAM_INFO,
+  EXAM_PARTS,
+  EXAM_STATS_2026,
+  OFFICIAL_WU_URL,
+  REGISTRATION_STEPS,
+  SITE,
+  inLang,
+} from '../seo/content'
+import { useI18n } from '../i18n'
 
-const TABS = [
-  { id: 'general', label: 'Общая информация' },
-  { id: 'stats', label: 'Статистика и проходной балл 2026' },
-  { id: 'registration', label: 'Процесс регистрации' },
-  { id: 'materials', label: 'Полезные материалы' },
-]
+// Все тексты страницы — в src/seo/content.js (EXAM_INFO, EXAM_PARTS,
+// REGISTRATION_STEPS, EXAM_FAQ): они же уходят в готовый HTML для поисковиков.
 
-const OFFICIAL_WU_URL =
-  'https://www.wu.ac.at/studium/bachelor/wirtschafts-und-sozialwissenschaften/ueberblick/aufnahmeverfahren'
+const TAB_IDS = ['general', 'stats', 'registration', 'materials']
 
 const STATS_SOURCE_URL =
   'https://www.wu.ac.at/universitaet/news-und-events/news/details-news/detail/rekord-registrierungszahlen-fuer-wu-bachelorstudien'
 
-function OfficialWuLink({ children = 'официальном сайте WU' }) {
+function OfficialWuLink({ children }) {
   return (
     <a
       href={OFFICIAL_WU_URL}
@@ -47,72 +52,66 @@ function OfficialWuLink({ children = 'официальном сайте WU' }) {
   )
 }
 
-function RegistrationInfo() {
+// Строка из content.js: **жирный** и [ссылка на официальный сайт WU].
+function ContentText({ text }) {
+  return text
+    .split(/(\*\*[^*]+\*\*|\[[^\]]+\])/)
+    .filter(Boolean)
+    .map((part, i) => {
+      if (part.startsWith('**')) return <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>
+      if (part.startsWith('[')) return <OfficialWuLink key={i}>{part.slice(1, -1)}</OfficialWuLink>
+      return part
+    })
+}
+
+function RegistrationInfo({ info }) {
   return (
     <div className="mt-3 space-y-3 leading-relaxed text-ink/75">
-      <p>
-        Подробнее о процессе регистрации на экзамен можно узнать на <OfficialWuLink />.
-      </p>
-      <p>
-        На момент 2026 года сервисный сбор за участие в экзамене составляет <strong className="font-semibold">50 €</strong>.
-      </p>
-      <p>Сервисный сбор не возвращается, даже если участник не сдаёт экзамен.</p>
+      {info.registration.map((paragraph) => (
+        <p key={paragraph}>
+          <ContentText text={paragraph} />
+        </p>
+      ))}
     </div>
   )
 }
 
-// Тексты частей экзамена, цифры и частые вопросы — в src/seo/content.js:
-// они же уходят в готовый HTML для поисковиков.
+const FACT_ICONS = [Clock, ListChecks, CheckSquare]
 
-function GeneralTab() {
+function GeneralTab({ lang, info }) {
   return (
     <div>
       <section>
-        <h2 className="text-lg font-extrabold">Краткая информация</h2>
+        <h2 className="text-lg font-extrabold">{info.summaryHeading}</h2>
         <ul className="mt-4 space-y-3">
-          <li className="flex items-center gap-3 text-sm text-ink/75">
-            <Clock size={17} className="shrink-0 text-pine-600" />
-            Продолжительность экзамена: <strong className="font-semibold">2 часа</strong>
-          </li>
-          <li className="flex items-start gap-3 text-sm text-ink/75">
-            <ListChecks size={17} className="mt-0.5 shrink-0 text-pine-600" />
-            <span>
-              Экзамен WISO состоит из трёх частей: понимание основ экономики, чтение немецкого текста и математика.
-            </span>
-          </li>
-          <li className="flex items-start gap-3 text-sm text-ink/75">
-            <CheckSquare size={17} className="mt-0.5 shrink-0 text-pine-600" />
-            <span>
-              Все задания представлены в формате <strong className="font-semibold">Multiple Choice</strong> — нужно
-              выбрать правильный вариант или варианты ответа из предложенных.
-            </span>
-          </li>
+          {info.facts.map((fact, i) => {
+            const Icon = FACT_ICONS[i] ?? CheckSquare
+            return (
+              <li key={fact} className="flex items-start gap-3 text-sm text-ink/75">
+                <Icon size={17} className="mt-0.5 shrink-0 text-pine-600" />
+                <span>
+                  <ContentText text={fact} />
+                </span>
+              </li>
+            )
+          })}
         </ul>
       </section>
 
       <section className="mt-8 sm:mt-10">
-        <h2 className="text-lg font-extrabold">Как проходит экзамен</h2>
-        <RichText
-          text={`Экзамен WISO проводится один раз в год в очном формате. Дату проведения самостоятельно выбрать нельзя.
-
-Все участники экзамена собираются в большом экзаменационном центре. Каждый студент работает за отдельной партой.
-
-С собой на экзамен разрешается взять калькулятор и письменные принадлежности. Все необходимые материалы для выполнения заданий выдаются непосредственно на месте проведения экзамена. На случай необходимости на столе также будет предоставлена ручка.
-
-Экзамен длится 2 часа без перерыва.`}
-          className="mt-3 leading-relaxed text-ink/75"
-        />
+        <h2 className="text-lg font-extrabold">{info.howItGoesHeading}</h2>
+        <RichText text={info.howItGoes} className="mt-3 leading-relaxed text-ink/75" />
       </section>
 
       <section className="mt-8 sm:mt-10">
-        <h2 className="text-lg font-extrabold">Регистрация и стоимость</h2>
-        <RegistrationInfo />
+        <h2 className="text-lg font-extrabold">{info.registrationHeading}</h2>
+        <RegistrationInfo info={info} />
       </section>
 
       <section className="mt-8 sm:mt-10">
-        <h2 className="text-lg font-extrabold">Части экзамена</h2>
+        <h2 className="text-lg font-extrabold">{info.partsHeading}</h2>
         <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-4">
-          {EXAM_PARTS.map((part) => (
+          {inLang(EXAM_PARTS, lang).map((part) => (
             <div key={part.number} className="rounded-2xl border border-line bg-white p-4 sm:p-5">
               <span className="text-xs font-bold text-pine-600">{part.number}</span>
               <h3 className="mt-1 text-base font-extrabold leading-snug">{part.title}</h3>
@@ -123,9 +122,9 @@ function GeneralTab() {
       </section>
 
       <section className="mt-8 max-w-3xl sm:mt-10">
-        <h2 className="text-lg font-extrabold">Частые вопросы</h2>
+        <h2 className="text-lg font-extrabold">{info.faqHeading}</h2>
         <div className="mt-4 divide-y divide-line rounded-2xl border border-line bg-white">
-          {EXAM_FAQ.map(({ question, answer }) => (
+          {inLang(EXAM_FAQ, lang).map(({ question, answer }) => (
             <details key={question} className="group px-5 py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold">
                 {question}
@@ -140,16 +139,15 @@ function GeneralTab() {
   )
 }
 
-function StatsTab() {
-  const stats = [
-    { label: 'Примерный проходной балл', value: EXAM_STATS_2026.passingScore },
-    { label: 'Кол-во мест', value: EXAM_STATS_2026.places },
-    { label: 'Кол-во сдающих', value: EXAM_STATS_2026.participants },
-  ]
+function StatsTab({ info }) {
+  const stats = ['passingScore', 'places', 'participants'].map((id) => ({
+    label: info.stats[id],
+    value: EXAM_STATS_2026[id],
+  }))
 
   return (
     <div>
-      <h2 className="h-section">Статистика и проходной балл 2026 года</h2>
+      <h2 className="h-section">{info.statsHeading}</h2>
       <div className="card mt-6 grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {stats.map((s) => (
           <div key={s.label} className="px-6 py-6">
@@ -159,7 +157,7 @@ function StatsTab() {
         ))}
       </div>
       <p className="mt-4 text-xs text-ink/40">
-        Источник:{' '}
+        {info.source}{' '}
         <a href={STATS_SOURCE_URL} target="_blank" rel="noreferrer" className="underline hover:text-ink/60">
           wu.ac.at — Rekord-Registrierungszahlen für WU-Bachelorstudien
         </a>
@@ -168,28 +166,29 @@ function StatsTab() {
   )
 }
 
+// Подпись ссылки — EXAM_INFO[lang].links[id].
 const usefulLinks = [
-  { title: 'Официальный сайт WU', href: OFFICIAL_WU_URL, icon: Globe2 },
+  { id: 'official', href: OFFICIAL_WU_URL, icon: Globe2 },
   {
-    title: 'Презентация о том, как считаются баллы за ответы',
+    id: 'scoring',
     href: 'https://www.wu.ac.at/fileadmin/wu/h/programs/bachelor/wiso/Teilpunktesystem_WISO.pdf',
     icon: Presentation,
   },
   // Книга пока скрыта с сайта — ссылку вернуть вместе с маршрутом /kniga (App.jsx):
-  // { title: 'Официальная книга по подготовке', href: '/kniga', icon: BookOpen }, (BookOpen — из lucide-react)
+  // { id: 'book', href: '/kniga', icon: BookOpen }, (BookOpen — из lucide-react)
 ]
 
 const socialLinks = [
-  { title: 'YouTube-канал WU WONNA', href: 'https://www.youtube.com/@wuwonna', icon: MonitorPlay },
-  { title: 'Telegram-канал WU WONNA', href: 'https://t.me/wuwonna', icon: Send },
+  { id: 'youtube', href: SITE.youtube, icon: MonitorPlay },
+  { id: 'telegram', href: SITE.telegram, icon: Send },
 ]
 
 // Список внешних ссылок карточками — открываются в новой вкладке.
-function LinkList({ links }) {
+function LinkList({ links, info }) {
   return (
     <ul className="mt-6 max-w-2xl space-y-3">
       {links.map((link) => (
-        <li key={link.title}>
+        <li key={link.id}>
           <a
             href={link.href}
             target="_blank"
@@ -197,7 +196,7 @@ function LinkList({ links }) {
             className="card flex items-center gap-3 p-4 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
           >
             <link.icon size={17} className="shrink-0 text-pine-600" />
-            {link.title}
+            {info.links[link.id]}
             <ExternalLink size={14} className="ml-auto shrink-0 text-ink/30" />
           </a>
         </li>
@@ -206,16 +205,16 @@ function LinkList({ links }) {
   )
 }
 
-function MaterialsTab() {
+function MaterialsTab({ info }) {
   return (
     <div className="space-y-10">
       <section>
-        <h2 className="h-section">Полезные материалы</h2>
-        <LinkList links={usefulLinks} />
+        <h2 className="h-section">{info.materialsHeading}</h2>
+        <LinkList links={usefulLinks} info={info} />
       </section>
       <section>
-        <h2 className="h-section">Соцсети</h2>
-        <LinkList links={socialLinks} />
+        <h2 className="h-section">{info.socialHeading}</h2>
+        <LinkList links={socialLinks} info={info} />
       </section>
     </div>
   )
@@ -224,18 +223,19 @@ function MaterialsTab() {
 // Иконки шагов — по порядку REGISTRATION_STEPS (тексты в src/seo/content.js).
 const STEP_ICONS = [UserPlus, ClipboardCheck, CreditCard, CalendarDays, Mail]
 
-function RegistrationTab() {
+function RegistrationTab({ lang, info }) {
+  const steps = inLang(REGISTRATION_STEPS, lang)
   return (
     <div className="max-w-3xl">
-      <h2 className="h-section">Процесс регистрации</h2>
+      <h2 className="h-section">{info.tabs.registration}</h2>
       <p className="mt-2 text-ink/60">
-        Кратко по шагам на 2026 год. Подробности — на <OfficialWuLink />.
+        <ContentText text={info.registrationIntro} />
       </p>
 
       <ol className="mt-8">
-        {REGISTRATION_STEPS.map(({ title, points }, i) => {
+        {steps.map(({ title, points }, i) => {
           const Icon = STEP_ICONS[i]
-          const isLast = i === REGISTRATION_STEPS.length - 1
+          const isLast = i === steps.length - 1
           return (
             <li key={title} className="relative flex gap-4 pb-8 last:pb-0 sm:gap-5">
               {/* вертикальная линия между шагами */}
@@ -244,7 +244,7 @@ function RegistrationTab() {
                 <Icon size={19} />
               </span>
               <div className="min-w-0 pt-0.5">
-                <p className="eyebrow text-pine-700">Шаг {i + 1}</p>
+                <p className="eyebrow text-pine-700">{info.step.replace('{number}', i + 1)}</p>
                 <h3 className="mt-0.5 text-lg font-extrabold">{title}</h3>
                 <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-ink/70">
                   {points.map((point) => (
@@ -265,14 +265,16 @@ function RegistrationTab() {
 
 export default function ExamInfoPage() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const activeTab = TABS.some((t) => t.id === searchParams.get('tab')) ? searchParams.get('tab') : 'general'
+  const { lang } = useI18n()
+  const info = inLang(EXAM_INFO, lang)
+  const activeTab = TAB_IDS.includes(searchParams.get('tab')) ? searchParams.get('tab') : 'general'
 
   return (
     <main className="page">
-      <PageHeader icon={Info} title="Об экзамене" subtitle="Как устроен вступительный экзамен WU и как на него зарегистрироваться">
+      <PageHeader icon={Info} title={info.title} subtitle={info.subtitle}>
         <Tabs
           className="mt-6"
-          items={TABS}
+          items={TAB_IDS.map((id) => ({ id, label: info.tabs[id] }))}
           value={activeTab}
           onChange={(id) => setSearchParams(id === 'general' ? {} : { tab: id })}
         />
@@ -281,12 +283,12 @@ export default function ExamInfoPage() {
       <div>
         {activeTab === 'general' && (
           <div className="max-w-4xl">
-            <GeneralTab />
+            <GeneralTab lang={lang} info={info} />
           </div>
         )}
-        {activeTab === 'stats' && <StatsTab />}
-        {activeTab === 'materials' && <MaterialsTab />}
-        {activeTab === 'registration' && <RegistrationTab />}
+        {activeTab === 'stats' && <StatsTab info={info} />}
+        {activeTab === 'materials' && <MaterialsTab info={info} />}
+        {activeTab === 'registration' && <RegistrationTab lang={lang} info={info} />}
       </div>
     </main>
   )

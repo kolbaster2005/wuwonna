@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, ClipboardCheck, Languages, Sparkles, TrendingUp } from 'lucide-react'
+import { ArrowRight, ClipboardCheck, Languages, MonitorPlay, Send, Sparkles, TrendingUp } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import { SITE, SITE_SUMMARY_DE } from '../seo/content'
 
 // Что есть на платформе — только то, что реально работает на сайте сейчас.
 const features = [
@@ -31,8 +32,14 @@ export default function AboutPage() {
           <h2 className="h-section">Вся подготовка к экзамену WU — в одном месте</h2>
           <div className="mt-4 max-w-prose space-y-4 leading-relaxed text-ink/75">
             <p>
-              WU WONNA — онлайн-платформа для подготовки к вступительному экзамену WU. Мы собрали пробники по главам книги
-              и в формате реального экзамена, перевод и личный словарь, чтобы не искать материалы по разным сайтам и источникам.
+              WU WONNA (wuwonna.at) — русскоязычная онлайн-платформа для подготовки к вступительному экзамену в Венский
+              экономический университет WU Wien (Wirtschaftsuniversität Wien) — WiSo Aufnahmeprüfung. Мы собрали пробники
+              в формате реального экзамена, тесты по каждой главе официальной книги WU с разбором ответов, перевод и
+              личный словарь, чтобы не искать материалы по разным сайтам и источникам.
+            </p>
+            <p>
+              Название — это WU и английское «wanna» («хочу»): «хочу в WU». Кроме сайта, мы ведём YouTube-канал и
+              Telegram-канал WU WONNA — рассказываем, как устроен экзамен, как к нему готовиться и как проходит поступление.
             </p>
             <p>
               Платформа постоянно развивается: мы добавляем новые пробники и материалы, улучшаем инструменты и
@@ -52,6 +59,28 @@ export default function AboutPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="mt-14 grid grid-cols-1 gap-8 sm:mt-16 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <h2 className="h-section">Мы в соцсетях</h2>
+          <ul className="mt-4 space-y-2.5">
+            <li>
+              <a href={SITE.youtube} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 font-semibold text-pine-700 hover:underline">
+                <MonitorPlay size={18} /> YouTube — @wuwonna
+              </a>
+            </li>
+            <li>
+              <a href={SITE.telegram} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 font-semibold text-pine-700 hover:underline">
+                <Send size={18} /> Telegram — @wuwonna
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div lang="de">
+          <h2 className="h-section">Über WU WONNA</h2>
+          <p className="mt-4 max-w-prose leading-relaxed text-ink/75">{SITE_SUMMARY_DE}</p>
+        </div>
       </section>
 
       <section className="mt-14 flex flex-col items-start gap-5 rounded-2xl bg-pine-50 p-6 sm:mt-16 sm:flex-row sm:items-center sm:justify-between sm:p-8">

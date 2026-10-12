@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router-dom'
 import {
   CalendarDays,
   CheckSquare,
+  ChevronDown,
   ClipboardCheck,
   Clock,
   CreditCard,
@@ -18,6 +19,7 @@ import {
 import RichText from '../components/RichText'
 import PageHeader from '../components/PageHeader'
 import Tabs from '../components/Tabs'
+import { EXAM_FAQ, EXAM_PARTS, EXAM_STATS_2026, REGISTRATION_STEPS } from '../seo/content'
 
 const TABS = [
   { id: 'general', label: 'Общая информация' },
@@ -59,26 +61,8 @@ function RegistrationInfo() {
   )
 }
 
-const examParts = [
-  {
-    number: '01',
-    title: 'Понимание основ экономики',
-    description:
-      'Все задания этого раздела составляются строго на основе официальной книги по экономике, которую WU рекомендует использовать для подготовки к экзамену. Поэтому знакомство с книгой и подготовку по ней рекомендуется начинать заранее. Книга состоит из четырёх разделов, и в экзамене могут встретиться вопросы по материалу всех четырёх разделов. Заранее определить, какие именно вопросы и темы попадутся на экзамене, невозможно.',
-  },
-  {
-    number: '02',
-    title: 'Чтение немецкого текста',
-    description:
-      'В этой части вам будет предложен текст экономической направленности примерно уровня B2–C1. Ваша задача — внимательно прочитать текст и выполнить предложенные к нему задания.',
-  },
-  {
-    number: '03',
-    title: 'Математика',
-    description:
-      'Математическая часть также проводится в формате Multiple Choice. Вам не требуется записывать решения или расписывать ход вычислений. Для каждого задания уже представлены готовые варианты ответа — необходимо определить, какие из них являются правильными.',
-  },
-]
+// Тексты частей экзамена, цифры и частые вопросы — в src/seo/content.js:
+// они же уходят в готовый HTML для поисковиков.
 
 function GeneralTab() {
   return (
@@ -128,12 +112,27 @@ function GeneralTab() {
       <section className="mt-8 sm:mt-10">
         <h2 className="text-lg font-extrabold">Части экзамена</h2>
         <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-4">
-          {examParts.map((part) => (
+          {EXAM_PARTS.map((part) => (
             <div key={part.number} className="rounded-2xl border border-line bg-white p-4 sm:p-5">
               <span className="text-xs font-bold text-pine-600">{part.number}</span>
               <h3 className="mt-1 text-base font-extrabold leading-snug">{part.title}</h3>
               <p className="mt-2.5 text-sm leading-relaxed text-ink/65">{part.description}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-8 max-w-3xl sm:mt-10">
+        <h2 className="text-lg font-extrabold">Частые вопросы</h2>
+        <div className="mt-4 divide-y divide-line rounded-2xl border border-line bg-white">
+          {EXAM_FAQ.map(({ question, answer }) => (
+            <details key={question} className="group px-5 py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold">
+                {question}
+                <ChevronDown size={18} className="shrink-0 text-ink/40 transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-2.5 text-[15px] leading-relaxed text-ink/70">{answer}</p>
+            </details>
           ))}
         </div>
       </section>
@@ -143,9 +142,9 @@ function GeneralTab() {
 
 function StatsTab() {
   const stats = [
-    { label: 'Примерный проходной балл', value: '≈ 89' },
-    { label: 'Кол-во мест', value: '2 703' },
-    { label: 'Кол-во сдающих', value: '6 370' },
+    { label: 'Примерный проходной балл', value: EXAM_STATS_2026.passingScore },
+    { label: 'Кол-во мест', value: EXAM_STATS_2026.places },
+    { label: 'Кол-во сдающих', value: EXAM_STATS_2026.participants },
   ]
 
   return (
@@ -222,56 +221,8 @@ function MaterialsTab() {
   )
 }
 
-// Шаги поступления на 2026 год — кратко, по официальной странице WU.
-// Каждый год даты меняются: обновить здесь.
-const registrationSteps = [
-  {
-    icon: UserPlus,
-    title: 'Регистрация онлайн',
-    when: '2 марта — 19 мая 2026',
-    points: [
-      'Заполни регистрационную форму на сайте WU.',
-      'Подать можно, даже если ещё учишься в последнем классе.',
-    ],
-  },
-  {
-    icon: ClipboardCheck,
-    title: 'Онлайн-самооценка (OSA)',
-    when: 'до 28 мая 2026, 12:00',
-    points: [
-      'Ссылка на OSA — в твоей регистрационной форме.',
-      'Не оценивается и ни на что не влияет, но пройти её обязательно — полностью и вовремя.',
-      'После прохождения в форме должна появиться зелёная галочка.',
-      'Технические проблемы — пиши на aufnahmeverfahren@wu.ac.at с темой «OSA» и своим ID OSA.',
-    ],
-  },
-  {
-    icon: CreditCard,
-    title: 'Оплата сбора — 50 €',
-    when: 'до 19 мая 2026',
-    points: [
-      'Онлайн-банкинг, EPS или карта (Visa, Mastercard, Amex, Diners).',
-      'Сбор не возвращается — даже если не поступишь. Поэтому сначала пройди OSA, потом плати.',
-      'Оплата засчитана, когда в форме появится зелёная галочка.',
-      'Для граждан Украины в 2026 году сбор отменён.',
-    ],
-  },
-  {
-    icon: CalendarDays,
-    title: 'Вступительный экзамен',
-    when: '30 июня 2026, 10:00–12:00',
-    points: [
-      'Очно, в Messe Wien (VIECON). Другой даты нет.',
-      'С собой: удостоверение личности с фото (оригинал), распечатанное приглашение, синяя или чёрная ручка, разрешённый калькулятор.',
-    ],
-  },
-  {
-    icon: Mail,
-    title: 'Результаты',
-    when: 'до 10 дней после экзамена',
-    points: ['Придут на почту и появятся в регистрационной форме.'],
-  },
-]
+// Иконки шагов — по порядку REGISTRATION_STEPS (тексты в src/seo/content.js).
+const STEP_ICONS = [UserPlus, ClipboardCheck, CreditCard, CalendarDays, Mail]
 
 function RegistrationTab() {
   return (
@@ -282,8 +233,9 @@ function RegistrationTab() {
       </p>
 
       <ol className="mt-8">
-        {registrationSteps.map(({ icon: Icon, title, when, points }, i) => {
-          const isLast = i === registrationSteps.length - 1
+        {REGISTRATION_STEPS.map(({ title, points }, i) => {
+          const Icon = STEP_ICONS[i]
+          const isLast = i === REGISTRATION_STEPS.length - 1
           return (
             <li key={title} className="relative flex gap-4 pb-8 last:pb-0 sm:gap-5">
               {/* вертикальная линия между шагами */}
@@ -294,7 +246,6 @@ function RegistrationTab() {
               <div className="min-w-0 pt-0.5">
                 <p className="eyebrow text-pine-700">Шаг {i + 1}</p>
                 <h3 className="mt-0.5 text-lg font-extrabold">{title}</h3>
-                <span className="chip mt-2 bg-pine-50 text-pine-800">{when}</span>
                 <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-ink/70">
                   {points.map((point) => (
                     <li key={point} className="flex gap-2.5">

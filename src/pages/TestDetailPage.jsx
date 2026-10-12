@@ -7,12 +7,15 @@ import { useAuth } from '../lib/authContext'
 import Breadcrumbs from '../components/Breadcrumbs'
 import RichText from '../components/RichText'
 import ProLockedNotice from '../components/ProLockedNotice'
+import { useSeo } from '../lib/seo'
+import { testSeo } from '../seo/content'
 
 export default function TestDetailPage() {
   const { testId } = useParams()
   const navigate = useNavigate()
   const { hasPro, loading: authLoading } = useAuth()
   const [test, setTest] = useState(undefined)
+  useSeo(test ? testSeo(test) : null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
 
   useEffect(() => {

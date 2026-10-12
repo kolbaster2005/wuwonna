@@ -13,6 +13,7 @@ import ProPage from './pages/ProPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import RequireAuth from './components/RequireAuth'
+import { RouteSeo } from './components/Seo'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminTestsListPage from './pages/admin/AdminTestsListPage'
 import AdminTestFormPage from './pages/admin/AdminTestFormPage'
@@ -25,6 +26,7 @@ import AdminBookSubchapterPage from './pages/admin/AdminBookSubchapterPage'
 export default function App() {
   return (
     <div className="flex min-h-screen flex-col">
+      <RouteSeo />
       <Header />
       {/* Область страницы — не ниже экрана за вычетом шапки (4.5rem + 1px: py-4 +
           аватарка/«Войти» h-10 + граница), поэтому футер всегда ниже первого экрана. */}

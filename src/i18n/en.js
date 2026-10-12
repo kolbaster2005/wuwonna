@@ -265,6 +265,7 @@ export default {
       unofficial: 'Unofficial practice test',
     },
     examYear: '{year} exam',
+    free: 'Free',
     kind: 'Practice test',
     description: 'Description',
     questionsLabel: { one: 'question', other: 'questions' },

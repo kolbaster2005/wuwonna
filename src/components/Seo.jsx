@@ -20,10 +20,10 @@ export function RouteSeo() {
     // неё заголовок зависит от загруженного теста.
     if (route?.key === 'test') return
     const page = route && PAGES[lang]?.[route.key]
-    if (page) applySeo({ ...page, path: pathname })
+    if (page) applySeo({ ...page, path: pathname, lang })
     // Личные и служебные страницы (вход, словарь, прогресс, тест, админка) —
     // поисковикам не нужны.
-    else applySeo({ title: translate(lang, 'seo.privateTitle'), noindex: true })
+    else applySeo({ title: translate(lang, 'seo.privateTitle'), noindex: true, lang })
   }, [pathname])
   return null
 }

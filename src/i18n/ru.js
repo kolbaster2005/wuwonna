@@ -268,6 +268,7 @@ export default {
       unofficial: 'Неофициальный пробник',
     },
     examYear: 'Экзамен {year}',
+    free: 'Бесплатно',
     kind: 'Пробник',
     description: 'Описание',
     questionsLabel: 'заданий',

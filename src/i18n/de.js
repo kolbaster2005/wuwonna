@@ -266,6 +266,7 @@ export default {
       unofficial: 'Inoffizieller Probetest',
     },
     examYear: 'Prüfung {year}',
+    free: 'Kostenlos',
     kind: 'Probetest',
     description: 'Beschreibung',
     questionsLabel: { one: 'Aufgabe', other: 'Aufgaben' },

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { SITE } from '../seo/content'
+import { OG_LOCALES, SITE } from '../seo/content'
 
 // Заголовок вкладки, описание, canonical и превью для соцсетей.
 // Готовый HTML для поисковиков собирает scripts/prerender.mjs — здесь те же
@@ -25,8 +25,9 @@ function setCanonical(href) {
   el.setAttribute('href', href)
 }
 
-export function applySeo({ title, description, path, noindex = false }) {
+export function applySeo({ title, description, path, noindex = false, lang }) {
   document.title = title
+  if (lang) setMeta('property', 'og:locale', OG_LOCALES[lang])
   setMeta('name', 'robots', noindex ? 'noindex, follow' : 'index, follow')
   if (description) {
     setMeta('name', 'description', description)
@@ -40,8 +41,8 @@ export function applySeo({ title, description, path, noindex = false }) {
 }
 
 export function useSeo(seo) {
-  const { title, description, path, noindex } = seo ?? {}
+  const { title, description, path, noindex, lang } = seo ?? {}
   useEffect(() => {
-    if (title) applySeo({ title, description, path, noindex })
-  }, [title, description, path, noindex])
+    if (title) applySeo({ title, description, path, noindex, lang })
+  }, [title, description, path, noindex, lang])
 }

@@ -126,12 +126,6 @@ export default function Footer() {
         {/* Не выдаём себя за университет — и людям, и поисковикам */}
         <p className="mt-4 max-w-3xl text-xs leading-relaxed text-white/40">
           {DISCLAIMER[lang] ?? DISCLAIMER.ru}
-          {/* На русской версии — ещё и по-немецки: её читают и в Австрии */}
-          {lang === 'ru' && (
-            <span lang="de" className="mt-1 block">
-              {DISCLAIMER.de}
-            </span>
-          )}
         </p>
       </div>
     </footer>

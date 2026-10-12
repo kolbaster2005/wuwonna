@@ -44,6 +44,7 @@ export default {
   footer: {
     tagline: 'Online platform to prepare for the WU entrance exam.',
     prep: 'Practice',
+    exam: 'Exam',
     project: 'Project',
     tests: 'Practice tests',
     economics: 'Economics basics',

@@ -47,6 +47,7 @@ export default {
   footer: {
     tagline: 'Онлайн-платформа для подготовки к экзаменам в WU.',
     prep: 'Подготовка',
+    exam: 'Экзамен',
     project: 'Проект',
     tests: 'Пробники',
     economics: 'Основы экономики',

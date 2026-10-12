@@ -45,6 +45,7 @@ export default {
   footer: {
     tagline: 'Online-Plattform zur Vorbereitung auf die Aufnahmeprüfung der WU.',
     prep: 'Vorbereitung',
+    exam: 'Prüfung',
     project: 'Projekt',
     tests: 'Probetests',
     economics: 'Wirtschaftliche Grundlagen',

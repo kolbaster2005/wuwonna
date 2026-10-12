@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Crown, Send } from 'lucide-react'
-import { DISCLAIMER } from '../seo/content'
+import { DISCLAIMER, EXAM_INFO, inLang } from '../seo/content'
 import { useI18n } from '../i18n'
 import { FooterLanguageLinks } from './LanguageSwitcher'
 
@@ -25,11 +25,13 @@ function YoutubeIcon({ size = 16 }) {
   )
 }
 
-// Те же разделы, что и в шапке (Header.jsx), плюс то, что в шапке спрятано
-// глубже: вкладка «Основы экономики», «О проекте», PRO.
+// Три колонки: «Подготовка» (то же, что в шапке), «Экзамен» (страница об
+// экзамене и её вкладки, гайд по поступлению) и «Проект» (о проекте, PRO).
+// Названия вкладок «Об экзамене» — из content.js, как на самой странице.
 // Книга пока скрыта с сайта — её здесь тоже нет.
 function useColumns() {
-  const { t, path } = useI18n()
+  const { t, path, lang } = useI18n()
+  const examTabs = inLang(EXAM_INFO, lang).tabs
   return [
     {
       title: t('footer.prep'),
@@ -41,10 +43,18 @@ function useColumns() {
       ],
     },
     {
-      title: t('footer.project'),
+      title: t('footer.exam'),
       links: [
         { label: t('footer.examInfo'), to: path('examInfo') },
         { label: t('footer.admissionGuide'), to: path('admissionGuide') },
+        { label: examTabs.stats, to: path('examInfo', { tab: 'stats' }) },
+        { label: examTabs.registration, to: path('examInfo', { tab: 'registration' }) },
+        { label: examTabs.materials, to: path('examInfo', { tab: 'materials' }) },
+      ],
+    },
+    {
+      title: t('footer.project'),
+      links: [
         { label: t('footer.about'), to: path('about') },
         { label: t('footer.pro'), to: path('pro'), pro: true }, // с короной
       ],
@@ -58,7 +68,7 @@ export default function Footer() {
   return (
     <footer className="bg-ink text-white">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
           <div>
             <Link to={path('home')} className="flex items-center gap-2.5">
               {/* белая подложка — на тёмном футере тёмная «U» в логотипе иначе теряется */}

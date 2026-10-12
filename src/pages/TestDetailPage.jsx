@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowRight, Download, ListChecks, Clock, ShieldCheck, CalendarDays, PauseCircle, Eye, Languages } from 'lucide-react'
+import { ArrowRight, Download, ListChecks, Clock, ShieldCheck, CalendarDays, Scale, CheckCheck, Eye, Languages } from 'lucide-react'
 import { fetchTestByPath, fetchTestPdf, fetchTestVersions } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -156,7 +156,10 @@ export default function TestDetailPage() {
 
             <ul className="mt-5 space-y-2.5 border-t border-line pt-5 text-[13px] leading-snug text-ink/55">
               <li className="flex gap-2.5">
-                <PauseCircle size={16} className="mt-px shrink-0 text-pine-600" /> {t('testDetail.pauseHint')}
+                <Scale size={16} className="mt-px shrink-0 text-pine-600" /> {t('testDetail.scoringHint')}
+              </li>
+              <li className="flex gap-2.5">
+                <CheckCheck size={16} className="mt-px shrink-0 text-pine-600" /> {t('testDetail.answersHint')}
               </li>
               <li className="flex gap-2.5">
                 <Eye size={16} className="mt-px shrink-0 text-pine-600" /> {t('testDetail.reviewHint')}

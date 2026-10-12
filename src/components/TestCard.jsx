@@ -116,33 +116,37 @@ export default function TestCard({ test, result, onPinChange }) {
       {/* Закрытый пробник — не уводим на отдельную страницу, а сразу
           показываем общую PRO-модалку. Прямая ссылка на пробник всё равно
           защищена: там ProLockedNotice. */}
+      {/* Кнопки внизу — одной высоты (h-11 + border у всех, у зелёных он
+          прозрачный): так в ряду карточек они стоят ровно на одной линии,
+          одна это кнопка или две. */}
       {isLockedForUser ? (
         <button
           onClick={() => openProModal()}
-          className="mt-5 flex w-full items-center justify-center gap-2 border border-line bg-white py-3 text-sm font-bold text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:mt-6"
+          className="mt-5 flex h-11 w-full items-center justify-center gap-2 border border-line bg-white text-sm font-bold text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:mt-6"
         >
           <Lock size={14} /> {t('testCard.openWithPro')}
         </button>
       ) : isDone ? (
         // Пройденный: посмотреть разбор последней попытки или пройти заново.
+        // Две кнопки в ряд — текст мельче, чтобы помещался в одну строку.
         <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-6">
           <Link
             to={testResultPath(test, result.last?.id, lang)}
-            className="flex items-center justify-center gap-2 border border-line bg-white py-3 text-sm font-bold text-ink/75 transition-colors hover:border-ink/30 hover:text-ink"
+            className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-line bg-white px-2 text-[13px] font-bold text-ink/75 transition-colors hover:border-ink/30 hover:text-ink"
           >
-            <Eye size={15} /> {t('testCard.results')}
+            <Eye size={14} className="shrink-0" /> {t('testCard.results')}
           </Link>
           <Link
             to={testPath(test, lang)}
-            className="flex items-center justify-center gap-2 bg-pine-600 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700"
+            className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-transparent bg-pine-600 px-2 text-[13px] font-bold text-white transition-colors hover:bg-pine-700"
           >
-            <RotateCcw size={15} /> {t('testCard.retake')}
+            <RotateCcw size={14} className="shrink-0" /> {t('testCard.retake')}
           </Link>
         </div>
       ) : (
         <Link
           to={testPath(test, lang)}
-          className="mt-5 flex w-full items-center justify-center gap-2 bg-pine-600 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:mt-6"
+          className="mt-5 flex h-11 w-full items-center justify-center gap-2 border border-transparent bg-pine-600 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:mt-6"
         >
           {t('testCard.start')}
         </Link>

@@ -1,55 +1,27 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, ExternalLink, Info } from 'lucide-react'
-import {
-  DISCLAIMER,
-  FREE_PROBNIK_PATH,
-  LANDINGS,
-  LANDING_ALTERNATES,
-  LANGUAGE_NAMES,
-  OFFICIAL_WU_URL,
-} from '../seo/content'
+import { ADMISSION_GUIDE, DISCLAIMER, OFFICIAL_WU_URL, freeProbnikPath, inLang } from '../seo/content'
+import { useI18n } from '../i18n'
 
-// Посадочная страница под поисковые запросы (/postuplenie-v-wu, /de, /en).
-// Тексты — в src/seo/content.js (LANDINGS): те же уходят в готовый HTML для
-// поисковиков (scripts/prerender.mjs). Заголовок, описание и язык страницы
-// (<html lang>) ставит RouteSeo.
+// «Как поступить в WU» (ключ маршрута admissionGuide) на языке страницы.
+// Тексты — в src/seo/content.js (ADMISSION_GUIDE): те же уходят в готовый
+// HTML для поисковиков (scripts/prerender.mjs). Заголовок, описание и язык
+// страницы (<html lang>) ставит RouteSeo.
 
-export default function LandingPage({ path }) {
-  const landing = LANDINGS[path]
-  const { lang } = landing
-
-  // Переключатель языка — без x-default (это та же английская страница).
-  const languageLinks = LANDING_ALTERNATES.filter((item) => item.lang !== 'x-default')
+export default function AdmissionGuidePage() {
+  const { lang, path } = useI18n()
+  const landing = inLang(ADMISSION_GUIDE, lang)
 
   return (
-    <main className="page" lang={lang}>
-      <nav aria-label="Language" className="mb-6 flex flex-wrap gap-2 text-sm">
-        {languageLinks.map((item) =>
-          item.lang === lang ? (
-            <span key={item.lang} className="rounded-lg bg-pine-600 px-3 py-1.5 font-bold text-white">
-              {LANGUAGE_NAMES[item.lang]}
-            </span>
-          ) : (
-            <Link
-              key={item.lang}
-              to={item.path}
-              hrefLang={item.lang}
-              className="rounded-lg border border-line px-3 py-1.5 font-semibold text-ink/70 transition-colors hover:border-ink/30 hover:text-ink"
-            >
-              {LANGUAGE_NAMES[item.lang]}
-            </Link>
-          ),
-        )}
-      </nav>
-
+    <main className="page">
       <h1 className="h-page max-w-3xl">{landing.h1}</h1>
       <p className="lead mt-4 max-w-3xl">{landing.lead}</p>
 
       <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-        <Link to={FREE_PROBNIK_PATH} className="btn btn-primary btn-lg">
+        <Link to={freeProbnikPath(lang)} className="btn btn-primary btn-lg">
           {landing.cta} <ArrowRight size={17} />
         </Link>
-        <Link to="/exam-info" className="btn btn-secondary btn-lg">
+        <Link to={path('examInfo')} className="btn btn-secondary btn-lg">
           <Info size={17} /> {landing.more}
         </Link>
       </div>
@@ -87,7 +59,7 @@ export default function LandingPage({ path }) {
         </section>
 
         <section className="rounded-2xl bg-pine-50 p-5 text-sm leading-relaxed text-ink/70">
-          <p>{DISCLAIMER[lang]}</p>
+          <p>{inLang(DISCLAIMER, lang)}</p>
           <a
             href={OFFICIAL_WU_URL}
             target="_blank"

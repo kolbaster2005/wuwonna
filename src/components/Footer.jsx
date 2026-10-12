@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Crown, Send } from 'lucide-react'
 import { DISCLAIMER } from '../seo/content'
 import { useI18n } from '../i18n'
+import { FooterLanguageLinks } from './LanguageSwitcher'
 
 // В lucide-react 1.x брендовых иконок (YouTube и т.п.) больше нет — рисуем
 // свою в том же контурном стиле, что и остальные иконки.
@@ -46,8 +47,6 @@ function useColumns() {
         { label: t('footer.admissionGuide'), to: path('admissionGuide') },
         { label: t('footer.about'), to: path('about') },
         { label: t('footer.pro'), to: path('pro'), pro: true }, // с короной
-        { label: 'Deutsch', to: '/de', lang: 'de' },
-        { label: 'English', to: '/en', lang: 'en' },
       ],
     },
   ]
@@ -103,7 +102,6 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       to={link.to}
-                      hrefLang={link.lang}
                       className="inline-flex items-center gap-1.5 text-sm text-white/60 transition-colors hover:text-white"
                     >
                       {link.pro && <Crown size={14} className="text-pine-600" />}
@@ -118,7 +116,8 @@ export default function Footer() {
 
         <div className="mt-9 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/40 sm:mt-12 sm:flex-row sm:items-center sm:justify-between">
           <span>{t('footer.rights', { year: new Date().getFullYear() })}</span>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
+            <FooterLanguageLinks />
             <Link to={path('home')} className="hover:text-white/70">{t('footer.privacy')}</Link>
             <Link to={path('home')} className="hover:text-white/70">{t('footer.terms')}</Link>
           </div>
@@ -126,9 +125,9 @@ export default function Footer() {
 
         {/* Не выдаём себя за университет — и людям, и поисковикам */}
         <p className="mt-4 max-w-3xl text-xs leading-relaxed text-white/40">
-          {DISCLAIMER[lang]}
+          {DISCLAIMER[lang] ?? DISCLAIMER.ru}
           {/* На русской версии — ещё и по-немецки: её читают и в Австрии */}
-          {lang !== 'de' && (
+          {lang === 'ru' && (
             <span lang="de" className="mt-1 block">
               {DISCLAIMER.de}
             </span>

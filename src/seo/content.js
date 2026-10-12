@@ -40,7 +40,8 @@ export function inLang(byLang, lang) {
 // чтобы нейросеть однозначно понимала, что такое WU WONNA.
 export const SITE_SUMMARY = {
   ru: 'WU WONNA (wuwonna.at) — русскоязычная онлайн-платформа для подготовки к вступительному экзамену в Венский экономический университет WU Wien (WiSo Aufnahmeprüfung): пробники в формате реального экзамена, тесты по каждой главе официальной книги WU и разбор ответов.',
-  de: 'WU WONNA (wuwonna.at) ist eine russischsprachige Online-Plattform zur Vorbereitung auf die Aufnahmeprüfung der Wirtschaftsuniversität Wien (WiSo-Aufnahmeverfahren): Probetests im Format der echten Prüfung, Übungstests zu jedem Kapitel des offiziellen WU-Buchs und Erklärungen zu allen Antworten.',
+  de: 'WU WONNA (wuwonna.at) ist eine Online-Plattform (auf Deutsch, Englisch und Russisch) zur Vorbereitung auf die Aufnahmeprüfung der Wirtschaftsuniversität Wien (WiSo-Aufnahmeverfahren): Probetests im Format der echten Prüfung, Übungstests zu jedem Kapitel des offiziellen WU-Buchs und Erklärungen zu allen Antworten.',
+  en: 'WU WONNA (wuwonna.at) is an online platform (in English, German and Russian) to prepare for the entrance exam of the Vienna University of Economics and Business (WU Wien, WiSo Aufnahmeprüfung): mock exams in the real exam format, practice tests for every chapter of the official WU study script, and explanations for every answer.',
 }
 
 // Заголовок (<title>) и описание каждой открытой страницы. Ключевые слова —
@@ -66,10 +67,79 @@ export const PAGES = {
       title: 'О проекте WU WONNA — подготовка к поступлению в WU Wien',
       description: SITE_SUMMARY.ru,
     },
+    admissionGuide: {
+      title: 'Как поступить в WU Wien (ВУ) на WiSo: вступительный экзамен 2026/27 пошагово | WU WONNA',
+      description:
+        'Поступление в WU Wien на бакалавриат WiSo: регистрация, OSA, сбор 50 €, вступительный экзамен (Aufnahmeprüfung) — 3 части, 2 часа, проходной балл 2026 ≈ 89. Бесплатный пробник онлайн.',
+    },
     pro: {
       title: 'WU WONNA PRO — все пробники к экзамену WU Wien навсегда',
       description:
         'PRO-доступ WU WONNA: все тесты по главам книги WU и все пробники к WiSo Aufnahmeprüfung с разборами — один раз и навсегда.',
+    },
+  },
+  de: {
+    home: {
+      title: 'WU WONNA – Vorbereitung auf die Aufnahmeprüfung der WU Wien (WiSo) 2026/27',
+      description:
+        'Online-Vorbereitung auf die Aufnahmeprüfung der WU Wien (WiSo-Aufnahmeverfahren): offizieller Probetest 2026/27 mit Lösungen, Übungstests zu allen Kapiteln, Timer wie in der Prüfung, Fortschritt und Vokabelheft.',
+    },
+    tests: {
+      title: 'Probetests 2026 für die Aufnahmeprüfung der WU Wien (WiSo) | WU WONNA',
+      description:
+        'Probetests und Übungstests für die WiSo-Aufnahmeprüfung der WU Wien: offizieller Probetest 2026/27, Probeprüfungen Set 1 und Set 2 sowie Übungstests zu jedem Kapitel des WU-Skripts – mit Erklärungen.',
+    },
+    examInfo: {
+      title: 'Aufnahmeprüfung WU Wien (WiSo): Ablauf, Anmeldung, Mindestpunktzahl | WU WONNA',
+      description:
+        'Alles zur WiSo-Aufnahmeprüfung der WU Wien: drei Prüfungsteile, Multiple Choice, 2 Stunden, Mindestpunktzahl 2026 (ca. 89), Anmeldung, OSA und Servicebeitrag 50 €.',
+    },
+    admissionGuide: {
+      title: 'WiSo Aufnahmeprüfung WU Wien 2026/27 – Vorbereitung, Probetest & Ablauf | WU WONNA',
+      description:
+        'Vorbereitung auf die WiSo-Aufnahmeprüfung der WU Wien: Ablauf, drei Prüfungsteile, Anmeldung, OSA, Kosten und Cut-off 2026 – plus kostenloser Probetest online mit Lösungen.',
+    },
+    about: {
+      title: 'Über WU WONNA – Vorbereitung auf das Studium an der WU Wien',
+      description:
+        'WU WONNA ist eine Online-Plattform zur Vorbereitung auf die Aufnahmeprüfung der WU Wien: Probetests im Prüfungsformat, Übungstests zu jedem Kapitel des WU-Skripts und Erklärungen zu allen Antworten.',
+    },
+    pro: {
+      title: 'WU WONNA PRO – alle Probetests für die WU-Aufnahmeprüfung für immer',
+      description:
+        'PRO-Zugang bei WU WONNA: alle Übungstests zu den Kapiteln des WU-Skripts und alle Probetests für die WiSo-Aufnahmeprüfung mit Erklärungen – einmal zahlen, für immer nutzen.',
+    },
+  },
+  en: {
+    home: {
+      title: 'WU WONNA – WU Vienna Entrance Exam Preparation (WiSo Admission Test) 2026/27',
+      description:
+        'Prepare online for the WU Vienna entrance exam (WiSo admission test): the official 2026/27 practice test with explanations, tests for every chapter, an exam-style timer, progress tracking and vocabulary.',
+    },
+    tests: {
+      title: 'WU Vienna Practice Tests 2026 – WiSo Admission Test Mock Exams | WU WONNA',
+      description:
+        'Practice tests for the WU Vienna WiSo entrance exam: the official 2026/27 practice test, mock exams Set 1 and Set 2, and a test for every chapter of the WU study script – with explanations.',
+    },
+    examInfo: {
+      title: 'WU Vienna Entrance Exam (WiSo): Format, Registration, Cut-off Score | WU WONNA',
+      description:
+        'Everything about the WU Vienna WiSo entrance exam: three parts, multiple choice, 2 hours, 2026 cut-off (≈ 89), registration, OSA and the €50 fee.',
+    },
+    admissionGuide: {
+      title: 'How to Get into WU Vienna (WiSo): Entrance Exam 2026/27 & Free Practice Test | WU WONNA',
+      description:
+        'How to get into WU Vienna (WiSo bachelor): admission steps, OSA, €50 fee, the three parts of the entrance exam, 2026 cut-off (≈ 89) – and a free online practice test with explanations.',
+    },
+    about: {
+      title: 'About WU WONNA – WU Vienna Entrance Exam Preparation',
+      description:
+        'WU WONNA is an online platform to prepare for the WU Vienna entrance exam: mock exams in the real format, tests for every chapter of the WU study script, and explanations for every answer.',
+    },
+    pro: {
+      title: 'WU WONNA PRO – All WU Vienna Practice Tests for Life',
+      description:
+        'WU WONNA PRO: every chapter test and every mock exam for the WU Vienna WiSo admission test, with explanations – pay once, use for life.',
     },
   },
 }
@@ -94,6 +164,46 @@ export const EXAM_PARTS = {
       title: 'Математика',
       description:
         'Математическая часть также проводится в формате Multiple Choice. Вам не требуется записывать решения или расписывать ход вычислений. Для каждого задания уже представлены готовые варианты ответа — необходимо определить, какие из них являются правильными.',
+    },
+  ],
+  de: [
+    {
+      number: '01',
+      title: 'Wirtschaftliche Grundlagen',
+      description:
+        'Alle Aufgaben dieses Teils basieren auf dem offiziellen Wirtschaftsskript, das die WU zur Vorbereitung empfiehlt. Fang deshalb früh an, mit dem Buch zu arbeiten. Es hat vier Teile, und Fragen können zum Stoff aller vier Teile kommen. Welche Themen in der Prüfung drankommen, lässt sich nicht vorhersagen.',
+    },
+    {
+      number: '02',
+      title: 'Textverständnis (Deutsch)',
+      description:
+        'In diesem Teil bekommst du einen Wirtschaftstext auf etwa Niveau B2–C1. Deine Aufgabe: den Text aufmerksam lesen und die Fragen dazu beantworten.',
+    },
+    {
+      number: '03',
+      title: 'Mathematik',
+      description:
+        'Auch der Mathematikteil ist Multiple Choice. Du musst keinen Rechenweg aufschreiben: Zu jeder Aufgabe gibt es vorgegebene Antworten, und du bestimmst, welche davon richtig sind.',
+    },
+  ],
+  en: [
+    {
+      number: '01',
+      title: 'Economics basics',
+      description:
+        'All questions in this part are based strictly on the official economics book that WU recommends for preparation, so start working with it early. The book has four parts, and questions can come from any of them. There is no way to predict which topics will come up in the exam.',
+    },
+    {
+      number: '02',
+      title: 'German reading comprehension',
+      description:
+        'In this part you get an economics text at roughly B2–C1 level. Your task is to read it carefully and answer the questions about it.',
+    },
+    {
+      number: '03',
+      title: 'Mathematics',
+      description:
+        'The maths part is multiple choice too. You don’t write down any working: each question comes with answer options, and you decide which of them are correct.',
     },
   ],
 }
@@ -137,6 +247,82 @@ export const REGISTRATION_STEPS = {
     {
       title: 'Результаты',
       points: ['Придут на почту и появятся в регистрационной форме.'],
+    },
+  ],
+  de: [
+    {
+      title: 'Online-Registrierung',
+      points: [
+        'Fülle das Registrierungsformular auf der Website der WU aus.',
+        'Das geht auch, wenn du noch in der Maturaklasse bist.',
+      ],
+    },
+    {
+      title: 'Online-Self-Assessment (OSA)',
+      points: [
+        'Den Link zum OSA findest du in deinem Registrierungsformular.',
+        'Es wird nicht bewertet und hat keinen Einfluss – du musst es aber vollständig und rechtzeitig absolvieren.',
+        'Danach erscheint im Formular ein grüner Haken.',
+        'Bei technischen Problemen: Mail an aufnahmeverfahren@wu.ac.at mit dem Betreff „OSA“ und deiner OSA-ID.',
+      ],
+    },
+    {
+      title: 'Servicebeitrag – 50 €',
+      points: [
+        'Onlinebanking, EPS oder Karte (Visa, Mastercard, Amex, Diners).',
+        'Keine Rückerstattung – auch wenn du nicht aufgenommen wirst. Deshalb zuerst das OSA, dann zahlen.',
+        'Die Zahlung ist erfasst, wenn im Formular ein grüner Haken erscheint.',
+        'Für ukrainische Staatsbürger:innen entfällt der Beitrag 2026.',
+      ],
+    },
+    {
+      title: 'Aufnahmeprüfung',
+      points: [
+        'Vor Ort in der Messe Wien (VIECON). Einen Ersatztermin gibt es nicht.',
+        'Mitbringen: amtlicher Lichtbildausweis (Original), ausgedruckte Einladung, blauer oder schwarzer Kugelschreiber, zugelassener Taschenrechner.',
+      ],
+    },
+    {
+      title: 'Ergebnis',
+      points: ['Kommt per E-Mail und erscheint im Registrierungsformular.'],
+    },
+  ],
+  en: [
+    {
+      title: 'Register online',
+      points: [
+        'Fill in the registration form on the WU website.',
+        'You can apply even while you’re still in your final school year.',
+      ],
+    },
+    {
+      title: 'Online Self-Assessment (OSA)',
+      points: [
+        'The OSA link is in your registration form.',
+        'It isn’t graded and doesn’t affect anything – but you must complete it fully and on time.',
+        'Once done, a green tick appears in the form.',
+        'Technical problems: email aufnahmeverfahren@wu.ac.at with the subject “OSA” and your OSA ID.',
+      ],
+    },
+    {
+      title: 'Pay the fee – €50',
+      points: [
+        'Online banking, EPS or card (Visa, Mastercard, Amex, Diners).',
+        'The fee isn’t refunded – even if you’re not admitted. So do the OSA first, then pay.',
+        'Payment is confirmed when a green tick appears in the form.',
+        'In 2026 the fee was waived for Ukrainian citizens.',
+      ],
+    },
+    {
+      title: 'Entrance exam',
+      points: [
+        'In person at Messe Wien (VIECON). There is no alternative date.',
+        'Bring: official photo ID (original), the printed invitation, a blue or black pen and an approved calculator.',
+      ],
+    },
+    {
+      title: 'Results',
+      points: ['Sent by email and shown in your registration form.'],
     },
   ],
 }
@@ -190,6 +376,86 @@ export const EXAM_FAQ = {
     {
       question: 'Что такое WU WONNA?',
       answer: `${SITE_SUMMARY.ru} Название — это WU + английское «wanna» («хочу»): «хочу в WU». У проекта есть YouTube-канал и Telegram-канал @wuwonna.`,
+    },
+  ],
+  de: [
+    {
+      question: 'Was ist die WiSo-Aufnahmeprüfung?',
+      answer:
+        'Die Aufnahmeprüfung der Wirtschaftsuniversität Wien (WU Wien) für das Bachelorstudium Wirtschafts- und Sozialwissenschaften (WiSo). Sie ist Teil des Aufnahmeverfahrens, in dem die Studienplätze nach dem Prüfungsergebnis vergeben werden.',
+    },
+    {
+      question: 'Aus welchen Teilen besteht die WU-Aufnahmeprüfung?',
+      answer:
+        'Aus drei Teilen: wirtschaftliche Grundlagen (nach dem offiziellen WU-Skript), Textverständnis mit einem deutschsprachigen Wirtschaftstext auf Niveau B2–C1 und Mathematik. Alle Aufgaben sind Multiple Choice.',
+    },
+    {
+      question: 'Wie lange dauert die Prüfung und wie läuft sie ab?',
+      answer:
+        'Die Prüfung dauert 2 Stunden ohne Pause. Sie findet einmal im Jahr vor Ort in einem großen Prüfungszentrum statt; einen anderen Termin gibt es nicht. Taschenrechner und Schreibzeug darfst du mitnehmen.',
+    },
+    {
+      question: 'Wie hoch ist die Mindestpunktzahl bei der WU-Aufnahmeprüfung?',
+      answer: `2026 lag die Mindestpunktzahl bei etwa ${EXAM_STATS_2026.passingScore.replace('≈ ', '')}. Um ${EXAM_STATS_2026.places} Plätze bewarben sich ${EXAM_STATS_2026.participants} Personen. Die Grenze ändert sich jedes Jahr – sie hängt von der Zahl der Plätze und den Ergebnissen ab.`,
+    },
+    {
+      question: 'Was kostet die Teilnahme an der WU-Aufnahmeprüfung?',
+      answer:
+        '2026 betrug der Servicebeitrag 50 €. Er wird nicht zurückerstattet, auch wenn du nicht aufgenommen wirst. Vor der Zahlung musst du das Online-Self-Assessment (OSA) absolvieren.',
+    },
+    {
+      question: 'Wie bereite ich mich auf die WiSo-Aufnahmeprüfung vor?',
+      answer:
+        'Die Wirtschaftsfragen basieren auf dem offiziellen WU-Skript – fang also damit an, Kapitel für Kapitel. Auf WU WONNA gibt es zu jedem Unterkapitel einen Übungstest mit Erklärungen, und komplette Probetests im Prüfungsformat (offizieller Probetest 2026/27, Set 1 und Set 2) zeigen dir, wo du zeitlich und in allen Teilen stehst.',
+    },
+    {
+      question: 'Ist WU WONNA die offizielle Website der WU?',
+      answer:
+        'Nein. WU WONNA ist ein unabhängiges Projekt, steht in keiner Verbindung zur Wirtschaftsuniversität Wien (WU Wien) und vertritt sie nicht. Offizielle Informationen zur Aufnahme gibt es nur auf wu.ac.at.',
+    },
+    {
+      question: 'Was ist WU WONNA?',
+      answer: `${SITE_SUMMARY.de} Der Name steht für WU + englisch „wanna“ („will“): „Ich will an die WU“. Es gibt auch einen YouTube- und einen Telegram-Kanal @wuwonna.`,
+    },
+  ],
+  en: [
+    {
+      question: 'What is the WiSo Aufnahmeprüfung?',
+      answer:
+        'It is the entrance exam of the Vienna University of Economics and Business (WU Wien, Wirtschaftsuniversität Wien) for the Business, Economics and Social Sciences bachelor (WiSo). It is part of the admission procedure (Aufnahmeverfahren), in which places are awarded based on exam results.',
+    },
+    {
+      question: 'What parts does the WU entrance exam have?',
+      answer:
+        'Three parts: economics basics (based on the official WU study script), German reading comprehension of an economics text at B2–C1 level, and mathematics. All questions are multiple choice.',
+    },
+    {
+      question: 'How long is the exam and how does it work?',
+      answer:
+        'The exam lasts 2 hours without a break. It is held once a year in person at a large exam venue; you can’t choose another date. You may bring a calculator and writing materials.',
+    },
+    {
+      question: 'What is the cut-off score for the WU entrance exam?',
+      answer: `In 2026 the cut-off was around ${EXAM_STATS_2026.passingScore.replace('≈ ', '')} points. ${EXAM_STATS_2026.participants.replace(' ', ',')} people competed for ${EXAM_STATS_2026.places.replace(' ', ',')} places. The cut-off changes every year depending on the number of places and the results.`,
+    },
+    {
+      question: 'How much does the WU entrance exam cost?',
+      answer:
+        'In 2026 the service fee was €50. It isn’t refunded, even if you are not admitted. You must complete the Online Self-Assessment (OSA) before paying.',
+    },
+    {
+      question: 'How do I prepare for the WiSo entrance exam?',
+      answer:
+        'The economics questions are based on the official WU study script, so start there, chapter by chapter. WU WONNA has a practice test with explanations for every sub-chapter, and full mock exams in the real format (the official 2026/27 practice test, Set 1 and Set 2) show where you stand on time and across all parts.',
+    },
+    {
+      question: 'Is WU WONNA the official WU website?',
+      answer:
+        'No. WU WONNA is an independent project, not affiliated with or representing the Vienna University of Economics and Business (WU Wien). Official admission information is available only at wu.ac.at.',
+    },
+    {
+      question: 'What is WU WONNA?',
+      answer: `${SITE_SUMMARY.en} The name is WU + “wanna”: “I wanna get into WU”. There is also a YouTube channel and a Telegram channel, @wuwonna.`,
     },
   ],
 }
@@ -246,6 +512,106 @@ export const EXAM_INFO = {
     registrationIntro: 'Кратко по шагам на 2026 год. Подробности — на [официальном сайте WU].',
     step: 'Шаг {number}',
   },
+  de: {
+    title: 'Zur Aufnahmeprüfung',
+    subtitle: 'Wie die Aufnahmeprüfung der WU abläuft und wie du dich anmeldest',
+    h1: 'Aufnahmeprüfung der WU Wien (WiSo)',
+    tabs: {
+      general: 'Überblick',
+      stats: 'Statistik und Mindestpunktzahl 2026',
+      registration: 'Anmeldung',
+      materials: 'Nützliche Links',
+    },
+    summaryHeading: 'Kurz und knapp',
+    facts: [
+      'Prüfungsdauer: **2 Stunden**',
+      'Die WiSo-Prüfung hat drei Teile: wirtschaftliche Grundlagen, deutsches Textverständnis und Mathematik.',
+      'Alle Aufgaben sind **Multiple Choice** – du wählst die richtige Antwort oder die richtigen Antworten aus den vorgegebenen aus.',
+    ],
+    howItGoesHeading: 'So läuft die Prüfung ab',
+    howItGoes: `Die WiSo-Prüfung findet einmal im Jahr vor Ort statt. Den Termin kannst du nicht selbst wählen.
+
+Alle Teilnehmer:innen schreiben gleichzeitig in einem großen Prüfungszentrum, jede:r an einem eigenen Tisch.
+
+Mitnehmen darfst du einen Taschenrechner und Schreibzeug. Alle Unterlagen für die Aufgaben bekommst du vor Ort; zur Sicherheit liegt auch ein Kugelschreiber am Tisch.
+
+Die Prüfung dauert 2 Stunden ohne Pause.`,
+    registrationHeading: 'Anmeldung und Kosten',
+    registration: [
+      'Alles zur Anmeldung findest du auf der [offiziellen Website der WU].',
+      'Stand 2026 beträgt der Servicebeitrag für die Prüfung **50 €**.',
+      'Der Servicebeitrag wird nicht zurückerstattet, auch wenn man die Prüfung nicht besteht.',
+    ],
+    partsHeading: 'Die Prüfungsteile',
+    faqHeading: 'Häufige Fragen',
+    statsHeading: 'Statistik und Mindestpunktzahl 2026',
+    stats: {
+      passingScore: 'Ungefähre Mindestpunktzahl',
+      places: 'Studienplätze',
+      participants: 'Teilnehmer:innen',
+    },
+    source: 'Quelle:',
+    materialsHeading: 'Nützliche Links',
+    socialHeading: 'Social Media',
+    links: {
+      official: 'Offizielle Website der WU',
+      scoring: 'Präsentation: wie die Punkte (Teilpunkte) berechnet werden',
+      youtube: 'YouTube-Kanal von WU WONNA',
+      telegram: 'Telegram-Kanal von WU WONNA',
+    },
+    registrationIntro: 'Die Schritte für 2026 im Überblick. Details auf der [offiziellen Website der WU].',
+    step: 'Schritt {number}',
+  },
+  en: {
+    title: 'The entrance exam',
+    subtitle: 'How the WU entrance exam works and how to register',
+    h1: 'WU Vienna entrance exam (WiSo admission test)',
+    tabs: {
+      general: 'Overview',
+      stats: '2026 statistics and cut-off',
+      registration: 'Registration',
+      materials: 'Useful links',
+    },
+    summaryHeading: 'Key facts',
+    facts: [
+      'Exam duration: **2 hours**',
+      'The WiSo exam has three parts: economics basics, German reading comprehension and mathematics.',
+      'All questions are **multiple choice** – you pick the correct option or options from those given.',
+    ],
+    howItGoesHeading: 'How the exam works',
+    howItGoes: `The WiSo exam is held once a year in person. You can’t choose the date yourself.
+
+All candidates sit the exam together in a large exam venue, each at their own desk.
+
+You may bring a calculator and writing materials. Everything you need for the tasks is handed out on site, and there is also a pen on the desk just in case.
+
+The exam lasts 2 hours without a break.`,
+    registrationHeading: 'Registration and cost',
+    registration: [
+      'Full details on registering for the exam are on the [official WU website].',
+      'As of 2026, the service fee for the exam is **€50**.',
+      'The service fee isn’t refunded, even if you don’t pass the exam.',
+    ],
+    partsHeading: 'Parts of the exam',
+    faqHeading: 'FAQ',
+    statsHeading: '2026 statistics and cut-off score',
+    stats: {
+      passingScore: 'Approximate cut-off score',
+      places: 'Places',
+      participants: 'Candidates',
+    },
+    source: 'Source:',
+    materialsHeading: 'Useful links',
+    socialHeading: 'Social media',
+    links: {
+      official: 'Official WU website',
+      scoring: 'Presentation: how answers are scored (partial credit)',
+      youtube: 'WU WONNA on YouTube',
+      telegram: 'WU WONNA on Telegram',
+    },
+    registrationIntro: 'The steps for 2026 in brief. Details on the [official WU website].',
+    step: 'Step {number}',
+  },
 }
 
 // Тексты страницы «О проекте».
@@ -279,6 +645,64 @@ export const ABOUT = {
     startTitle: 'С чего начать',
     startText: 'Пройди первый пробник — после него будет видно, какие темы подтянуть.',
     startCta: 'К пробникам',
+  },
+  de: {
+    title: 'Über uns',
+    subtitle: 'Wer wir sind und warum es WU WONNA gibt',
+    h1: 'Über WU WONNA',
+    heading: 'Die ganze Vorbereitung auf die WU-Aufnahmeprüfung an einem Ort',
+    paragraphs: [
+      'WU WONNA (wuwonna.at) ist eine Online-Plattform zur Vorbereitung auf die Aufnahmeprüfung der Wirtschaftsuniversität Wien (WU Wien) – das WiSo-Aufnahmeverfahren. Wir haben Probetests im Format der echten Prüfung, Übungstests zu jedem Kapitel des offiziellen WU-Skripts mit Erklärungen, Übersetzung und ein eigenes Vokabelheft zusammengebracht, damit du Material nicht auf verschiedenen Seiten suchen musst.',
+      'Der Name steht für WU und englisch „wanna“ („will“): „Ich will an die WU“. Neben der Website betreiben wir einen YouTube- und einen Telegram-Kanal – dort geht es darum, wie die Prüfung aufgebaut ist, wie man sich vorbereitet und wie die Aufnahme abläuft.',
+      'Die Plattform wächst ständig: Wir ergänzen neue Probetests und Materialien, verbessern die Werkzeuge und machen die Vorbereitung so bequem und strukturiert wie möglich.',
+    ],
+    features: [
+      {
+        title: 'Probetests',
+        description: 'Tests im Format der echten Prüfung – mit Timer, Teilpunkten und einer Erklärung zu jeder Antwort.',
+      },
+      {
+        title: 'Übersetzung und Vokabeln',
+        description: 'Markiere ein unbekanntes Wort direkt in der Aufgabe – übersetze es und speichere es mit Beispiel in deinen Vokabeln.',
+      },
+      {
+        title: 'Fortschritt pro Kapitel',
+        description: 'Du siehst, wie viel Prozent jedes Kapitels du schon kannst und welche Unterkapitel du wiederholen solltest.',
+      },
+    ],
+    socialHeading: 'Social Media',
+    startTitle: 'Womit anfangen',
+    startText: 'Mach den ersten Probetest – danach siehst du, welche Themen du noch üben solltest.',
+    startCta: 'Zu den Probetests',
+  },
+  en: {
+    title: 'About',
+    subtitle: 'Who we are and why we built WU WONNA',
+    h1: 'About WU WONNA',
+    heading: 'All your WU entrance exam preparation in one place',
+    paragraphs: [
+      'WU WONNA (wuwonna.at) is an online platform to prepare for the entrance exam of the Vienna University of Economics and Business (WU Wien, Wirtschaftsuniversität Wien) – the WiSo admission test. We brought together mock exams in the real format, practice tests for every chapter of the official WU study script with explanations, translation and a personal vocabulary list, so you don’t have to hunt for materials across different sites.',
+      'The name is WU + “wanna”: “I wanna get into WU”. Besides the site, we run a YouTube channel and a Telegram channel about how the exam is structured, how to prepare and how admission works.',
+      'The platform keeps growing: we add new practice tests and materials, improve the tools and try to make preparation convenient and structured.',
+    ],
+    features: [
+      {
+        title: 'Practice tests',
+        description: 'Tests in the real exam format – with a timer, partial credit and an explanation for every answer.',
+      },
+      {
+        title: 'Translation and vocabulary',
+        description: 'Select an unfamiliar word right in the question – translate it and save it with an example to your vocabulary.',
+      },
+      {
+        title: 'Progress by chapter',
+        description: 'See what percentage of each chapter you’ve mastered and which sub-chapters are worth revising.',
+      },
+    ],
+    socialHeading: 'Social media',
+    startTitle: 'Where to start',
+    startText: 'Take your first practice test – afterwards you’ll see which topics to work on.',
+    startCta: 'Practice tests',
   },
 }
 
@@ -333,22 +757,23 @@ export const DISCLAIMER = {
 export const OFFICIAL_WU_URL =
   'https://www.wu.ac.at/studium/bachelor/wirtschafts-und-sozialwissenschaften/ueberblick/aufnahmeverfahren'
 
-// Бесплатный пробник, на который ведут кнопки посадочных страниц.
-export const FREE_PROBNIK_PATH = '/probniki/wiso-probnik-2026-oficialnyj'
+// Бесплатный официальный пробник, на который ведут кнопки гайда по
+// поступлению. На других языках ссылка по id: страница пробника сама
+// перейдёт на версию этого языка (или покажет русскую, если перевода нет).
+export const FREE_PROBNIK = { id: '5d1b0666-184a-4bf8-a56e-cf1813273597', slug: 'wiso-probnik-2026-oficialnyj' }
 
-// Посадочные страницы под поисковые запросы на трёх языках — одна и та же
-// тема («как поступить в WU и сдать WiSo Aufnahmeprüfung»), поэтому они
-// связаны между собой через hreflang: Google сам покажет человеку версию на
-// его языке. Добавляя язык — добавить страницу сюда и в LANDING_ALTERNATES.
+export function freeProbnikPath(lang) {
+  return localPath('test', { slug: lang === 'ru' ? FREE_PROBNIK.slug : FREE_PROBNIK.id }, lang)
+}
+
+// «Как поступить в WU» (ключ маршрута admissionGuide) на каждом языке: одна
+// тема («как поступить в WU и сдать WiSo Aufnahmeprüfung»), связанная через
+// hreflang — Google сам покажет человеку версию на его языке. Заголовок и
+// описание — в PAGES[lang].admissionGuide.
 //
 // Раздел страницы: { heading, text?, items?, ordered? } — абзац и/или список.
-export const LANDINGS = {
-  '/postuplenie-v-wu': {
-    lang: 'ru',
-    locale: 'ru_RU',
-    title: 'Как поступить в WU Wien (ВУ) на WiSo: вступительный экзамен 2026/27 пошагово | WU WONNA',
-    description:
-      'Поступление в WU Wien на бакалавриат WiSo: регистрация, OSA, сбор 50 €, вступительный экзамен (Aufnahmeprüfung) — 3 части, 2 часа, проходной балл 2026 ≈ 89. Бесплатный пробник онлайн.',
+export const ADMISSION_GUIDE = {
+  ru: {
     h1: 'Как поступить в WU Wien на WiSo — вступительный экзамен 2026/27 пошагово',
     lead: 'Венский экономический университет (WU Wien, по-русски часто пишут просто «ВУ») принимает на бакалавриат Wirtschafts- und Sozialwissenschaften (WiSo, «ВиСо», «визо») через вступительный экзамен — Aufnahmeprüfung. Ниже — весь путь поступления коротко, а в конце — бесплатный пробник в формате реального экзамена.',
     sections: [
@@ -407,14 +832,9 @@ export const LANDINGS = {
     officialLink: 'Официальная страница WU о поступлении',
   },
 
-  '/de': {
-    lang: 'de',
-    locale: 'de_AT',
-    title: 'WiSo Aufnahmeprüfung WU Wien 2026/27 – Vorbereitung, Probetest & Ablauf | WU WONNA',
-    description:
-      'Vorbereitung auf die WiSo-Aufnahmeprüfung der WU Wien: Ablauf, drei Prüfungsteile, Anmeldung, OSA, Kosten und Cut-off 2026 – plus kostenloser Probetest online mit Lösungen.',
+  de: {
     h1: 'WiSo Aufnahmeprüfung an der WU Wien – Vorbereitung und kostenloser Probetest',
-    lead: 'Alles Wichtige zum Aufnahmeverfahren für das Bachelorstudium Wirtschafts- und Sozialwissenschaften (WiSo) an der Wirtschaftsuniversität Wien – kurz und übersichtlich. Auf WU WONNA kannst du dich mit Probetests im Prüfungsformat und Übungstests zu jedem Kapitel des WU-Skripts vorbereiten. Hinweis: Die Website ist derzeit überwiegend auf Russisch.',
+    lead: 'Alles Wichtige zum Aufnahmeverfahren für das Bachelorstudium Wirtschafts- und Sozialwissenschaften (WiSo) an der Wirtschaftsuniversität Wien – kurz und übersichtlich. Auf WU WONNA kannst du dich mit Probetests im Prüfungsformat und Übungstests zu jedem Kapitel des WU-Skripts vorbereiten.',
     sections: [
       {
         heading: 'Was ist die WiSo-Aufnahmeprüfung?',
@@ -470,19 +890,14 @@ export const LANDINGS = {
       },
     ],
     cta: 'Kostenlosen Probetest starten',
-    more: 'Mehr zur Prüfung (Russisch)',
+    more: 'Mehr zur Aufnahmeprüfung',
     faqHeading: 'Häufige Fragen',
     officialLink: 'Offizielle WU-Seite zum Aufnahmeverfahren',
   },
 
-  '/en': {
-    lang: 'en',
-    locale: 'en_US',
-    title: 'WU Vienna WiSo Entrance Exam 2026/27 – How to Prepare & Free Practice Test | WU WONNA',
-    description:
-      'How to get into WU Vienna (WiSo bachelor): admission steps, OSA, €50 fee, the three parts of the Aufnahmeprüfung, 2026 cut-off (≈ 89) – and a free online practice test with explanations.',
+  en: {
     h1: 'WU Vienna WiSo entrance exam (Aufnahmeprüfung) – how to prepare, plus a free practice test',
-    lead: 'A short guide to the admission procedure for the Business, Economics and Social Sciences bachelor (WiSo) at the Vienna University of Economics and Business (WU Wien). On WU WONNA you can practise with mock exams in the real format and tests for every chapter of the official WU study script. Note: the site is currently mostly in Russian, and the exam itself is in German.',
+    lead: 'A short guide to the admission procedure for the Business, Economics and Social Sciences bachelor (WiSo) at the Vienna University of Economics and Business (WU Wien). On WU WONNA you can practise with mock exams in the real format and tests for every chapter of the official WU study script. Note: the exam itself is in German.',
     sections: [
       {
         heading: 'What is the WiSo entrance exam?',
@@ -537,17 +952,8 @@ export const LANDINGS = {
       },
     ],
     cta: 'Start the free practice test',
-    more: 'More about the exam (Russian)',
+    more: 'More about the exam',
     faqHeading: 'FAQ',
     officialLink: 'Official WU admission page',
   },
 }
-
-// Одна тема на трёх языках — для <link rel="alternate" hreflang> и sitemap.
-// x-default — для всех остальных языков: английская версия.
-export const LANDING_ALTERNATES = [
-  { lang: 'ru', path: '/postuplenie-v-wu' },
-  { lang: 'de', path: '/de' },
-  { lang: 'en', path: '/en' },
-  { lang: 'x-default', path: '/en' },
-]

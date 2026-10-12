@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import HomePage from './pages/HomePage'
@@ -12,11 +13,12 @@ import ProgressPage from './pages/ProgressPage'
 import ProPage from './pages/ProPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
-import LandingPage from './pages/LandingPage'
+import AdmissionGuidePage from './pages/AdmissionGuidePage'
 import RequireAuth from './components/RequireAuth'
 import { RouteSeo } from './components/Seo'
-import { LANDINGS } from './seo/content'
-import { ENABLED_LANGS, ROUTES } from './i18n/routes'
+import { ENABLED_LANGS, ROUTES, localPath } from './i18n/routes'
+import { AlternatesProvider } from './i18n/alternates'
+import { LanguageHint, rememberedLang } from './components/LanguageSwitcher'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminTestsListPage from './pages/admin/AdminTestsListPage'
 import AdminTestFormPage from './pages/admin/AdminTestFormPage'
@@ -45,6 +47,7 @@ const PAGES = {
   progress: ProgressPage,
   pro: ProPage,
   examInfo: ExamInfoPage,
+  admissionGuide: AdmissionGuidePage,
   about: AboutPage,
   login: LoginPage,
 }
@@ -55,20 +58,36 @@ const pageRoutes = ENABLED_LANGS.flatMap((lang) =>
   )),
 )
 
+// Служебный переход без языка в адресе — ссылка из письма Supabase
+// (подтверждение почты, сброс пароля) ведёт на главную с токеном в адресе —
+// на главную запомненного языка (его выбирают переключателем).
+function useRememberedLanguageOnAuthRedirect() {
+  const { pathname, search, hash } = useLocation()
+  const navigate = useNavigate()
+  useEffect(() => {
+    const fromAuthEmail = /access_token|type=|code=/.test(`${search}${hash}`)
+    const lang = rememberedLang()
+    if (pathname === '/' && fromAuthEmail && lang && lang !== 'ru' && ENABLED_LANGS.includes(lang)) {
+      navigate(`${localPath('home', {}, lang)}${search}${hash}`, { replace: true })
+    }
+    // только при первом заходе
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+}
+
 export default function App() {
+  useRememberedLanguageOnAuthRedirect()
   return (
+    <AlternatesProvider>
     <div className="flex min-h-screen flex-col">
       <RouteSeo />
       <Header />
+      <LanguageHint />
       {/* Область страницы — не ниже экрана за вычетом шапки (4.5rem + 1px: py-4 +
           аватарка/«Войти» h-10 + граница), поэтому футер всегда ниже первого экрана. */}
       <div className="min-h-[calc(100svh-4.5rem-1px)] flex-1">
         <Routes>
           {pageRoutes}
-          {/* Посадочные страницы под поисковые запросы (RU/DE/EN) — тексты в src/seo/content.js */}
-          {Object.keys(LANDINGS).map((path) => (
-            <Route key={path} path={path} element={<LandingPage path={path} />} />
-          ))}
 
           <Route element={<RequireAuth />}>
             <Route path="/admin" element={<AdminLayout />}>
@@ -88,5 +107,6 @@ export default function App() {
       </div>
       <Footer />
     </div>
+    </AlternatesProvider>
   )
 }

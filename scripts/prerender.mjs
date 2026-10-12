@@ -28,9 +28,7 @@ import {
   EXAM_INFO,
   EXAM_PARTS,
   EXAM_STATS_2026,
-  FREE_PROBNIK_PATH,
-  LANDINGS,
-  LANDING_ALTERNATES,
+  ADMISSION_GUIDE,
   LANGUAGE_NAMES,
   OFFICIAL_WU_URL,
   OG_LOCALES,
@@ -38,9 +36,11 @@ import {
   REGISTRATION_STEPS,
   SITE,
   SITE_SUMMARY,
+  freeProbnikPath,
   testPath,
   testSeo,
 } from '../src/seo/content.js'
+import { LANGS, localPath } from '../src/i18n/routes.js'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = resolve(root, 'dist')
@@ -348,7 +348,7 @@ ${chapters.length ? `<p>В PRO входят тесты по всем глава�
     }),
   )
 
-  for (const [path, landing] of Object.entries(LANDINGS)) urls.push(renderLanding(path, landing))
+  for (const lang of LANGS) urls.push(renderLanding(lang))
 
   return urls
 }
@@ -397,11 +397,16 @@ ${about.paragraphs.map((p) => `<p>${esc(p)}</p>`).join('\n')}
 }
 
 // Посадочная страница на своём языке (RU/DE/EN) — тексты из LANDINGS.
-function renderLanding(path, landing) {
-  const { lang } = landing
-  const languages = LANDING_ALTERNATES.filter((a) => a.lang !== 'x-default')
-    .map((a) => (a.lang === lang ? `<strong>${LANGUAGE_NAMES[a.lang]}</strong>` : `<a href="${a.path}" hreflang="${a.lang}">${LANGUAGE_NAMES[a.lang]}</a>`))
-    .join(' · ')
+function renderLanding(lang) {
+  const landing = ADMISSION_GUIDE[lang]
+  const path = localPath('admissionGuide', {}, lang)
+  const alternates = [
+    ...LANGS.map((l) => ({ lang: l, path: localPath('admissionGuide', {}, l) })),
+    { lang: 'x-default', path: localPath('admissionGuide', {}, 'en') },
+  ]
+  const languages = LANGS.map((l) =>
+    l === lang ? `<strong>${LANGUAGE_NAMES[l]}</strong>` : `<a href="${localPath('admissionGuide', {}, l)}" hreflang="${l}">${LANGUAGE_NAMES[l]}</a>`,
+  ).join(' · ')
   const sections = landing.sections
     .map((section) => {
       const tag = section.ordered ? 'ol' : 'ul'
@@ -416,15 +421,14 @@ function renderLanding(path, landing) {
 
   return render({
     path,
-    title: landing.title,
-    description: landing.description,
+    ...PAGES[lang].admissionGuide,
     lang,
-    locale: landing.locale,
-    alternates: LANDING_ALTERNATES,
+    locale: OG_LOCALES[lang],
+    alternates,
     body: `<p>${languages}</p>
 <h1 class="h-page">${esc(landing.h1)}</h1>
 <p class="lead">${esc(landing.lead)}</p>
-<p>${link(FREE_PROBNIK_PATH, landing.cta)} · ${link('/exam-info', landing.more)}</p>
+<p>${link(freeProbnikPath(lang), landing.cta)} · ${link(localPath('examInfo', {}, lang), landing.more)}</p>
 ${sections}
 <h2 class="h-section">FAQ</h2>
 ${faq}

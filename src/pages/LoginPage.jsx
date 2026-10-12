@@ -40,7 +40,7 @@ export default function LoginPage() {
       if (mode === 'signin') {
         await signIn(email, password)
       } else {
-        await signUp(email, password)
+        await signUp(email, password, `${window.location.origin}${import.meta.env.BASE_URL.replace(/\/$/, '')}${path('home')}`)
         setNotice(t('login.created'))
         setMode('signin')
       }

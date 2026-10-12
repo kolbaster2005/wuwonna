@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { LANDINGS, PAGES } from '../seo/content'
+import { PAGES } from '../seo/content'
 import { applySeo } from '../lib/seo'
 import { langFromPath, matchRoute } from '../i18n/routes'
 import { translate } from '../i18n/translate'
@@ -13,14 +13,13 @@ export function RouteSeo() {
   const { pathname } = useLocation()
   useEffect(() => {
     const route = matchRoute(pathname)
-    const landing = LANDINGS[pathname]
-    const lang = landing?.lang ?? route?.lang ?? langFromPath(pathname)
+    const lang = route?.lang ?? langFromPath(pathname)
     document.documentElement.lang = lang
 
     // Страница пробника задаёт свои теги сама (useSeo в TestDetailPage) — у
     // неё заголовок зависит от загруженного теста.
     if (route?.key === 'test') return
-    const page = landing ?? (route && PAGES[lang]?.[route.key])
+    const page = route && PAGES[lang]?.[route.key]
     if (page) applySeo({ ...page, path: pathname })
     // Личные и служебные страницы (вход, словарь, прогресс, тест, админка) —
     // поисковикам не нужны.

@@ -108,6 +108,12 @@ function Landing() {
               >
                 <Info size={17} /> {t('home.examInfo')}
               </Link>
+              <Link
+                to={path('admissionGuide')}
+                className="text-sm font-bold text-pine-700 underline-offset-4 hover:underline sm:px-2"
+              >
+                {t('home.admissionGuide')} →
+              </Link>
             </div>
           </div>
 

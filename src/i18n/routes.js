@@ -13,7 +13,7 @@ export const LANGS = ['ru', 'de', 'en']
 export const DEFAULT_LANG = 'ru'
 
 // Языки, для которых включены адреса на сайте.
-export const ENABLED_LANGS = ['ru']
+export const ENABLED_LANGS = LANGS
 
 // indexed — открыта ли страница для поисковиков (sitemap, пререндер).
 export const ROUTES = {

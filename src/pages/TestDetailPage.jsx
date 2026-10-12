@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowRight, Download, ListChecks, Clock, ShieldCheck, CalendarDays, PauseCircle, Eye, Languages } from 'lucide-react'
-import { fetchTestByPath, fetchTestPdf } from '../lib/data'
+import { fetchTestByPath, fetchTestPdf, fetchTestVersions } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import Breadcrumbs from '../components/Breadcrumbs'
 import RichText from '../components/RichText'
@@ -9,6 +9,7 @@ import ProLockedNotice from '../components/ProLockedNotice'
 import { useSeo } from '../lib/seo'
 import { testExamPath, testPath, testSeo } from '../seo/content'
 import { useI18n } from '../i18n'
+import { useTestAlternates } from '../i18n/alternates'
 
 export default function TestDetailPage() {
   // В адресе — понятный slug (или старый id), в базе — id.
@@ -22,6 +23,9 @@ export default function TestDetailPage() {
   // canonical на русскую страницу (testSeo строит путь по языку версии).
   useSeo(test ? { ...testSeo(test), noindex: Boolean(test.is_fallback) } : null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
+  // Версии на других языках — для переключателя языка.
+  const [versions, setVersions] = useState(null)
+  useTestAlternates(versions, testPath)
 
   useEffect(() => {
     let alive = true
@@ -35,6 +39,7 @@ export default function TestDetailPage() {
         return
       }
       setTest(found)
+      if (found) fetchTestVersions(found.translation_group).then((list) => alive && setVersions(list))
     })
     return () => {
       alive = false

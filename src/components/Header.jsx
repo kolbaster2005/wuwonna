@@ -6,6 +6,7 @@ import { useAuth } from '../lib/authContext'
 import { useI18n } from '../i18n'
 import { matchRoute } from '../i18n/routes'
 import UserMenu from './UserMenu'
+import { LanguageSwitcher, MobileLanguageSwitcher } from './LanguageSwitcher'
 
 // «О проекте» — только в футере. «Книга» и «Режим тренировки» пока скрыты с
 // сайта (маршруты отключены в App.jsx). «Админка» — в личном кабинете
@@ -243,6 +244,7 @@ function MobileMenu({ onClose }) {
           )}
         </div>
       </nav>
+      <MobileLanguageSwitcher onDone={onClose} />
     </div>,
     document.body,
   )
@@ -284,6 +286,7 @@ export default function Header() {
 
         {/* «Войти» / аватарка с личным кабинетом — и на телефоне тоже, рядом с бургером. */}
         <div className="flex items-center gap-2 justify-self-end">
+          <LanguageSwitcher />
           {user ? (
             <UserMenu onSignOut={handleSignOut} />
           ) : (

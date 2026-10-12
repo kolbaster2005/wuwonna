@@ -28,9 +28,16 @@ export function AuthProvider({ children }) {
     if (error) throw error
   }
 
-  async function signUp(email, password) {
+  // redirectTo — куда ведёт ссылка из письма подтверждения: главная на языке
+  // человека. Адрес должен быть в Supabase → Authentication → URL
+  // Configuration → Redirect URLs, иначе Supabase поведёт на Site URL.
+  async function signUp(email, password, redirectTo) {
     if (!isSupabaseConfigured) throw new Error('errors.supabaseNotConfigured')
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: redirectTo ? { emailRedirectTo: redirectTo } : undefined,
+    })
     if (error) throw error
   }
 

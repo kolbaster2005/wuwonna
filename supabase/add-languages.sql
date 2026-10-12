@@ -31,6 +31,12 @@ create unique index if not exists practice_tests_group_lang on practice_tests (t
 alter table categories add column if not exists name_de text;
 alter table categories add column if not exists name_en text;
 
+-- Названия текущих вкладок (поменять можно в админке, «Категории»).
+update categories set name_de = 'Probetests', name_en = 'Practice tests'
+where slug = 'probniki' and name_de is null and name_en is null;
+update categories set name_de = 'Wirtschaftliche Grundlagen', name_en = 'Economics basics'
+where slug = 'основы-экономики' and name_de is null and name_en is null;
+
 -- --- Слаги (бывший TEST_SLUGS) ---
 
 update practice_tests t set slug = v.slug

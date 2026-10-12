@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, MinusCircle, BookOpen, Circle, Eye } from 'lucide-react'
-import { fetchTestByPath, fetchQuestions, fetchPassages, fetchCategories, saveAttempt } from '../lib/data'
+import { fetchTestByPath, fetchTestVersions, fetchQuestions, fetchPassages, fetchCategories, saveAttempt } from '../lib/data'
 import { buildSteps, buildGroups, findPinnedPassage } from '../lib/steps'
 import { scoreQuestion, scoreStatus } from '../lib/scoring'
 import { useVocabulary } from '../lib/useVocabulary'
@@ -17,6 +17,7 @@ import ResultScreen, { secondaryActionClass } from '../components/ResultScreen'
 import { useConfirm } from '../lib/confirmDialog'
 import { testExamPath, testPath } from '../seo/content'
 import { useI18n } from '../i18n'
+import { useTestAlternates } from '../i18n/alternates'
 
 // Строка под результатом: сохранился ли результат и где.
 function SaveStatus({ status, isGuest }) {
@@ -85,6 +86,11 @@ export default function TestTakingPage() {
 
   const [wordModalPrefill, setWordModalPrefill] = useState(null) // string | null
 
+  // Версии на других языках — для переключателя языка (он спросит
+  // подтверждение: другая версия — другой тест).
+  const [versions, setVersions] = useState(null)
+  useTestAlternates(versions, testExamPath)
+
   useEffect(() => {
     let alive = true
     fetchTestByPath(lang, slug).then(async ({ test: found, redirect }) => {
@@ -99,8 +105,14 @@ export default function TestTakingPage() {
         setTest(null)
         return
       }
-      const [qs, ps, cats] = await Promise.all([fetchQuestions(found.id), fetchPassages(found.id), fetchCategories()])
+      const [qs, ps, cats, vs] = await Promise.all([
+        fetchQuestions(found.id),
+        fetchPassages(found.id),
+        fetchCategories(),
+        fetchTestVersions(found.translation_group),
+      ])
       if (!alive) return
+      setVersions(vs)
       setTest(found)
       setQuestions(qs)
       setPassages(ps)

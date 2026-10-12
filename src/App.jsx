@@ -12,8 +12,10 @@ import ProgressPage from './pages/ProgressPage'
 import ProPage from './pages/ProPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
+import LandingPage from './pages/LandingPage'
 import RequireAuth from './components/RequireAuth'
 import { RouteSeo } from './components/Seo'
+import { LANDINGS } from './seo/content'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminTestsListPage from './pages/admin/AdminTestsListPage'
 import AdminTestFormPage from './pages/admin/AdminTestFormPage'
@@ -47,6 +49,10 @@ export default function App() {
           <Route path="/pro" element={<ProPage />} />
           <Route path="/exam-info" element={<ExamInfoPage />} />
           <Route path="/about" element={<AboutPage />} />
+          {/* Посадочные страницы под поисковые запросы (RU/DE/EN) — тексты в src/seo/content.js */}
+          {Object.keys(LANDINGS).map((path) => (
+            <Route key={path} path={path} element={<LandingPage path={path} />} />
+          ))}
           <Route path="/login" element={<LoginPage />} />
 
           <Route element={<RequireAuth />}>

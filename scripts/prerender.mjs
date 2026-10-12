@@ -22,14 +22,21 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
+  DISCLAIMER,
   EXAM_FAQ,
   EXAM_PARTS,
   EXAM_STATS_2026,
+  FREE_PROBNIK_PATH,
+  LANDINGS,
+  LANDING_ALTERNATES,
+  LANGUAGE_NAMES,
+  OFFICIAL_WU_URL,
   PAGES,
   REGISTRATION_STEPS,
   SITE,
   SITE_SUMMARY,
   SITE_SUMMARY_DE,
+  testPath,
   testSeo,
 } from '../src/seo/content.js'
 
@@ -94,16 +101,21 @@ const link = (href, text) => `<a href="${esc(href)}">${esc(text)}</a>`
 
 const NAV = `<header class="mx-auto max-w-6xl px-4 py-4 sm:px-6">
 <nav aria-label="Навигация"><strong>${link('/', SITE.name)}</strong> ·
-${link('/probniki', 'Пробники')} · ${link('/exam-info', 'Об экзамене')} · ${link('/about', 'О проекте')} · ${link('/pro', 'PRO')}</nav>
+${link('/probniki', 'Пробники')} · ${link('/exam-info', 'Об экзамене')} · ${link('/postuplenie-v-wu', 'Как поступить в WU')} · ${link('/about', 'О проекте')} · ${link('/pro', 'PRO')} ·
+<a href="/de" hreflang="de">Deutsch</a> · <a href="/en" hreflang="en">English</a></nav>
 </header>`
 
-const FOOTER = `<footer class="mx-auto max-w-6xl px-4 py-8 text-sm sm:px-6">
-<p>${esc(SITE_SUMMARY)}</p>
+// В футере — описание проекта и отказ от связи с WU на языке страницы.
+function footer(lang) {
+  return `<footer class="mx-auto max-w-6xl px-4 py-8 text-sm sm:px-6">
+<p>${esc(lang === 'ru' ? SITE_SUMMARY : SITE_SUMMARY_DE)}</p>
 <p>${link(SITE.youtube, 'YouTube @wuwonna')} · ${link(SITE.telegram, 'Telegram @wuwonna')}</p>
+<p>${esc(DISCLAIMER[lang])}</p>
 </footer>`
+}
 
-function page(body) {
-  return `${NAV}\n<main class="page">\n${body}\n</main>\n${FOOTER}`
+function page(body, lang = 'ru') {
+  return `${NAV}\n<main class="page" lang="${lang}">\n${body}\n</main>\n${footer(lang)}`
 }
 
 // --- schema.org ---
@@ -120,6 +132,10 @@ const baseGraph = [
     url: SITE.url,
     logo: `${SITE.url}${SITE.logo}`,
     description: SITE_SUMMARY,
+    // Прямо говорим поисковикам и нейросетям: это не университет.
+    disambiguatingDescription: DISCLAIMER.en,
+    knowsAbout: ['WiSo Aufnahmeprüfung', 'WU Wien Aufnahmeverfahren', 'Wirtschaftsuniversität Wien'],
+    areaServed: 'AT',
     sameAs: [SITE.youtube, SITE.telegram],
   },
   {
@@ -128,7 +144,7 @@ const baseGraph = [
     url: SITE.url,
     name: SITE.name,
     alternateName: SITE.alternateNames,
-    inLanguage: 'ru',
+    inLanguage: ['ru', 'de', 'en'],
     publisher: { '@id': ORG_ID },
   },
 ]
@@ -153,8 +169,12 @@ function breadcrumbs(items) {
 
 // --- сборка одной страницы ---
 
-function render({ path, title, description, body, schema = [] }) {
+// hreflang-версии страницы (адрес → список языков) — и для <head>, и для sitemap.
+const alternatesByUrl = new Map()
+
+function render({ path, title, description, body, schema = [], lang = 'ru', locale = SITE.locale, alternates = [] }) {
   const url = `${SITE.url}${path}`
+  if (alternates.length) alternatesByUrl.set(url, alternates)
   const head = [
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(description)}" />`,
@@ -163,12 +183,15 @@ function render({ path, title, description, body, schema = [] }) {
     `<meta property="og:title" content="${esc(title)}" />`,
     `<meta property="og:description" content="${esc(description)}" />`,
     `<meta property="og:url" content="${esc(url)}" />`,
+    ...alternates.map((a) => `<link rel="alternate" hreflang="${a.lang}" href="${esc(SITE.url + a.path)}" />`),
     jsonLd(schema),
   ].join('\n    ')
 
   const html = template
     .replace(/<!-- seo:start[\s\S]*?<!-- seo:end -->/, head)
-    .replace('<div id="root"></div>', `<div id="root">${page(body)}</div>`)
+    .replace('<html lang="ru">', `<html lang="${lang}">`)
+    .replace('<meta property="og:locale" content="ru_RU" />', `<meta property="og:locale" content="${locale}" />`)
+    .replace('<div id="root"></div>', `<div id="root">${page(body, lang)}</div>`)
   if (html === template) throw new Error('prerender: в index.html не найдены метки seo:start/seo:end или #root')
 
   const file = path === '/' ? 'index.html' : `${path.slice(1)}.html`
@@ -178,11 +201,33 @@ function render({ path, title, description, body, schema = [] }) {
   return url
 }
 
+// Старый адрес → новый. На GitHub Pages нет настоящих редиректов (301),
+// поэтому — мгновенный meta refresh + canonical: Google понимает это как
+// постоянный переезд. В sitemap такие адреса не попадают.
+function writeRedirect(fromPath, toPath) {
+  const url = `${SITE.url}${toPath}`
+  const html = `<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>WU WONNA</title>
+<link rel="canonical" href="${esc(url)}" />
+<meta name="robots" content="noindex, follow" />
+<meta http-equiv="refresh" content="0; url=${esc(toPath)}" />
+</head>
+<body><p>Страница переехала: ${link(toPath, url)}</p></body>
+</html>
+`
+  const target = resolve(dist, `${fromPath.slice(1)}.html`)
+  mkdirSync(dirname(target), { recursive: true })
+  writeFileSync(target, html)
+}
+
 // --- страницы ---
 
 function testList(tests) {
   return `<ul>\n${tests
-    .map((t) => `<li>${link(`/probniki/${t.id}`, t.title)}${t.description ? ` — ${esc(t.description)}` : ''}</li>`)
+    .map((t) => `<li>${link(testPath(t), t.title)}${t.description ? ` — ${esc(t.description)}` : ''}</li>`)
     .join('\n')}\n</ul>`
 }
 
@@ -242,7 +287,7 @@ ${chapters.map(([title, list]) => `<h3>${esc(title)}</h3>\n${testList(list)}`).j
 <h1 class="h-page">${esc(test.title)}</h1>
 ${paragraphs(test.long_description || test.description)}
 <ul>${facts.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
-<p>${link(`/probniki/${test.id}/exam`, 'Пройти пробник онлайн')}</p>`,
+<p>${link(`${seo.path}/exam`, 'Пройти пробник онлайн')}</p>`,
         schema: [
           breadcrumbs([
             ['WU WONNA', '/'],
@@ -252,6 +297,7 @@ ${paragraphs(test.long_description || test.description)}
         ],
       }),
     )
+    if (seo.path !== `/probniki/${test.id}`) writeRedirect(`/probniki/${test.id}`, seo.path)
   }
 
   urls.push(
@@ -320,7 +366,57 @@ ${chapters.length ? `<p>В PRO входят тесты по всем глава�
     }),
   )
 
+  for (const [path, landing] of Object.entries(LANDINGS)) urls.push(renderLanding(path, landing))
+
   return urls
+}
+
+// Посадочная страница на своём языке (RU/DE/EN) — тексты из LANDINGS.
+function renderLanding(path, landing) {
+  const { lang } = landing
+  const languages = LANDING_ALTERNATES.filter((a) => a.lang !== 'x-default')
+    .map((a) => (a.lang === lang ? `<strong>${LANGUAGE_NAMES[a.lang]}</strong>` : `<a href="${a.path}" hreflang="${a.lang}">${LANGUAGE_NAMES[a.lang]}</a>`))
+    .join(' · ')
+  const sections = landing.sections
+    .map((section) => {
+      const tag = section.ordered ? 'ol' : 'ul'
+      return [
+        `<h2 class="h-section">${esc(section.heading)}</h2>`,
+        section.text ? `<p>${esc(section.text)}</p>` : '',
+        section.items ? `<${tag}>${section.items.map((item) => `<li>${esc(item)}</li>`).join('')}</${tag}>` : '',
+      ].join('\n')
+    })
+    .join('\n')
+  const faq = landing.faq.map((f) => `<h3>${esc(f.question)}</h3>\n<p>${esc(f.answer)}</p>`).join('\n')
+
+  return render({
+    path,
+    title: landing.title,
+    description: landing.description,
+    lang,
+    locale: landing.locale,
+    alternates: LANDING_ALTERNATES,
+    body: `<p>${languages}</p>
+<h1 class="h-page">${esc(landing.h1)}</h1>
+<p class="lead">${esc(landing.lead)}</p>
+<p>${link(FREE_PROBNIK_PATH, landing.cta)} · ${link('/exam-info', landing.more)}</p>
+${sections}
+<h2 class="h-section">FAQ</h2>
+${faq}
+<p>${esc(DISCLAIMER[lang])} ${link(OFFICIAL_WU_URL, 'wu.ac.at')}</p>`,
+    schema: [
+      {
+        '@type': 'FAQPage',
+        inLanguage: lang,
+        mainEntity: landing.faq.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        })),
+      },
+      breadcrumbs([['WU WONNA', '/'], [landing.h1, path]]),
+    ],
+  })
 }
 
 // --- sitemap.xml и robots.txt ---
@@ -328,8 +424,15 @@ ${chapters.length ? `<p>В PRO входят тесты по всем глава�
 function writeSitemap(urls) {
   const today = new Date().toISOString().slice(0, 10)
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${esc(u)}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urls
+  .map((u) => {
+    const alternates = (alternatesByUrl.get(u) ?? [])
+      .map((a) => `\n    <xhtml:link rel="alternate" hreflang="${a.lang}" href="${esc(SITE.url + a.path)}" />`)
+      .join('')
+    return `  <url><loc>${esc(u)}</loc><lastmod>${today}</lastmod>${alternates}</url>`
+  })
+  .join('\n')}
 </urlset>
 `
   writeFileSync(resolve(dist, 'sitemap.xml'), xml)

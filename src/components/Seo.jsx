@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { PAGES, SITE } from '../seo/content'
+import { LANDINGS, PAGES, SITE } from '../seo/content'
 import { applySeo } from '../lib/seo'
 
 // Теги страницы по адресу: заголовок и описание открытых страниц — из
@@ -14,7 +14,7 @@ export function RouteSeo() {
   const { pathname } = useLocation()
   useEffect(() => {
     if (OWN_SEO.test(pathname)) return
-    const page = PAGES[pathname]
+    const page = PAGES[pathname] ?? LANDINGS[pathname]
     if (page) applySeo({ ...page, path: pathname })
     // Личные и служебные страницы (вход, словарь, прогресс, тест, админка) —
     // поисковикам не нужны.

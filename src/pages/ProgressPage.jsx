@@ -12,6 +12,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { fetchTests, fetchAttempts } from '../lib/data'
+import { testPath } from '../seo/content'
 import { chapterProgress, lastAttempt, nextTest, summary, weakestTests, attemptRatio } from '../lib/progress'
 import { useVocabulary } from '../lib/useVocabulary'
 import { useAuth } from '../lib/authContext'
@@ -126,7 +127,7 @@ function ChapterCard({ chapter, expanded, onToggle }) {
                 </div>
                 <span className="w-10 text-right text-sm font-bold tabular-nums">{attempts > 0 ? percent(best) : '—'}</span>
                 <Link
-                  to={`/probniki/${test.id}`}
+                  to={testPath(test)}
                   className="shrink-0 rounded-lg border border-line px-2.5 py-1.5 text-xs font-bold text-ink/70 hover:border-ink/30"
                 >
                   {attempts > 0 ? 'Ещё раз' : 'Пройти'}
@@ -258,7 +259,7 @@ export default function ProgressPage() {
                   <p className="mt-2 text-xs text-ink/45">Время: {formatStudyTime(last.duration_seconds)}</p>
                 )}
                 <Link
-                  to={`/probniki/${lastTest.id}/exam`}
+                  to={`${testPath(lastTest)}/exam`}
                   className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
                 >
                   <RotateCcw size={15} /> Пройти ещё раз
@@ -275,7 +276,7 @@ export default function ProgressPage() {
               <p className="text-sm text-ink/55">{next.section ? `${next.section} · следующий по порядку` : 'Следующий по порядку'}</p>
               <p className="mt-1 font-bold">{next.title}</p>
               <Link
-                to={`/probniki/${next.id}`}
+                to={testPath(next)}
                 className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-pine-600 py-2.5 text-sm font-bold text-white hover:bg-pine-700"
               >
                 Начать <ArrowRight size={15} />
@@ -289,7 +290,7 @@ export default function ProgressPage() {
               <ul className="space-y-3">
                 {weakest.map(({ test, best }) => (
                   <li key={test.id}>
-                    <Link to={`/probniki/${test.id}`} className="group block">
+                    <Link to={testPath(test)} className="group block">
                       <div className="flex items-baseline justify-between gap-3">
                         <span className="truncate text-sm font-bold group-hover:text-pine-700">{test.title}</span>
                         <span className="text-sm font-bold tabular-nums">{percent(best)}</span>

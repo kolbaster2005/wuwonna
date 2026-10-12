@@ -7,6 +7,7 @@ import { isSupabaseConfigured } from '../lib/supabaseClient'
 import { useProModal } from '../lib/proModal'
 import { originalityLabel } from '../lib/originality'
 import RichText from './RichText'
+import { testPath } from '../seo/content'
 
 // result — { best (0..1), attempts } по этому тесту, если человек его уже
 // проходил (см. statsByTest в lib/progress.js). Пройденная карточка
@@ -117,7 +118,7 @@ export default function TestCard({ test, result, onPinChange }) {
         </button>
       ) : (
         <Link
-          to={`/probniki/${test.id}`}
+          to={testPath(test)}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-pine-600 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:mt-6"
         >
           {isDone ? (

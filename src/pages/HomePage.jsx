@@ -85,6 +85,7 @@ function Landing() {
 
         <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-8 px-4 pb-20 pt-8 sm:px-6 sm:pb-24 sm:pt-10 lg:grid-cols-[1.5fr_1fr] lg:gap-4">
           <div>
+            <p className="eyebrow mb-3 text-pine-700">Вступительный экзамен WU Wien · WiSo Aufnahmeprüfung 2026/27</p>
             <h1 className="text-[32px] font-extrabold leading-[1.15] tracking-tight sm:text-[42px] lg:text-[44px]">
               Подготовка к экзамену в WU <br className="hidden sm:block" />— <span className="text-pine-600">удобно</span>{' '}
               <br className="hidden sm:block" />и в одном месте

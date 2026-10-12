@@ -15,6 +15,7 @@ import AddWordModal from '../components/AddWordModal'
 import ProLockedNotice from '../components/ProLockedNotice'
 import ResultScreen, { secondaryActionClass } from '../components/ResultScreen'
 import { useConfirm } from '../lib/confirmDialog'
+import { testIdFromParam, testPath } from '../seo/content'
 
 // Строка под результатом: сохранился ли результат и где.
 function SaveStatus({ status, isGuest }) {
@@ -65,7 +66,7 @@ function pluralQuestions(n) {
 export default function TestTakingPage() {
   const vocabulary = useVocabulary()
   const confirmAction = useConfirm()
-  const { testId } = useParams()
+  const testId = testIdFromParam(useParams().testId) // в адресе — slug или старый id
   const { user, hasPro, loading: authLoading } = useAuth()
   const [test, setTest] = useState(undefined)
   const [questions, setQuestions] = useState([])
@@ -161,7 +162,7 @@ export default function TestTakingPage() {
   if (test?.is_pro && !hasPro) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
-        <Breadcrumbs items={[{ label: 'Пробники', to: '/probniki' }, { label: test.title, to: `/probniki/${test.id}` }]} />
+        <Breadcrumbs items={[{ label: 'Пробники', to: '/probniki' }, { label: test.title, to: testPath(test) }]} />
         <div className="mt-5 rounded-2xl border border-line bg-white p-5 sm:mt-6 sm:p-8 lg:p-10">
           <ProLockedNotice testTitle={test.title} />
         </div>
@@ -173,7 +174,7 @@ export default function TestTakingPage() {
   if (questions.length === 0) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
-        <Breadcrumbs items={[{ label: 'Пробники', to: '/probniki' }, { label: test.title, to: `/probniki/${test.id}` }]} />
+        <Breadcrumbs items={[{ label: 'Пробники', to: '/probniki' }, { label: test.title, to: testPath(test) }]} />
         <div className="mt-5 rounded-2xl border border-line bg-white px-5 py-16 text-center sm:mt-6">
           <h1 className="text-xl font-extrabold">В этом пробнике пока нет вопросов</h1>
           <p className="mt-2 text-sm text-ink/55">Загляни попозже — их скоро добавят.</p>
@@ -288,7 +289,7 @@ export default function TestTakingPage() {
       <Breadcrumbs
         items={[
           { label: 'Пробники', to: '/probniki' },
-          { label: test.title, to: `/probniki/${test.id}` },
+          { label: test.title, to: testPath(test) },
           { label: 'Выполнение' },
         ]}
       />

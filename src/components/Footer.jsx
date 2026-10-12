@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Crown, Send } from 'lucide-react'
+import { DISCLAIMER } from '../seo/content'
 
 // В lucide-react 1.x брендовых иконок (YouTube и т.п.) больше нет — рисуем
 // свою в том же контурном стиле, что и остальные иконки.
@@ -39,8 +40,11 @@ const columns = [
     title: 'Проект',
     links: [
       { label: 'Об экзамене', to: '/exam-info' },
+      { label: 'Как поступить в WU', to: '/postuplenie-v-wu' },
       { label: 'О проекте', to: '/about' },
       { label: 'PRO-доступ', to: '/pro', pro: true }, // с короной
+      { label: 'Deutsch', to: '/de', lang: 'de' },
+      { label: 'English', to: '/en', lang: 'en' },
     ],
   },
 ]
@@ -93,6 +97,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       to={link.to}
+                      hrefLang={link.lang}
                       className="inline-flex items-center gap-1.5 text-sm text-white/60 transition-colors hover:text-white"
                     >
                       {link.pro && <Crown size={14} className="text-pine-600" />}
@@ -112,6 +117,14 @@ export default function Footer() {
             <Link to="/" className="hover:text-white/70">Пользовательское соглашение</Link>
           </div>
         </div>
+
+        {/* Не выдаём себя за университет — и людям, и поисковикам */}
+        <p className="mt-4 max-w-3xl text-xs leading-relaxed text-white/40">
+          {DISCLAIMER.ru}
+          <span lang="de" className="mt-1 block">
+            {DISCLAIMER.de}
+          </span>
+        </p>
       </div>
     </footer>
   )

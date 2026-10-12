@@ -6,6 +6,7 @@ import { attemptRatio, chapterNextTest, chapterProgress, lastAttempt, nextTest, 
 import { useVocabulary } from '../lib/useVocabulary'
 import { TOPICS } from '../data/topics'
 import { useAuth } from '../lib/authContext'
+import { testPath } from '../seo/content'
 
 // Главная для вошедшего. Сетка 2 колонки × 3 строки (на компьютере всё на
 // первом экране):
@@ -107,7 +108,7 @@ function ChaptersMap({ chapters }) {
                   return (
                     <Link
                       key={item.test.id}
-                      to={`/probniki/${item.test.id}`}
+                      to={testPath(item.test)}
                       title={`${item.test.title} — ${status}`}
                       aria-label={`${item.test.title}: ${status}`}
                       className={`h-6 w-6 rounded-md transition-transform hover:scale-110 hover:ring-2 hover:ring-pine-600/40 ${levelClass(item)}`}
@@ -135,7 +136,7 @@ function ChaptersMap({ chapters }) {
 
 function LastResultCard({ last, lastTest, next }) {
   const button = next && (
-    <Link to={`/probniki/${next.id}`} className="btn btn-primary shrink-0">
+    <Link to={testPath(next)} className="btn btn-primary shrink-0">
       {last ? 'Продолжить' : 'Начать'} <ArrowRight size={16} />
     </Link>
   )

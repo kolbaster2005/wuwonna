@@ -8,15 +8,23 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import RichText from '../components/RichText'
 import ProLockedNotice from '../components/ProLockedNotice'
 import { useSeo } from '../lib/seo'
-import { testSeo } from '../seo/content'
+import { testIdFromParam, testPath, testSeo } from '../seo/content'
 
 export default function TestDetailPage() {
-  const { testId } = useParams()
+  // В адресе — понятный slug (или старый id), в базе — id.
+  const { testId: testParam } = useParams()
+  const testId = testIdFromParam(testParam)
   const navigate = useNavigate()
   const { hasPro, loading: authLoading } = useAuth()
   const [test, setTest] = useState(undefined)
   useSeo(test ? testSeo(test) : null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
+
+  // Старая ссылка с id → на адрес со slug, без лишней записи в истории.
+  useEffect(() => {
+    const canonicalPath = testPath(testId)
+    if (canonicalPath !== `/probniki/${testParam}`) navigate(canonicalPath, { replace: true })
+  }, [testId, testParam, navigate])
 
   useEffect(() => {
     let alive = true
@@ -115,7 +123,7 @@ export default function TestDetailPage() {
               </div>
             </div>
 
-            <button onClick={() => navigate(`/probniki/${test.id}/exam`)} className="btn btn-primary btn-lg mt-5 w-full">
+            <button onClick={() => navigate(`${testPath(test)}/exam`)} className="btn btn-primary btn-lg mt-5 w-full">
               Начать тест <ArrowRight size={17} />
             </button>
 

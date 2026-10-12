@@ -719,6 +719,11 @@ export function testExamPath(test, lang = test.lang ?? 'ru') {
   return localPath('testExam', { slug: test.slug || test.id }, lang)
 }
 
+// Результат попытки (разбор ответов). attemptId не указан — последняя попытка.
+export function testResultPath(test, attemptId, lang = test.lang ?? 'ru') {
+  return localPath('testResult', { slug: test.slug || test.id, attempt: attemptId }, lang)
+}
+
 // Шаблон заголовка, если у версии нет своего seo_title.
 const TEST_SEO_TEMPLATES = {
   ru: (test) =>

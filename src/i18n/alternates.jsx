@@ -30,7 +30,7 @@ export function useAlternateLinks() {
   return LANGS.map((lang) => {
     if (override?.[lang]) return { lang, to: override[lang] }
     if (!route) return { lang, to: localPath('home', {}, lang) }
-    if (route.key === 'test' || route.key === 'testExam') return { lang, to: localPath('tests', {}, lang) }
+    if (route.key.startsWith('test') && route.key !== 'tests') return { lang, to: localPath('tests', {}, lang) }
     return { lang, to: `${localPath(route.key, route.params, lang)}${search}` }
   })
 }

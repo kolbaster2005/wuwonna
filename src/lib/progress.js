@@ -167,3 +167,35 @@ export function localizeSections(tests, chapterName) {
     return number ? { ...t, section: chapterName(Number(number)) } : t
   })
 }
+
+// --- Разбор сохранённой попытки («Посмотреть результаты») ---
+
+// Попытка для страницы результата: по id из адреса (?attempt=), а без него —
+// самая свежая попытка этого пробника (на любой языковой версии группы).
+export function pickAttempt(attempts, translationGroup, attemptId) {
+  if (attemptId) return attempts.find((a) => String(a.id) === String(attemptId)) ?? null
+  return attempts
+    .filter((a) => (a.translation_group ?? a.test_id) === translationGroup)
+    .reduce((latest, a) => (!latest || a.completed_at > latest.completed_at ? a : latest), null)
+}
+
+// Ответы попытки -> состояние разбора в TestTakingPage:
+// { [индекс вопроса]: { selected, score, max, status } }.
+// selectionKnown: false — у попытки сохранены только баллы (попытки до того,
+// как стали сохранять выбранные варианты): верные ответы видно, свой выбор — нет.
+// Вопросы, которых больше нет в пробнике, пропускаются.
+export function answersFromAttempt(attempt, questions) {
+  const indexById = new Map(questions.map((q, i) => [q.id, i]))
+  const answers = {}
+  let selectionKnown = true
+  for (const a of attempt.answers ?? []) {
+    const index = indexById.get(a.question_id)
+    if (index === undefined) continue
+    if (!Array.isArray(a.selected)) selectionKnown = false
+    const score = Number(a.score)
+    const max = Number(a.max)
+    const status = score >= max ? 'correct' : score <= 0 ? 'incorrect' : 'partial'
+    answers[index] = { selected: Array.isArray(a.selected) ? a.selected : [], score, max, status }
+  }
+  return { answers, selectionKnown }
+}

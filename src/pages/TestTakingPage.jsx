@@ -1,7 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, MinusCircle, BookOpen, Circle, Eye } from 'lucide-react'
-import { fetchTestByPath, fetchTestVersions, fetchQuestions, fetchPassages, fetchCategories, saveAttempt } from '../lib/data'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, MinusCircle, BookOpen, Circle, Eye, RotateCcw } from 'lucide-react'
+import {
+  fetchAttempts,
+  fetchTestById,
+  fetchTestByPath,
+  fetchTestVersions,
+  fetchQuestions,
+  fetchPassages,
+  fetchCategories,
+  saveAttempt,
+} from '../lib/data'
+import { answersFromAttempt, pickAttempt } from '../lib/progress'
 import { buildSteps, buildGroups, findPinnedPassage } from '../lib/steps'
 import { scoreQuestion, scoreStatus } from '../lib/scoring'
 import { useVocabulary } from '../lib/useVocabulary'
@@ -56,11 +66,16 @@ function SaveStatus({ status, isGuest }) {
   return null
 }
 
-export default function TestTakingPage() {
+// review — страница результата (TestResultPage): тест открывается сразу
+// завершённым, с ответами сохранённой попытки (?attempt=<id>, без него —
+// последней), как будто его только что закончили. Ничего не сохраняет.
+export default function TestTakingPage({ review = false }) {
   const vocabulary = useVocabulary()
   const confirmAction = useConfirm()
-  const { t, lang, path, formatNumber } = useI18n()
+  const { t, lang, path, formatNumber, formatDate } = useI18n()
   const { slug } = useParams() // в адресе — slug или старый id
+  const [searchParams] = useSearchParams()
+  const attemptId = searchParams.get('attempt')
   const navigate = useNavigate()
   const { user, hasPro, loading: authLoading } = useAuth()
   const [test, setTest] = useState(undefined)
@@ -86,17 +101,23 @@ export default function TestTakingPage() {
 
   const [wordModalPrefill, setWordModalPrefill] = useState(null) // string | null
 
+  // Разбор: попытка (null — её нет) и сохранены ли в ней выбранные варианты.
+  const [attempt, setAttempt] = useState(undefined)
+  const [selectionKnown, setSelectionKnown] = useState(true)
+
   // Версии на других языках — для переключателя языка (он спросит
   // подтверждение: другая версия — другой тест).
   const [versions, setVersions] = useState(null)
-  useTestAlternates(versions, testExamPath)
+  // В разборе другой язык — страница пробника на нём (у другой версии свои вопросы).
+  useTestAlternates(versions, review ? testPath : testExamPath)
 
   useEffect(() => {
+    if (review && authLoading) return // попытки зависят от того, кто вошёл
     let alive = true
     fetchTestByPath(lang, slug).then(async ({ test: found, redirect }) => {
       if (!alive) return
       // Есть версия на языке страницы (или открыли по старому id) — на её адрес.
-      const target = redirect && testExamPath(redirect, lang)
+      const target = !review && redirect && testExamPath(redirect, lang)
       if (target && target !== testExamPath({ slug }, lang)) {
         navigate(target, { replace: true })
         return
@@ -105,23 +126,44 @@ export default function TestTakingPage() {
         setTest(null)
         return
       }
+
+      // Разбор открывается на той версии, где сделана попытка, — иначе
+      // ответы не совпадут с вопросами.
+      let shown = found
+      let saved = null
+      if (review) {
+        saved = pickAttempt(await fetchAttempts(user?.id), found.translation_group, attemptId)
+        if (saved && saved.test_id !== found.id) shown = (await fetchTestById(saved.test_id)) ?? found
+      }
+
       const [qs, ps, cats, vs] = await Promise.all([
-        fetchQuestions(found.id),
-        fetchPassages(found.id),
+        fetchQuestions(shown.id),
+        fetchPassages(shown.id),
         fetchCategories(),
-        fetchTestVersions(found.translation_group),
+        fetchTestVersions(shown.translation_group),
       ])
       if (!alive) return
       setVersions(vs)
-      setTest(found)
+      setTest(shown)
       setQuestions(qs)
       setPassages(ps)
       setCategories(cats)
+      if (review) {
+        setAttempt(saved)
+        if (saved) {
+          const restored = answersFromAttempt(saved, qs)
+          setAnswers(restored.answers)
+          setSelectionKnown(restored.selectionKnown)
+          setElapsedSeconds(saved.duration_seconds ?? 0)
+          setCompleted(true)
+          setFinished(true)
+        }
+      }
     })
     return () => {
       alive = false
     }
-  }, [lang, slug, navigate])
+  }, [lang, slug, navigate, review, attemptId, authLoading, user?.id])
 
   // Таймер стартует, как только начинается тестирование, и тикает, пока не
   // поставлен на паузу.
@@ -162,7 +204,7 @@ export default function TestTakingPage() {
     setPendingSelection(currentAnswer?.selected ?? [])
   }, [currentStepIndex, currentAnswer])
 
-  if (test === undefined || authLoading) {
+  if (test === undefined || authLoading || (review && attempt === undefined && test !== null)) {
     return <main className="mx-auto max-w-6xl px-6 py-12 text-sm text-ink/40">{t('testTaking.loading')}</main>
   }
   if (test === null) {
@@ -180,6 +222,21 @@ export default function TestTakingPage() {
         <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test, lang) }]} />
         <div className="mt-5 border border-line bg-white p-5 sm:mt-6 sm:p-8 lg:p-10">
           <ProLockedNotice testTitle={test.title} />
+        </div>
+      </main>
+    )
+  }
+  // Результат смотрят, а попыток нет (не проходил или проходил в другом браузере без входа).
+  if (review && !attempt) {
+    return (
+      <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
+        <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title, to: testPath(test, lang) }]} />
+        <div className="mt-5 border border-line bg-white px-5 py-16 text-center sm:mt-6">
+          <h1 className="text-xl font-extrabold">{t('testTaking.review.noAttempt')}</h1>
+          <p className="mt-2 text-sm text-ink/55">{t('testTaking.review.noAttemptText')}</p>
+          <Link to={testExamPath(test, lang)} className="btn btn-primary mt-6">
+            {t('testCard.start')} <ArrowRight size={16} />
+          </Link>
         </div>
       </main>
     )
@@ -268,10 +325,13 @@ export default function TestTakingPage() {
         questions_count: questions.length,
         answered_count: answeredCount,
         duration_seconds: elapsedSeconds,
+        // selected — выбранные варианты: по ним потом открывается разбор
+        // («Посмотреть результаты»).
         answers: Object.entries(answers).map(([index, a]) => ({
           question_id: questions[index].id,
           score: a.score,
           max: a.max,
+          selected: a.selected,
         })),
       })
       setSaveStatus(saved.savedLocally ? 'local' : 'saved')
@@ -307,9 +367,15 @@ export default function TestTakingPage() {
         items={[
           { label: t('breadcrumbs.tests'), to: path('tests') },
           { label: test.title, to: testPath(test, lang) },
-          { label: t('testTaking.breadcrumb') },
+          { label: review ? t('testTaking.review.breadcrumb') : t('testTaking.breadcrumb') },
         ]}
       />
+
+      {review && !selectionKnown && (
+        <p className="mt-5 border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {t('testTaking.review.unknownSelection')}
+        </p>
+      )}
 
       <div className="mt-5 flex flex-col gap-4 sm:mt-6 sm:gap-6 lg:flex-row">
         <QuestionNavGrid
@@ -327,7 +393,11 @@ export default function TestTakingPage() {
         <div className="flex-1 border border-line bg-white p-4 sm:p-7 lg:p-8">
           {finished ? (
             <ResultScreen
-              kicker={t('testTaking.finished')}
+              kicker={
+                review
+                  ? t('testTaking.review.kicker', { date: formatDate(attempt.completed_at, { day: 'numeric', month: 'long', year: 'numeric' }) })
+                  : t('testTaking.finished')
+              }
               ratio={totalMax ? totalScore / totalMax : 0}
               score={Math.round(totalScore * 100) / 100}
               maxScore={totalMax}
@@ -335,11 +405,18 @@ export default function TestTakingPage() {
               elapsedSeconds={elapsedSeconds}
               onReview={startReview}
               actions={
-                <Link to={backToList.to} className={secondaryActionClass}>
-                  {backToList.label} <ArrowRight size={15} />
-                </Link>
+                <>
+                  {review && (
+                    <Link to={testExamPath(test, lang)} className={secondaryActionClass}>
+                      <RotateCcw size={15} /> {t('testCard.retake')}
+                    </Link>
+                  )}
+                  <Link to={backToList.to} className={secondaryActionClass}>
+                    {backToList.label} <ArrowRight size={15} />
+                  </Link>
+                </>
               }
-              footer={<SaveStatus status={saveStatus} isGuest={!user} />}
+              footer={review ? null : <SaveStatus status={saveStatus} isGuest={!user} />}
             />
           ) : currentStep.type === 'intro' ? (
             <div>

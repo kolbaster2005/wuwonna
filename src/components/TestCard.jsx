@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FileText, ListChecks, Clock, ShieldCheck, Pin, Lock, CheckCircle2, RotateCcw, Languages } from 'lucide-react'
+import { FileText, ListChecks, Clock, ShieldCheck, Pin, Lock, CheckCircle2, RotateCcw, Languages, Eye } from 'lucide-react'
 import { setTestPinned } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
 import { useProModal } from '../lib/proModal'
 import RichText from './RichText'
-import { testPath } from '../seo/content'
+import { testPath, testResultPath } from '../seo/content'
 import { useI18n } from '../i18n'
 
 // result — { best (0..1), attempts } по этому тесту, если человек его уже
@@ -123,18 +123,28 @@ export default function TestCard({ test, result, onPinChange }) {
         >
           <Lock size={14} /> {t('testCard.openWithPro')}
         </button>
+      ) : isDone ? (
+        // Пройденный: посмотреть разбор последней попытки или пройти заново.
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-6">
+          <Link
+            to={testResultPath(test, result.last?.id, lang)}
+            className="flex items-center justify-center gap-2 border border-line bg-white py-3 text-sm font-bold text-ink/75 transition-colors hover:border-ink/30 hover:text-ink"
+          >
+            <Eye size={15} /> {t('testCard.results')}
+          </Link>
+          <Link
+            to={testPath(test, lang)}
+            className="flex items-center justify-center gap-2 bg-pine-600 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700"
+          >
+            <RotateCcw size={15} /> {t('testCard.retake')}
+          </Link>
+        </div>
       ) : (
         <Link
           to={testPath(test, lang)}
           className="mt-5 flex w-full items-center justify-center gap-2 bg-pine-600 py-3 text-sm font-bold text-white transition-colors hover:bg-pine-700 sm:mt-6"
         >
-          {isDone ? (
-            <>
-              <RotateCcw size={15} /> {t('testCard.retake')}
-            </>
-          ) : (
-            t('testCard.start')
-          )}
+          {t('testCard.start')}
         </Link>
       )}
     </div>

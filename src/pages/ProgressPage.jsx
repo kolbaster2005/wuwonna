@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight,
   BookOpen,
+  Eye,
   ChevronDown,
   Clock,
   Flame,
@@ -12,7 +13,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { fetchTests, fetchAttempts } from '../lib/data'
-import { testExamPath, testPath } from '../seo/content'
+import { testExamPath, testPath, testResultPath } from '../seo/content'
 import {
   attemptsForShownTests,
   chapterProgress,
@@ -271,12 +272,20 @@ export default function ProgressPage() {
                     {t('progress.duration', { time: formatStudyTime(t, last.duration_seconds) })}
                   </p>
                 )}
-                <Link
-                  to={testExamPath(lastTest, lang)}
-                  className="mt-4 flex items-center justify-center gap-2 border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
-                >
-                  <RotateCcw size={15} /> {t('testCard.retake')}
-                </Link>
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <Link
+                    to={testResultPath(lastTest, last.id, lang)}
+                    className="flex items-center justify-center gap-2 border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
+                  >
+                    <Eye size={15} /> {t('testCard.results')}
+                  </Link>
+                  <Link
+                    to={testExamPath(lastTest, lang)}
+                    className="flex items-center justify-center gap-2 border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
+                  >
+                    <RotateCcw size={15} /> {t('testCard.retake')}
+                  </Link>
+                </div>
               </>
             ) : (
               <p className="text-sm text-ink/50">{t('progress.lastTestEmpty')}</p>

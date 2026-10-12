@@ -45,7 +45,7 @@ function useNavItems() {
 function usePrepState() {
   const { pathname, search } = useLocation()
   const key = matchRoute(pathname)?.key
-  const inPrep = key === 'tests' || key === 'test' || key === 'testExam'
+  const inPrep = ['tests', 'test', 'testExam', 'testResult'].includes(key)
   const onList = key === 'tests'
   const tab = new URLSearchParams(search).get('tab') ?? PREP_ITEMS[0].tab
   return { inPrep, activeTab: onList ? tab : null }

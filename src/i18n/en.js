@@ -80,6 +80,7 @@ export default {
     done: 'Done · {percent}%',
     questions: { one: '{count} question', other: '{count} questions' },
     openWithPro: 'Unlock with PRO',
+    results: 'Results',
     retake: 'Take again',
     start: 'Start test',
     fallback: 'Explanations in Russian',
@@ -326,6 +327,14 @@ export default {
     toResult: 'To result',
     finish: 'Finish',
     next: 'Next',
+    review: {
+      breadcrumb: 'Result',
+      kicker: 'Result from {date}',
+      noAttempt: 'No results yet',
+      noAttemptText: 'Take the practice test – afterwards you’ll find an explanation for every answer here.',
+      unknownSelection:
+        'This attempt was made before the site started saving selected options: you can see the points per question and the correct answers, but not your choices.',
+    },
     save: {
       saving: 'Saving result…',
       error: 'Couldn’t save the result.',

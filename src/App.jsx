@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage'
 import PracticeTestsPage from './pages/PracticeTestsPage'
 import TestDetailPage from './pages/TestDetailPage'
 import TestTakingPage from './pages/TestTakingPage'
+import TestResultPage from './pages/TestResultPage'
 import ExamInfoPage from './pages/ExamInfoPage'
 import AboutPage from './pages/AboutPage'
 import VocabularyPage from './pages/VocabularyPage'
@@ -44,6 +45,7 @@ const PAGES = {
   tests: PracticeTestsPage,
   test: TestDetailPage,
   testExam: TestTakingPage,
+  testResult: TestResultPage,
   vocabulary: VocabularyPage,
   progress: ProgressPage,
   pro: ProPage,

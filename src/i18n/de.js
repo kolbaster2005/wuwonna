@@ -81,6 +81,7 @@ export default {
     done: 'Erledigt · {percent} %',
     questions: { one: '{count} Aufgabe', other: '{count} Aufgaben' },
     openWithPro: 'Mit PRO öffnen',
+    results: 'Ergebnisse',
     retake: 'Nochmal machen',
     start: 'Test starten',
     fallback: 'Erklärungen auf Russisch',
@@ -327,6 +328,14 @@ export default {
     toResult: 'Zum Ergebnis',
     finish: 'Beenden',
     next: 'Weiter',
+    review: {
+      breadcrumb: 'Ergebnis',
+      kicker: 'Ergebnis vom {date}',
+      noAttempt: 'Noch keine Ergebnisse',
+      noAttemptText: 'Mach den Probetest – danach findest du hier die Erklärung zu jeder Antwort.',
+      unknownSelection:
+        'Dieser Versuch stammt aus der Zeit, bevor die gewählten Antworten gespeichert wurden: Punkte pro Frage und die richtigen Antworten sind sichtbar, deine Auswahl nicht.',
+    },
     save: {
       saving: 'Ergebnis wird gespeichert …',
       error: 'Das Ergebnis konnte nicht gespeichert werden.',

@@ -26,6 +26,12 @@ export const ROUTES = {
     en: '/en/practice-tests/:slug/exam',
     indexed: false,
   },
+  testResult: {
+    ru: '/probniki/:slug/rezultat',
+    de: '/de/probetests/:slug/ergebnis',
+    en: '/en/practice-tests/:slug/result',
+    indexed: false,
+  },
   examInfo: { ru: '/exam-info', de: '/de/aufnahmepruefung', en: '/en/entrance-exam', indexed: true },
   admissionGuide: { ru: '/postuplenie-v-wu', de: '/de/aufnahme-wu-wien', en: '/en/how-to-get-into-wu', indexed: true },
   about: { ru: '/about', de: '/de/ueber-uns', en: '/en/about', indexed: true },

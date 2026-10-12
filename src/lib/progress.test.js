@@ -2,6 +2,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   attemptCounts,
+  answersFromAttempt,
+  pickAttempt,
   statsByTest,
   attemptsForShownTests,
   localizeSections,
@@ -171,4 +173,39 @@ test('localizeSections: раздел русской версии-заменит�
     ['Kapitel 1', 'Kapitel 1', null],
   )
   assert.equal(chapterProgress(result, []).length, 1)
+})
+
+test('pickAttempt: по id или самая свежая в группе переводов', () => {
+  const attempts = [
+    { id: 1, test_id: 'ru-1', translation_group: 'g1', completed_at: '2026-10-01T10:00:00Z' },
+    { id: 2, test_id: 'de-1', translation_group: 'g1', completed_at: '2026-10-05T10:00:00Z' },
+    { id: 3, test_id: 'ru-2', completed_at: '2026-10-09T10:00:00Z' },
+  ]
+  assert.equal(pickAttempt(attempts, 'g1').id, 2)
+  assert.equal(pickAttempt(attempts, 'g1', '1').id, 1)
+  assert.equal(pickAttempt(attempts, 'ru-2').id, 3)
+  assert.equal(pickAttempt(attempts, 'g1', '99'), null)
+  assert.equal(pickAttempt([], 'g1'), null)
+})
+
+test('answersFromAttempt: выбор, баллы и статусы; старые попытки без выбора', () => {
+  const questions = [{ id: 'q1' }, { id: 'q2' }, { id: 'q3' }]
+  const fresh = answersFromAttempt(
+    {
+      answers: [
+        { question_id: 'q1', score: 2, max: 2, selected: ['a'] },
+        { question_id: 'q3', score: 0.5, max: 1, selected: ['b', 'c'] },
+        { question_id: 'deleted', score: 1, max: 1, selected: ['a'] },
+      ],
+    },
+    questions,
+  )
+  assert.equal(fresh.selectionKnown, true)
+  assert.deepEqual(fresh.answers, {
+    0: { selected: ['a'], score: 2, max: 2, status: 'correct' },
+    2: { selected: ['b', 'c'], score: 0.5, max: 1, status: 'partial' },
+  })
+  const old = answersFromAttempt({ answers: [{ question_id: 'q2', score: 0, max: 1 }] }, questions)
+  assert.equal(old.selectionKnown, false)
+  assert.deepEqual(old.answers[1], { selected: [], score: 0, max: 1, status: 'incorrect' })
 })

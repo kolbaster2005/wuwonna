@@ -240,10 +240,7 @@ export default {
     whereToStart: 'Womit anfangen',
     firstResultHint: 'Hier erscheint das Ergebnis deines ersten Tests.',
     next: 'Als Nächstes:',
-    vocabulary: 'Vokabeln',
     words: { one: '{count} Wort', other: '{count} Wörter' },
-    progress: 'Mein Fortschritt',
-    testsTaken: '{taken} von {total} Tests',
     exams: {
       title: 'Probeprüfungen im Prüfungsformat',
       all: 'Alle Probetests →',

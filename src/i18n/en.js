@@ -239,10 +239,7 @@ export default {
     whereToStart: 'Where to start',
     firstResultHint: 'Your first test result will appear here.',
     next: 'Next:',
-    vocabulary: 'Vocabulary',
     words: { one: '{count} word', other: '{count} words' },
-    progress: 'My progress',
-    testsTaken: '{taken} of {total} tests',
     exams: {
       title: 'Mock exams in the real format',
       all: 'All practice tests →',

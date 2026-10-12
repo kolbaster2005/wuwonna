@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, BookOpen, ChevronRight, ClipboardList, Eye, Lock, RotateCcw, TrendingUp } from 'lucide-react'
+import { ArrowRight, ClipboardList, Eye, Lock, RotateCcw } from 'lucide-react'
 import { fetchAttempts, fetchTests } from '../lib/data'
 import {
   attemptRatio,
@@ -12,22 +12,19 @@ import {
   nextTest,
   recentTests,
   statsByTest,
-  summary,
 } from '../lib/progress'
-import { useVocabulary } from '../lib/useVocabulary'
 import { TOPICS } from '../data/topics'
 import { useAuth } from '../lib/authContext'
 import { testPath, testResultPath } from '../seo/content'
 import { useProModal } from '../lib/proModal'
 import { useI18n } from '../i18n'
 
-// Главная для вошедшего. Сетка 2 колонки × 3 строки:
-//   слева на все три строки — карта прогресса по главам (каждая подглава —
+// Главная для вошедшего. Сетка 2 колонки × 2 строки:
+//   слева на обе строки — карта прогресса по главам (каждая подглава —
 //   квадратик, по цвету видно, где прогресс есть, а где нет);
-//   справа: 1-я строка — последний результат и «Продолжить»,
-//           2-я строка — «Словарь» и «Мой прогресс»,
-//           3-я строка — пробники в формате экзамена (сразу начать, без меню).
-// Под сеткой — недавние результаты с переходом к разбору ответов.
+//   справа: 1-я строка — два последних результата с переходом к разбору
+//           ответов (пока ничего не пройдено — «С чего начать»),
+//           2-я строка — пробники в формате экзамена (сразу начать, без меню).
 
 // Немецкие названия глав книги — подписи под «Глава 1», «Глава 2»...
 const CHAPTER_TITLES = Object.fromEntries(TOPICS.map((t) => [t.chapter_number, t.chapter_title]))
@@ -82,7 +79,7 @@ function ChaptersMap({ chapters }) {
   const { t, lang } = useI18n()
   const overall = chapters.reduce((sum, c) => sum + c.ratio, 0) / chapters.length
   return (
-    <section className="card flex flex-col p-6 sm:p-8 lg:row-span-3">
+    <section className="card flex flex-col p-6 sm:p-8 lg:row-span-2">
       <div className="flex items-start justify-between gap-6">
         <div>
           <h2 className="h-section">{t('dashboard.chapters.title')}</h2>
@@ -134,7 +131,7 @@ function ChaptersMap({ chapters }) {
   )
 }
 
-// --- справа, 1-я строка: последний результат + «Продолжить» ---
+// --- справа, 1-я строка, пока ничего не пройдено: «С чего начать» ---
 
 function LastResultCard({ last, lastTest, next }) {
   const { t, lang, formatDate } = useI18n()
@@ -169,30 +166,6 @@ function LastResultCard({ last, lastTest, next }) {
   )
 }
 
-// --- справа, 2-я строка: ссылки ---
-
-function TileLink({ to, icon: Icon, title, subtitle, dark = false }) {
-  return (
-    <Link
-      to={to}
-      className={`group flex flex-col justify-between gap-4 p-5 transition-shadow hover:shadow-pop ${
-        dark ? 'bg-pine-700 text-white' : 'border border-pine-100 bg-pine-50'
-      }`}
-    >
-      <div className="flex items-start justify-between">
-        <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${dark ? 'bg-white/10' : 'bg-white text-pine-700'}`}>
-          <Icon size={19} />
-        </span>
-        <ChevronRight size={18} className={`transition-transform group-hover:translate-x-0.5 ${dark ? 'text-white/70' : 'text-ink/40'}`} />
-      </div>
-      <div>
-        <p className="font-extrabold">{title}</p>
-        <p className={`text-sm ${dark ? 'text-white/70' : 'text-ink/50'}`}>{subtitle}</p>
-      </div>
-    </Link>
-  )
-}
-
 // Маленькая кнопка в строке виджета: белая или зелёная.
 const smallButton = (primary) =>
   `flex h-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border px-3 text-[12px] font-bold transition-colors ${
@@ -201,7 +174,7 @@ const smallButton = (primary) =>
       : 'border-ink/25 bg-white text-ink/75 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700'
   }`
 
-// --- справа, 3-я строка: пробники в формате экзамена ---
+// --- справа, 2-я строка: пробники в формате экзамена ---
 
 function ExamsWidget({ exams, attempts }) {
   const { t, lang, path } = useI18n()
@@ -264,14 +237,14 @@ function ExamsWidget({ exams, attempts }) {
   )
 }
 
-// --- под сеткой: недавние результаты ---
+// --- справа, 1-я строка: два последних результата ---
 
 function RecentResults({ items }) {
   const { t, lang, formatDate } = useI18n()
   return (
-    <section className="mt-6">
-      <h2 className="h-section">{t('dashboard.recent.title')}</h2>
-      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+    <section className="order-first lg:order-none">
+      <p className="eyebrow">{t('dashboard.recent.title')}</p>
+      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
         {items.map(({ test, last, counts }) => (
           <div key={test.id} className="card flex flex-col p-5">
             <div className="flex items-center gap-4">
@@ -284,7 +257,7 @@ function RecentResults({ items }) {
             <p className="mt-3 text-xs text-ink/55">
               {t('dashboard.recent.counts', { correct: counts.correct, partial: counts.partial, incorrect: counts.incorrect })}
             </p>
-            <div className="mt-4 grid grid-cols-2 gap-2 pt-1 md:mt-auto">
+            <div className="mt-4 grid grid-cols-2 gap-2 pt-1 sm:mt-auto lg:mt-4">
               <Link to={testResultPath(test, last.id, lang)} className={smallButton(false)}>
                 <Eye size={13} /> {t('testCard.results')}
               </Link>
@@ -301,10 +274,9 @@ function RecentResults({ items }) {
 
 export default function DashboardPage() {
   const { user } = useAuth()
-  const { t, lang, path } = useI18n()
+  const { t, lang } = useI18n()
   const [tests, setTests] = useState(null)
   const [attempts, setAttempts] = useState([])
-  const wordsCount = useVocabulary().entries.length
 
   // Версии пробников на языке страницы; попытки на других языковых версиях
   // засчитываются показанным (attemptsForShownTests).
@@ -326,7 +298,6 @@ export default function DashboardPage() {
   }
 
   const chapters = chapterProgress(tests, attempts)
-  const stats = summary(tests, attempts)
   const last = lastAttempt(tests, attempts)
   const lastTest = last && tests.find((t) => t.id === last.test_id)
 
@@ -337,31 +308,19 @@ export default function DashboardPage() {
   const chapter = (lastChapter && chapterNextTest(lastChapter) && lastChapter) || chapters.find((c) => chapterNextTest(c))
   const next = chapter ? chapterNextTest(chapter) : nextTest(tests, attempts)
   const exams = tests.filter((test) => !test.section?.trim())
-  const recent = recentTests(tests, attempts, 3)
+  const recent = recentTests(tests, attempts, 2)
 
   return (
     <main className="page">
-      <div className="grid grid-cols-1 gap-6 lg:grid-flow-col lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-flow-col lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
         {chapters.length > 0 && <ChaptersMap chapters={chapters} />}
-        <LastResultCard last={last} lastTest={lastTest} next={next} />
-        <div className="grid grid-cols-2 gap-6">
-          <TileLink
-            to={path('vocabulary')}
-            icon={BookOpen}
-            title={t('dashboard.vocabulary')}
-            subtitle={t('dashboard.words', { count: wordsCount })}
-          />
-          <TileLink
-            to={path('progress')}
-            icon={TrendingUp}
-            title={t('dashboard.progress')}
-            subtitle={t('dashboard.testsTaken', { taken: stats.testsTaken, total: stats.testsTotal })}
-            dark
-          />
-        </div>
+        {recent.length > 0 ? (
+          <RecentResults items={recent} />
+        ) : (
+          <LastResultCard last={last} lastTest={lastTest} next={next} />
+        )}
         {exams.length > 0 && <ExamsWidget exams={exams} attempts={attempts} />}
       </div>
-      {recent.length > 0 && <RecentResults items={recent} />}
     </main>
   )
 }

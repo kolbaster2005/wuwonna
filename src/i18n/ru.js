@@ -242,10 +242,7 @@ export default {
     whereToStart: 'С чего начать',
     firstResultHint: 'Здесь появится результат первого теста.',
     next: 'Дальше:',
-    vocabulary: 'Словарь',
     words: { one: '{count} слово', few: '{count} слова', many: '{count} слов', other: '{count} слова' },
-    progress: 'Мой прогресс',
-    testsTaken: '{taken} из {total} тестов',
     exams: {
       title: 'Пробники в формате экзамена',
       all: 'Все пробники →',

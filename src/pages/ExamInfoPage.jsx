@@ -240,7 +240,7 @@ function RegistrationTab({ lang, info }) {
             <li key={title} className="relative flex gap-4 pb-8 last:pb-0 sm:gap-5">
               {/* вертикальная линия между шагами */}
               {!isLast && <span aria-hidden="true" className="absolute left-5 top-11 bottom-0 w-px bg-line" />}
-              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center bg-pine-600 text-white">
+              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pine-600 text-white">
                 <Icon size={19} />
               </span>
               <div className="min-w-0 pt-0.5">
@@ -249,7 +249,7 @@ function RegistrationTab({ lang, info }) {
                 <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-ink/70">
                   {points.map((point) => (
                     <li key={point} className="flex gap-2.5">
-                      <span aria-hidden="true" className="mt-[0.6em] h-1.5 w-1.5 shrink-0 bg-pine-600" />
+                      <span aria-hidden="true" className="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full bg-pine-600" />
                       {point}
                     </li>
                   ))}

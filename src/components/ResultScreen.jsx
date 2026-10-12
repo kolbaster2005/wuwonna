@@ -43,7 +43,7 @@ export default function ResultScreen({
 
   return (
     <div className="mx-auto max-w-xl py-4 text-center sm:py-8">
-      <span className="mx-auto flex h-14 w-14 items-center justify-center bg-pine-50 text-pine-700">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pine-50 text-pine-700">
         <Trophy size={26} />
       </span>
       <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-ink/40">{kicker}</p>

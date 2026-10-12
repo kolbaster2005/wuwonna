@@ -107,7 +107,7 @@ function NavGroup({ label, items }) {
                   active ? 'bg-pine-50' : 'hover:bg-black/[0.04]'
                 }`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-pine-50 text-pine-700">
                   <Icon size={18} />
                 </span>
                 <span>

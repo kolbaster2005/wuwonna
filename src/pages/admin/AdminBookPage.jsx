@@ -121,7 +121,7 @@ export default function AdminBookPage() {
             ) : (
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
                     <BookOpen size={15} />
                   </span>
                   <p className="text-sm font-semibold">{c.title}</p>

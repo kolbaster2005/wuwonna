@@ -177,7 +177,7 @@ function TileLink({ to, icon: Icon, title, subtitle, dark = false }) {
       }`}
     >
       <div className="flex items-start justify-between">
-        <span className={`flex h-10 w-10 items-center justify-center ${dark ? 'bg-white/10' : 'bg-white text-pine-700'}`}>
+        <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${dark ? 'bg-white/10' : 'bg-white text-pine-700'}`}>
           <Icon size={19} />
         </span>
         <ChevronRight size={18} className={`transition-transform group-hover:translate-x-0.5 ${dark ? 'text-white/70' : 'text-ink/40'}`} />

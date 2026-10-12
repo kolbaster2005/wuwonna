@@ -70,7 +70,7 @@ export default function TestCard({ test, result, onPinChange }) {
         {/* Значок «Пройдено» — в одной строке с иконкой, чтобы пройденная
             карточка не была выше соседних и ряд не "съезжал". */}
         <div className="flex items-center gap-3 pr-10">
-          <div className={`flex h-12 w-12 shrink-0 items-center justify-center bg-pine-50 text-pine-700 sm:h-14 sm:w-14 ${lockedFade}`}>
+          <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700 sm:h-14 sm:w-14 ${lockedFade}`}>
             <FileText size={22} strokeWidth={1.75} className="sm:hidden" />
             <FileText size={24} strokeWidth={1.75} className="hidden sm:block" />
           </div>

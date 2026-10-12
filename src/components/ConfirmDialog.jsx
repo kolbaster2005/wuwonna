@@ -39,7 +39,7 @@ export default function ConfirmDialog({ title, message, confirmLabel, cancelLabe
         className="w-full max-w-md bg-white p-6 shadow-pop sm:p-7"
       >
         <span
-          className={`flex h-12 w-12 items-center justify-center ${
+          className={`flex h-12 w-12 items-center justify-center rounded-full ${
             danger ? 'bg-red-50 text-red-600' : 'bg-pine-50 text-pine-700'
           }`}
         >

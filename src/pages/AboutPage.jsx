@@ -30,7 +30,7 @@ export default function AboutPage() {
             const Icon = FEATURE_ICONS[i] ?? Sparkles
             return (
               <li key={title}>
-                <span className="flex h-11 w-11 items-center justify-center bg-pine-50 text-pine-700">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-pine-50 text-pine-700">
                   <Icon size={21} />
                 </span>
                 <h3 className="mt-3.5 text-base font-extrabold">{title}</h3>

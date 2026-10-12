@@ -160,7 +160,7 @@ export default function LoginPage() {
           <ul className="mt-4 space-y-3">
             {benefits.map((b) => (
               <li key={b} className="flex items-center gap-3 text-sm font-medium text-ink/75">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-white text-pine-700">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-pine-700">
                   <Check size={14} strokeWidth={3} />
                 </span>
                 {b}

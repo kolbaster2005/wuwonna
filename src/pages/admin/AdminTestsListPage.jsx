@@ -247,7 +247,7 @@ export default function AdminTestsListPage() {
                 <span className="cursor-grab px-1 text-ink/30 hover:text-ink/60 active:cursor-grabbing" title="Перетащи, чтобы поменять порядок">
                   <GripVertical size={18} />
                 </span>
-                <span className="flex h-9 w-9 items-center justify-center bg-pine-50 text-pine-700">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-pine-50 text-pine-700">
                   <FileText size={16} />
                 </span>
                 <div>

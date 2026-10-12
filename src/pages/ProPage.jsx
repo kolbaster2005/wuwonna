@@ -69,7 +69,7 @@ function PriceCard({ user, hasPro, loading, location }) {
   if (!loading && hasPro) {
     return (
       <div className={`border border-line bg-white p-6 text-center sm:p-8 ${cardShadow}`}>
-        <span className="mx-auto flex h-14 w-14 items-center justify-center bg-pine-600 text-white">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pine-600 text-white">
           <Crown size={26} />
         </span>
         <p className="mt-4 text-xl font-extrabold">{t('pro.alreadyTitle')}</p>
@@ -161,7 +161,7 @@ export default function ProPage() {
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map(({ id, icon: Icon }) => (
               <div key={id} className="border border-line bg-white p-6">
-                <span className="flex h-12 w-12 items-center justify-center bg-pine-50 text-pine-700">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pine-50 text-pine-700">
                   <Icon size={22} />
                 </span>
                 <h3 className="mt-4 text-lg font-extrabold tracking-tight">{t(`pro.features.${id}.title`)}</h3>
@@ -178,7 +178,7 @@ export default function ProPage() {
             <ol className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
               {STEPS.map((step, i) => (
                 <li key={step.id} className="border-t-2 border-pine-600 pt-5">
-                  <span className="flex h-10 w-10 items-center justify-center bg-pine-600 text-base font-extrabold text-white">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pine-600 text-base font-extrabold text-white">
                     {i + 1}
                   </span>
                   <h3 className="mt-4 text-lg font-extrabold tracking-tight">

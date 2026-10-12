@@ -11,7 +11,7 @@ export function Avatar({ email, size = 'md' }) {
   const sizes = size === 'lg' ? 'h-11 w-11 text-lg' : 'h-10 w-10 text-base'
   return (
     <span
-      className={`flex shrink-0 select-none items-center justify-center bg-pine-600 font-extrabold text-white ${sizes}`}
+      className={`flex shrink-0 select-none items-center justify-center rounded-full bg-pine-600 font-extrabold text-white ${sizes}`}
     >
       {letter}
     </span>
@@ -102,7 +102,7 @@ export default function UserMenu({ onSignOut }) {
         aria-label={t('userMenu.open')}
         aria-expanded={open}
         title={user.email}
-        className={`ring-offset-2 ring-offset-paper transition-shadow ${
+        className={`rounded-full ring-offset-2 ring-offset-paper transition-shadow ${
           open ? 'ring-2 ring-pine-600' : 'hover:ring-2 hover:ring-pine-600/40'
         }`}
       >

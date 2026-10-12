@@ -138,7 +138,7 @@ export default function AdminUsersPage() {
                   return (
                     <li key={u.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
                           <UserRound size={16} />
                         </span>
                         <div className="min-w-0">

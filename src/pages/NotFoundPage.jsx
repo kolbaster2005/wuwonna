@@ -7,7 +7,7 @@ export default function NotFoundPage() {
   const { t, path } = useI18n()
   return (
     <main className="page flex min-h-[60vh] flex-col items-center justify-center text-center">
-      <span className="flex h-14 w-14 items-center justify-center bg-pine-50 text-pine-700">
+      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-pine-50 text-pine-700">
         <Compass size={26} />
       </span>
       <p className="eyebrow mt-6">{t('notFound.eyebrow')}</p>

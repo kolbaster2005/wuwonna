@@ -76,7 +76,7 @@ export function ProPerkList({ className = '' }) {
     <ul className={`w-fit space-y-3 text-left text-[15px] font-medium text-ink/80 ${className}`}>
       {PERKS.map((perk, i) => (
         <li key={i} className="flex items-center gap-3">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-pine-50 text-pine-700">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-pine-50 text-pine-700">
             <Check size={14} strokeWidth={3} />
           </span>
           <span>

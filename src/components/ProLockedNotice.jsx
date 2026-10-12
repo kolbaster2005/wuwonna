@@ -15,7 +15,7 @@ export default function ProLockedNotice({ testTitle }) {
 
   return (
     <div className="mx-auto max-w-lg py-6 text-center sm:py-10">
-      <span className="mx-auto flex h-14 w-14 items-center justify-center bg-amber-50 text-amber-600 sm:h-16 sm:w-16">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-600 sm:h-16 sm:w-16">
         <Crown size={26} />
       </span>
       <h1 className="mt-5 text-2xl font-extrabold tracking-tight sm:text-3xl">{t('proLocked.title')}</h1>

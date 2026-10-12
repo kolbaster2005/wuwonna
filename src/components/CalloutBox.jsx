@@ -14,7 +14,7 @@ export default function CalloutBox({ icon = 'lightbulb', raw, className = '' }) 
 
   return (
     <div className={`flex items-start gap-3 bg-pine-50/60 p-4 sm:gap-4 sm:p-5 ${className}`}>
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-white text-pine-700 sm:h-9 sm:w-9">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-pine-700 sm:h-9 sm:w-9">
         <Icon size={17} />
       </span>
       <div className="min-w-0 text-sm leading-relaxed text-ink/80">

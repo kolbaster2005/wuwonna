@@ -100,4 +100,4 @@ export default function ResultScreen({
 // Класс второстепенной кнопки рядом с «Разобрать ответы» — чтобы страницы
 // оформляли свои действия одинаково.
 export const secondaryActionClass =
-  'flex items-center justify-center gap-2 border border-line px-6 py-3 text-sm font-bold text-ink/70 hover:border-ink/30'
+  'flex items-center justify-center gap-2 border border-ink/25 px-6 py-3 text-sm font-bold text-ink/70 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700'

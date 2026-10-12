@@ -34,14 +34,14 @@ export default function QuestionNavGrid({
           <span className="tabular-nums text-ink/60">{formatDuration(elapsedSeconds)}</span>
           <button
             onClick={onToggleTimer}
-            className="flex h-6 w-6 items-center justify-center border border-line text-ink/50 hover:border-ink/30 hover:text-ink"
+            className="flex h-6 w-6 items-center justify-center border border-ink/25 text-ink/50 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700"
             title={isPaused ? t('questionNav.resumeTimer') : t('questionNav.pauseTimer')}
           >
             {isPaused ? <Play size={12} /> : <Pause size={12} />}
           </button>
           <button
             onClick={() => setExpanded((e) => !e)}
-            className="flex h-6 w-6 items-center justify-center border border-line text-ink/50 hover:border-ink/30 hover:text-ink lg:hidden"
+            className="flex h-6 w-6 items-center justify-center border border-ink/25 text-ink/50 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 lg:hidden"
             title={expanded ? t('questionNav.collapse') : t('questionNav.expand')}
           >
             <ChevronDown size={13} className={`transition-transform ${expanded ? 'rotate-180' : ''}`} />

@@ -57,7 +57,7 @@ export default function ConfirmDialog({ title, message, confirmLabel, cancelLabe
         <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
           <button
             onClick={onCancel}
-            className="border border-line px-5 py-3 text-sm font-bold text-ink/70 transition-colors hover:border-ink/30"
+            className="border border-ink/25 px-5 py-3 text-sm font-bold text-ink/70 transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700"
           >
             {cancelLabel}
           </button>

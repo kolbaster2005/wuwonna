@@ -127,7 +127,7 @@ function ChapterCard({ chapter, expanded, onToggle }) {
                 <span className="w-10 text-right text-sm font-bold tabular-nums">{attempts > 0 ? percent(best) : '—'}</span>
                 <Link
                   to={testPath(test, lang)}
-                  className="shrink-0 border border-line px-2.5 py-1.5 text-xs font-bold text-ink/70 hover:border-ink/30"
+                  className="shrink-0 border border-ink/25 px-2.5 py-1.5 text-xs font-bold text-ink/70 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700"
                 >
                   {attempts > 0 ? t('progress.again') : t('progress.take')}
                 </Link>
@@ -275,13 +275,13 @@ export default function ProgressPage() {
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <Link
                     to={testResultPath(lastTest, last.id, lang)}
-                    className="flex items-center justify-center gap-2 border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
+                    className="flex items-center justify-center gap-2 border border-ink/25 py-2.5 text-sm font-bold text-ink/75 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700"
                   >
                     <Eye size={15} /> {t('testCard.results')}
                   </Link>
                   <Link
                     to={testExamPath(lastTest, lang)}
-                    className="flex items-center justify-center gap-2 border border-line py-2.5 text-sm font-bold text-ink/75 hover:border-ink/30"
+                    className="flex items-center justify-center gap-2 border border-ink/25 py-2.5 text-sm font-bold text-ink/75 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700"
                   >
                     <RotateCcw size={15} /> {t('testCard.retake')}
                   </Link>

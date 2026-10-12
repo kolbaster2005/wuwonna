@@ -104,7 +104,7 @@ function Landing() {
               </Link>
               <Link
                 to={path('examInfo')}
-                className="flex items-center justify-center gap-2.5 border border-line bg-white px-7 py-4 text-sm font-bold text-ink transition-colors hover:border-ink/30"
+                className="flex items-center justify-center gap-2.5 border border-ink/25 bg-white px-7 py-4 text-sm font-bold text-ink transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700"
               >
                 <Info size={17} /> {t('home.examInfo')}
               </Link>

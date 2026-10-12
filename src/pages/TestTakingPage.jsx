@@ -432,7 +432,7 @@ export default function TestTakingPage({ review = false }) {
                 <button
                   onClick={() => goToStep(currentStepIndex - 1)}
                   disabled={currentStepIndex === 0}
-                  className="flex items-center gap-2 border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40"
+                  className="flex items-center gap-2 border border-ink/25 px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 disabled:opacity-40"
                 >
                   <ArrowLeft size={15} /> {t('testTaking.back')}
                 </button>
@@ -631,7 +631,7 @@ export default function TestTakingPage({ review = false }) {
                   <button
                     onClick={() => goToStep(currentStepIndex - 1)}
                     disabled={currentStepIndex === 0}
-                    className="flex w-full items-center justify-center gap-2 border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 disabled:opacity-40 sm:w-auto sm:justify-start"
+                    className="flex w-full items-center justify-center gap-2 border border-ink/25 px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 disabled:opacity-40 sm:w-auto sm:justify-start"
                   >
                     <ArrowLeft size={15} /> {t('testTaking.back')}
                   </button>
@@ -639,7 +639,7 @@ export default function TestTakingPage({ review = false }) {
                     {!completed && (
                       <button
                         onClick={handleSkip}
-                        className="w-full border border-line px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 sm:w-auto"
+                        className="w-full border border-ink/25 px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 sm:w-auto"
                       >
                         {t('testTaking.skip')}
                       </button>

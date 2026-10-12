@@ -87,7 +87,7 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
                 type="button"
                 onClick={handleTranslateWord}
                 disabled={translatingWord}
-                className="flex shrink-0 items-center gap-1.5 border border-line px-3 py-2 text-xs font-semibold text-ink/60 hover:border-ink/30 disabled:opacity-50"
+                className="flex shrink-0 items-center gap-1.5 border border-ink/25 px-3 py-2 text-xs font-semibold text-ink/60 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 disabled:opacity-50"
               >
                 <Languages size={14} /> {translatingWord ? '...' : t('addWord.translate')}
               </button>
@@ -154,7 +154,7 @@ export default function AddWordModal({ initial, existingCategories, onSave, onCl
             <button
               type="button"
               onClick={onClose}
-              className="border border-line px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-ink/30"
+              className="border border-ink/25 px-5 py-2.5 text-sm font-semibold text-ink/60 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700"
             >
               {t('common.cancel')}
             </button>

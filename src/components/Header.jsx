@@ -292,7 +292,7 @@ export default function Header() {
           ) : (
             <Link
               to={path('login')}
-              className="flex h-10 shrink-0 items-center gap-2 border border-line bg-white px-3.5 text-sm font-semibold text-ink shadow-[0_4px_14px_-8px_rgba(20,23,26,0.25)] transition-colors hover:border-ink/30 sm:px-5"
+              className="flex h-10 shrink-0 items-center gap-2 border border-ink/25 bg-white px-3.5 text-sm font-semibold text-ink shadow-[0_4px_14px_-8px_rgba(20,23,26,0.25)] transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 sm:px-5"
             >
               <UserRound size={16} strokeWidth={2.25} />
               {t('header.login')}

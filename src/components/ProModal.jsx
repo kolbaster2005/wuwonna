@@ -41,7 +41,7 @@ export default function ProModal({ onClose }) {
           ref={closeRef}
           onClick={onClose}
           aria-label={t('common.close')}
-          className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center border border-line text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:right-5 sm:top-5"
+          className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center border border-ink/25 text-ink/60 transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 sm:right-5 sm:top-5"
         >
           <X size={20} />
         </button>

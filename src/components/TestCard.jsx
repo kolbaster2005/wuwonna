@@ -122,7 +122,7 @@ export default function TestCard({ test, result, onPinChange }) {
       {isLockedForUser ? (
         <button
           onClick={() => openProModal()}
-          className="mt-5 flex h-11 w-full items-center justify-center gap-2 border border-line bg-white text-sm font-bold text-ink/60 transition-colors hover:border-ink/30 hover:text-ink sm:mt-6"
+          className="mt-5 flex h-11 w-full items-center justify-center gap-2 border border-ink/25 bg-white text-sm font-bold text-ink/60 transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 sm:mt-6"
         >
           <Lock size={14} /> {t('testCard.openWithPro')}
         </button>
@@ -132,7 +132,7 @@ export default function TestCard({ test, result, onPinChange }) {
         <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-6">
           <Link
             to={testResultPath(test, result.last?.id, lang)}
-            className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-line bg-white px-2 text-[12px] font-bold text-ink/75 transition-colors hover:border-ink/30 hover:text-ink"
+            className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-ink/25 bg-white px-2 text-[12px] font-bold text-ink/75 transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700"
           >
             <Eye size={13} className="shrink-0" /> {t('testCard.results')}
           </Link>

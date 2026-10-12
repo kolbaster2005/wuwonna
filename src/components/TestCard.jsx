@@ -132,15 +132,15 @@ export default function TestCard({ test, result, onPinChange }) {
         <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-6">
           <Link
             to={testResultPath(test, result.last?.id, lang)}
-            className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-line bg-white px-2 text-[13px] font-bold text-ink/75 transition-colors hover:border-ink/30 hover:text-ink"
+            className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-line bg-white px-2 text-[12px] font-bold text-ink/75 transition-colors hover:border-ink/30 hover:text-ink"
           >
-            <Eye size={14} className="shrink-0" /> {t('testCard.results')}
+            <Eye size={13} className="shrink-0" /> {t('testCard.results')}
           </Link>
           <Link
             to={testPath(test, lang)}
-            className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-transparent bg-pine-600 px-2 text-[13px] font-bold text-white transition-colors hover:bg-pine-700"
+            className="flex h-11 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap border border-transparent bg-pine-600 px-2 text-[12px] font-bold text-white transition-colors hover:bg-pine-700"
           >
-            <RotateCcw size={14} className="shrink-0" /> {t('testCard.retake')}
+            <RotateCcw size={13} className="shrink-0" /> {t('testCard.retake')}
           </Link>
         </div>
       ) : (

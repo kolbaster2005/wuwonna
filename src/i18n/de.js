@@ -244,6 +244,17 @@ export default {
     words: { one: '{count} Wort', other: '{count} Wörter' },
     progress: 'Mein Fortschritt',
     testsTaken: '{taken} von {total} Tests',
+    exams: {
+      title: 'Probeprüfungen im Prüfungsformat',
+      all: 'Alle Probetests →',
+      best: 'Bestes Ergebnis · {percent} %',
+      notTaken: 'Noch nicht gemacht',
+      again: 'Nochmal',
+    },
+    recent: {
+      title: 'Letzte Ergebnisse',
+      counts: 'Richtig {correct} · teilweise {partial} · falsch {incorrect}',
+    },
   },
 
   tests: {

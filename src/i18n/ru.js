@@ -246,6 +246,17 @@ export default {
     words: { one: '{count} слово', few: '{count} слова', many: '{count} слов', other: '{count} слова' },
     progress: 'Мой прогресс',
     testsTaken: '{taken} из {total} тестов',
+    exams: {
+      title: 'Пробники в формате экзамена',
+      all: 'Все пробники →',
+      best: 'Лучший результат · {percent}%',
+      notTaken: 'Ещё не проходил',
+      again: 'Ещё раз',
+    },
+    recent: {
+      title: 'Недавние результаты',
+      counts: 'Верно {correct} · частично {partial} · неверно {incorrect}',
+    },
   },
 
   tests: {

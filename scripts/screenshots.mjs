@@ -83,12 +83,20 @@ async function fakeLogin(context, page) {
   await page.goto(`${baseUrl}/probniki?tab=%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B-%D1%8D%D0%BA%D0%BE%D0%BD%D0%BE%D0%BC%D0%B8%D0%BA%D0%B8`, {
     waitUntil: 'networkidle',
   })
-  const ids = await page.evaluate(() =>
+  // В ссылках — slug, а попытке нужен id пробника: берём его из базы.
+  const slugs = await page.evaluate(() =>
     [...document.querySelectorAll('a[href*="/probniki/"]')]
       .map((a) => a.getAttribute('href').split('/probniki/')[1])
-      .filter((id) => id && !id.includes('/'))
+      .filter((slug) => slug && !slug.includes('/'))
       .slice(0, 3),
   )
+  const rows = await (
+    await fetch(
+      `${env.VITE_SUPABASE_URL.replace(/\/$/, '')}/rest/v1/practice_tests?select=id,slug&lang=eq.ru&slug=in.(${slugs.join(',')})`,
+      { headers: { apikey: env.VITE_SUPABASE_ANON_KEY, Authorization: `Bearer ${env.VITE_SUPABASE_ANON_KEY}` } },
+    )
+  ).json()
+  const ids = slugs.map((slug) => rows.find((r) => r.slug === slug)?.id ?? slug)
   const now = Date.now()
   const attempts = ids.map((id, i) => ({
     id: `fake-${i}`,

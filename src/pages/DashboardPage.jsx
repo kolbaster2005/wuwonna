@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, BookOpen, ChevronRight, TrendingUp } from 'lucide-react'
+import { ArrowRight, BookOpen, ChevronRight, ClipboardList, Eye, Lock, RotateCcw, TrendingUp } from 'lucide-react'
 import { fetchAttempts, fetchTests } from '../lib/data'
 import {
   attemptRatio,
@@ -10,21 +10,24 @@ import {
   lastAttempt,
   localizeSections,
   nextTest,
+  recentTests,
+  statsByTest,
   summary,
 } from '../lib/progress'
 import { useVocabulary } from '../lib/useVocabulary'
 import { TOPICS } from '../data/topics'
 import { useAuth } from '../lib/authContext'
-import { testPath } from '../seo/content'
+import { testPath, testResultPath } from '../seo/content'
+import { useProModal } from '../lib/proModal'
 import { useI18n } from '../i18n'
 
-// Главная для вошедшего. Сетка 2 колонки × 3 строки (на компьютере всё на
-// первом экране):
+// Главная для вошедшего. Сетка 2 колонки × 3 строки:
 //   слева на все три строки — карта прогресса по главам (каждая подглава —
 //   квадратик, по цвету видно, где прогресс есть, а где нет);
 //   справа: 1-я строка — последний результат и «Продолжить»,
 //           2-я строка — «Словарь» и «Мой прогресс»,
-//           3-я строка — пока свободна.
+//           3-я строка — пробники в формате экзамена (сразу начать, без меню).
+// Под сеткой — недавние результаты с переходом к разбору ответов.
 
 // Немецкие названия глав книги — подписи под «Глава 1», «Глава 2»...
 const CHAPTER_TITLES = Object.fromEntries(TOPICS.map((t) => [t.chapter_number, t.chapter_title]))
@@ -190,6 +193,112 @@ function TileLink({ to, icon: Icon, title, subtitle, dark = false }) {
   )
 }
 
+// Маленькая кнопка в строке виджета: белая или зелёная.
+const smallButton = (primary) =>
+  `flex h-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border px-3 text-[12px] font-bold transition-colors ${
+    primary
+      ? 'border-transparent bg-pine-600 text-white hover:bg-pine-700'
+      : 'border-ink/25 bg-white text-ink/75 hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700'
+  }`
+
+// --- справа, 3-я строка: пробники в формате экзамена ---
+
+function ExamsWidget({ exams, attempts }) {
+  const { t, lang, path } = useI18n()
+  const { hasPro } = useAuth()
+  const { openProModal } = useProModal()
+  const byTest = statsByTest(attempts)
+  return (
+    <section className="card flex flex-col p-6">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 className="flex items-center gap-2 text-base font-extrabold">
+          <ClipboardList size={17} className="text-pine-700" /> {t('dashboard.exams.title')}
+        </h2>
+        <Link
+          to={path('tests', { tab: 'probniki' })}
+          className="shrink-0 whitespace-nowrap text-sm font-bold text-pine-700 hover:text-pine-800"
+        >
+          {t('dashboard.exams.all')}
+        </Link>
+      </div>
+      <ul className="mt-3 divide-y divide-line">
+        {exams.map((test) => {
+          const stats = byTest[test.id]
+          const locked = Boolean(test.is_pro) && !hasPro
+          return (
+            <li key={test.id} className="flex items-center justify-between gap-3 py-3">
+              <div className="min-w-0">
+                <Link to={testPath(test, lang)} className="block truncate text-sm font-bold hover:text-pine-700">
+                  {test.title}
+                </Link>
+                <p className="mt-0.5 text-xs text-ink/50">
+                  {locked
+                    ? t('testCard.proOnly')
+                    : stats
+                      ? t('dashboard.exams.best', { percent: Math.round(stats.best * 100) })
+                      : t('dashboard.exams.notTaken')}
+                </p>
+              </div>
+              {locked ? (
+                <button onClick={() => openProModal()} className={smallButton(false)}>
+                  <Lock size={13} /> PRO
+                </button>
+              ) : (
+                <Link to={testPath(test, lang)} className={smallButton(!stats)}>
+                  {stats ? (
+                    <>
+                      <RotateCcw size={13} /> {t('dashboard.exams.again')}
+                    </>
+                  ) : (
+                    <>
+                      {t('dashboard.start')} <ArrowRight size={13} />
+                    </>
+                  )}
+                </Link>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
+// --- под сеткой: недавние результаты ---
+
+function RecentResults({ items }) {
+  const { t, lang, formatDate } = useI18n()
+  return (
+    <section className="mt-6">
+      <h2 className="h-section">{t('dashboard.recent.title')}</h2>
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {items.map(({ test, last, counts }) => (
+          <div key={test.id} className="card flex flex-col p-5">
+            <div className="flex items-center gap-4">
+              <Ring ratio={attemptRatio(last)} size={56} />
+              <div className="min-w-0">
+                <p className="truncate font-extrabold">{test.title}</p>
+                <p className="text-xs text-ink/50">{formatDate(last.completed_at, { day: 'numeric', month: 'long' })}</p>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-ink/55">
+              {t('dashboard.recent.counts', { correct: counts.correct, partial: counts.partial, incorrect: counts.incorrect })}
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-2 pt-1 md:mt-auto">
+              <Link to={testResultPath(test, last.id, lang)} className={smallButton(false)}>
+                <Eye size={13} /> {t('testCard.results')}
+              </Link>
+              <Link to={testPath(test, lang)} className={smallButton(true)}>
+                <RotateCcw size={13} /> {t('dashboard.exams.again')}
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export default function DashboardPage() {
   const { user } = useAuth()
   const { t, lang, path } = useI18n()
@@ -227,6 +336,8 @@ export default function DashboardPage() {
   const lastChapter = lastTest && chapters.find((c) => c.tests.some((t) => t.test.id === lastTest.id))
   const chapter = (lastChapter && chapterNextTest(lastChapter) && lastChapter) || chapters.find((c) => chapterNextTest(c))
   const next = chapter ? chapterNextTest(chapter) : nextTest(tests, attempts)
+  const exams = tests.filter((test) => !test.section?.trim())
+  const recent = recentTests(tests, attempts, 3)
 
   return (
     <main className="page">
@@ -248,7 +359,9 @@ export default function DashboardPage() {
             dark
           />
         </div>
+        {exams.length > 0 && <ExamsWidget exams={exams} attempts={attempts} />}
       </div>
+      {recent.length > 0 && <RecentResults items={recent} />}
     </main>
   )
 }

@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import AdmissionGuidePage from './pages/AdmissionGuidePage'
 import RequireAuth from './components/RequireAuth'
+import ScrollToTop from './components/ScrollToTop'
 import { RouteSeo } from './components/Seo'
 import { ENABLED_LANGS, ROUTES, localPath } from './i18n/routes'
 import { AlternatesProvider } from './i18n/alternates'
@@ -80,6 +81,7 @@ export default function App() {
   return (
     <AlternatesProvider>
     <div className="flex min-h-screen flex-col">
+      <ScrollToTop />
       <RouteSeo />
       <Header />
       <LanguageHint />

@@ -80,11 +80,16 @@ async function fetchTests() {
       headers: { apikey: key, Authorization: `Bearer ${key}` },
     })
   try {
-    let response = await request(`${base},lang,translation_group,slug,seo_title,seo_description`)
-    // supabase/add-languages.sql ещё не выполнен — без языковых колонок, всё русское.
+    const languages = `${base},lang,translation_group,slug,seo_title,seo_description`
+    let response = await request(`${languages},is_hidden`)
+    // Колонки ещё нет (add-test-visibility.sql) — без неё; нет и языковых
+    // (add-languages.sql) — всё русское.
+    if (response.status === 400) response = await request(languages)
     if (response.status === 400) response = await request(base)
     if (!response.ok) throw new Error(`${response.status} ${await response.text()}`)
-    return (await response.json()).map((t) => ({ ...t, lang: t.lang ?? 'ru', translation_group: t.translation_group ?? t.id }))
+    return (await response.json())
+      .filter((t) => !t.is_hidden) // скрытые — только в админке
+      .map((t) => ({ ...t, lang: t.lang ?? 'ru', translation_group: t.translation_group ?? t.id }))
   } catch (error) {
     console.warn('prerender: не получилось загрузить пробники —', error.message)
     return []

@@ -292,6 +292,7 @@ export default {
     questionsLabel: 'заданий',
     minutesLabel: 'минут',
     noPdf: 'Файл ещё не загружен',
+    hiddenNotice: 'Этот пробник скрыт: его видят только админы, пользователям и поисковикам он недоступен.',
     proOnly: 'Этот пробник — только в PRO. Описание открыто всем, а пройти его можно с PRO.',
     downloadLink: 'Скачать материалы',
     preparingPdf: 'Готовим файл…',
@@ -571,6 +572,7 @@ export default {
     deleteRussianFirst:
       'русскую версию нельзя удалить, пока есть переводы: она показывается на языках без перевода. Сначала удали переводы.',
     noDownloadUrl: 'в базе ещё нет колонки для ссылки — выполни supabase/add-download-url.sql в Supabase (SQL Editor)',
+    noVisibility: 'в базе ещё нет колонки для скрытия — выполни supabase/add-test-visibility.sql в Supabase (SQL Editor)',
     supabaseNotConfigured: 'Supabase не подключен — сначала настрой .env (см. README).',
     translateNetwork: 'Не получилось связаться с сервисом перевода — проверь интернет-соединение.',
     translateUnavailable: 'Сервис перевода сейчас недоступен, попробуй чуть позже.',

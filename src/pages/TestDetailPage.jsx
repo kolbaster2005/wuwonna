@@ -14,6 +14,7 @@ import {
   Languages,
   Lock,
   Crown,
+  EyeOff,
 } from 'lucide-react'
 import { fetchTestByPath, fetchTestPdf, fetchTestVersions } from '../lib/data'
 import { useAuth } from '../lib/authContext'
@@ -31,7 +32,7 @@ export default function TestDetailPage() {
   const { t, lang, path } = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, hasPro, loading: authLoading } = useAuth()
+  const { user, hasPro, isAdmin, loading: authLoading } = useAuth()
   const { openProModal } = useProModal()
   const [test, setTest] = useState(undefined)
   // Русская версия на чужом языке (перевода нет) — не для поиска: noindex и
@@ -82,7 +83,9 @@ export default function TestDetailPage() {
     return <main className="mx-auto max-w-6xl px-6 py-12 text-sm text-ink/40">{t('testDetail.loading')}</main>
   }
 
-  if (test === null) {
+  // Скрытый пробник пользователям не показываем — как будто его нет. Админ
+  // видит страницу с плашкой (чтобы проверить перед публикацией).
+  if (test === null || (test.is_hidden && !isAdmin)) {
     return (
       <main className="mx-auto max-w-6xl px-6 py-24 text-center">
         <h1 className="text-2xl font-extrabold">{t('testDetail.notFound')}</h1>
@@ -106,6 +109,12 @@ export default function TestDetailPage() {
   return (
     <main className="page">
       <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title }]} />
+
+      {test.is_hidden && (
+        <p className="mt-5 flex items-start gap-2 border border-ink/20 bg-ink/5 px-4 py-3 text-sm text-ink/70">
+          <EyeOff size={16} className="mt-0.5 shrink-0" /> {t('testDetail.hiddenNotice')}
+        </p>
+      )}
 
       {test.is_fallback && (
         <p className="mt-5 flex items-start gap-2 border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">

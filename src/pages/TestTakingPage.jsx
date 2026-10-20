@@ -79,7 +79,7 @@ export default function TestTakingPage({ review = false }) {
   const [searchParams] = useSearchParams()
   const attemptId = searchParams.get('attempt')
   const navigate = useNavigate()
-  const { user, hasPro, loading: authLoading } = useAuth()
+  const { user, hasPro, isAdmin, loading: authLoading } = useAuth()
   const [test, setTest] = useState(undefined)
   const [questions, setQuestions] = useState([])
   const [passages, setPassages] = useState([])
@@ -276,7 +276,8 @@ export default function TestTakingPage({ review = false }) {
   if (test === undefined || authLoading || (review ? attempt === undefined : !draftReady) && test !== null) {
     return <main className="mx-auto max-w-6xl px-6 py-12 text-sm text-ink/40">{t('testTaking.loading')}</main>
   }
-  if (test === null) {
+  // Скрытый пробник (is_hidden) — только для админа.
+  if (test === null || (test.is_hidden && !isAdmin)) {
     return (
       <main className="mx-auto max-w-6xl px-6 py-24 text-center">
         <h1 className="text-2xl font-extrabold">{t('testDetail.notFound')}</h1>

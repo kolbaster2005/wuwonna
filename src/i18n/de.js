@@ -290,6 +290,7 @@ export default {
     questionsLabel: { one: 'Aufgabe', other: 'Aufgaben' },
     minutesLabel: { one: 'Minute', other: 'Minuten' },
     noPdf: 'Datei noch nicht hochgeladen',
+    hiddenNotice: 'Dieser Probetest ist ausgeblendet: Nur Admins sehen ihn, für Nutzer:innen und Suchmaschinen ist er nicht sichtbar.',
     proOnly: 'Dieser Probetest ist nur mit PRO verfügbar. Die Beschreibung ist für alle sichtbar, machen kannst du ihn mit PRO.',
     downloadLink: 'Materialien herunterladen',
     preparingPdf: 'Datei wird vorbereitet …',
@@ -560,6 +561,7 @@ export default {
     deleteRussianFirst:
       'Die russische Version kann nicht gelöscht werden, solange es Übersetzungen gibt. Lösche zuerst die Übersetzungen.',
     noDownloadUrl: 'In der Datenbank fehlt die Spalte für den Link – führe supabase/add-download-url.sql aus.',
+    noVisibility: 'In der Datenbank fehlt die Spalte zum Ausblenden – führe supabase/add-test-visibility.sql aus.',
     supabaseNotConfigured: 'Supabase ist nicht verbunden – richte zuerst .env ein (siehe README).',
     translateNetwork: 'Der Übersetzungsdienst ist nicht erreichbar – prüfe deine Internetverbindung.',
     translateUnavailable: 'Der Übersetzungsdienst ist gerade nicht verfügbar, versuch es später noch einmal.',

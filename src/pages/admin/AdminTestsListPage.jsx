@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, FileText, Pin, Crown, Users, GripVertical } from 'lucide-react'
+import { Plus, Pencil, Trash2, FileText, Pin, Crown, Users, GripVertical, Eye, EyeOff } from 'lucide-react'
 import {
   fetchTests,
   fetchCategories,
   deleteTest,
   setTestProAccess,
+  setTestHidden,
   setTestCategory,
   reorderTests,
   createTestTranslation,
@@ -67,6 +68,7 @@ export default function AdminTestsListPage() {
   const [tests, setTests] = useState(null)
   const [categories, setCategories] = useState([])
   const [togglingProId, setTogglingProId] = useState(null)
+  const [togglingHiddenId, setTogglingHiddenId] = useState(null)
 
   // Перетаскивание: список переставляется "вживую" по мере движения, а в
   // базу порядок уходит один раз — когда отпустили (dragend).
@@ -184,6 +186,20 @@ export default function AdminTestsListPage() {
     }
   }
 
+  // Скрыть от пользователей / показать: скрытый пробник виден только здесь.
+  async function handleToggleHidden(test) {
+    const nextIsHidden = !test.is_hidden
+    setTogglingHiddenId(test.id)
+    try {
+      await setTestHidden(test, nextIsHidden)
+      setTests((prev) => prev.map((t) => (t.id === test.id ? { ...t, is_hidden: nextIsHidden } : t)))
+    } catch (err) {
+      alert(`Не получилось изменить видимость: ${translateError('ru', err)}`)
+    } finally {
+      setTogglingHiddenId(null)
+    }
+  }
+
   return (
     <div>
       {!isSupabaseConfigured && (
@@ -240,7 +256,7 @@ export default function AdminTestsListPage() {
               onDrop={(e) => e.preventDefault()}
               onDragEnd={handleDragEnd}
               className={`flex flex-col gap-3 py-4 pl-2 pr-4 transition-colors sm:pr-5 lg:flex-row lg:items-center lg:justify-between lg:gap-4 ${
-                draggingId === test.id ? 'bg-pine-50/70 opacity-60' : ''
+                draggingId === test.id ? 'bg-pine-50/70 opacity-60' : test.is_hidden ? 'bg-paper' : ''
               }`}
             >
               <div className="flex items-center gap-3">
@@ -278,6 +294,23 @@ export default function AdminTestsListPage() {
                     </option>
                   ))}
                 </select>
+                <button
+                  onClick={() => handleToggleHidden(test)}
+                  disabled={togglingHiddenId === test.id}
+                  title={
+                    test.is_hidden
+                      ? 'Скрыт: виден только в админке — нажми, чтобы показать пользователям'
+                      : 'Виден пользователям — нажми, чтобы скрыть (останется только в админке)'
+                  }
+                  className={`flex items-center gap-1.5 border px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
+                    test.is_hidden
+                      ? 'border-ink/40 bg-ink/5 text-ink/70 hover:border-ink/60'
+                      : 'border-line text-ink/70 hover:border-ink/30'
+                  }`}
+                >
+                  {test.is_hidden ? <EyeOff size={14} /> : <Eye size={14} />}
+                  {test.is_hidden ? 'Скрыт' : 'Виден'}
+                </button>
                 <button
                   onClick={() => handleToggleProAccess(test)}
                   disabled={togglingProId === test.id}

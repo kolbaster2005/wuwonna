@@ -64,7 +64,7 @@ export async function createCategory({ name, slug }) {
 // обычных запросах явно перечисляем колонки без pdf_url, а сам файл
 // запрашиваем отдельно, только когда пользователь жмёт "Скачать".
 const TEST_LIST_COLUMNS =
-  'id, category_id, title, description, long_description, originality, is_pinned, is_pro, questions_count, duration_minutes, year, sort_order, section, created_at, lang, translation_group, slug, seo_title, seo_description, download_url'
+  'id, category_id, title, description, long_description, originality, is_pinned, is_pro, questions_count, duration_minutes, year, sort_order, section, created_at, lang, translation_group, slug, seo_title, seo_description, download_url, is_hidden'
 
 // Эти колонки появляются только после отдельных SQL-скриптов. Пока скрипт не
 // выполнен, запрос с такой колонкой падает (Postgres 42703 "column does not
@@ -79,6 +79,7 @@ const OPTIONAL_COLUMNS = {
   seo_title: 'supabase/add-languages.sql',
   seo_description: 'supabase/add-languages.sql',
   download_url: 'supabase/add-download-url.sql',
+  is_hidden: 'supabase/add-test-visibility.sql',
 }
 const MISSING_COLUMN = '42703'
 
@@ -98,6 +99,7 @@ export const SHARED_TEST_FIELDS = [
   'year',
   'duration_minutes',
   'originality',
+  'is_hidden',
 ]
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -199,11 +201,13 @@ function localTests() {
     .map((t) => withLanguage({ ...t, questions_count: store.listQuestions(t.id).length, has_pdf: Boolean(t.pdf_url) }))
 }
 
-// lang не указан — все языковые версии (админка). Указан — по одной версии
-// на группу: на этом языке или русская (см. pickVersions).
+// lang не указан — все языковые версии, и скрытые тоже (админка). Указан —
+// сайт: по одной версии на группу, на этом языке или русская (см.
+// pickVersions); скрытые пробники (is_hidden) не показываются.
 export async function fetchTests({ categoryId, lang } = {}) {
   const finish = (tests) => {
-    const filtered = categoryId ? tests.filter((t) => t.category_id === categoryId) : tests
+    const visible = lang ? tests.filter((t) => !t.is_hidden) : tests
+    const filtered = categoryId ? visible.filter((t) => t.category_id === categoryId) : visible
     return sortTests(lang ? pickVersions(filtered, lang) : filtered)
   }
   if (!isSupabaseConfigured) return finish(localTests())
@@ -409,6 +413,18 @@ export async function reorderTests(orderedGroups) {
 export async function setTestProAccess(test, isPro) {
   if (!isSupabaseConfigured) return store.updateGroup(test, { is_pro: isPro })
   await updateGroup(test, { is_pro: isPro })
+}
+
+// Скрыть пробник от пользователей (все языковые версии) или снова показать.
+// Скрытый виден только в админке.
+export async function setTestHidden(test, isHidden) {
+  if (!isSupabaseConfigured) return store.updateGroup(test, { is_hidden: isHidden })
+  try {
+    await updateGroup(test, { is_hidden: isHidden })
+  } catch (error) {
+    if (error.code === MISSING_COLUMN) throw new Error('errors.noVisibility')
+    throw error
+  }
 }
 
 // Закрепить/открепить пробник (все языковые версии). Отдельный update —

@@ -82,6 +82,7 @@ export default {
     bestResult: 'Лучший результат, попыток: {count}',
     done: 'Пройдено · {percent}%',
     questions: { one: '{count} задание', few: '{count} задания', many: '{count} заданий', other: '{count} задания' },
+    details: 'Подробнее',
     openWithPro: 'Открыть с PRO',
     inProgress: 'Начат · {answered} из {total}',
     continue: 'Продолжить',
@@ -291,6 +292,8 @@ export default {
     questionsLabel: 'заданий',
     minutesLabel: 'минут',
     noPdf: 'Файл ещё не загружен',
+    proOnly: 'Этот пробник — только в PRO. Описание открыто всем, а пройти его можно с PRO.',
+    downloadLink: 'Скачать материалы',
     preparingPdf: 'Готовим файл…',
     downloadPdf: 'Скачать в PDF',
     scoringHint: 'Баллы считаются так же, как на реальном экзамене',
@@ -552,6 +555,10 @@ export default {
     privateTitle: 'WU WONNA — подготовка к экзамену WU Wien',
   },
 
+  imageZoom: {
+    open: 'Увеличить картинку',
+  },
+
   errors: {
     notAllowed:
       'изменение не сохранилось — нет прав на запись. Нужна роль admin (см. README, «Защита админки»); если роль только что выдана — выйди и войди заново.',
@@ -563,6 +570,7 @@ export default {
     versionExists: 'версия на этом языке уже есть',
     deleteRussianFirst:
       'русскую версию нельзя удалить, пока есть переводы: она показывается на языках без перевода. Сначала удали переводы.',
+    noDownloadUrl: 'в базе ещё нет колонки для ссылки — выполни supabase/add-download-url.sql в Supabase (SQL Editor)',
     supabaseNotConfigured: 'Supabase не подключен — сначала настрой .env (см. README).',
     translateNetwork: 'Не получилось связаться с сервисом перевода — проверь интернет-соединение.',
     translateUnavailable: 'Сервис перевода сейчас недоступен, попробуй чуть позже.',

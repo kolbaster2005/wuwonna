@@ -1,11 +1,25 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowRight, Download, ListChecks, Clock, ShieldCheck, CalendarDays, Scale, CheckCheck, Eye, Languages } from 'lucide-react'
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
+import {
+  ArrowRight,
+  Download,
+  ExternalLink,
+  ListChecks,
+  Clock,
+  ShieldCheck,
+  CalendarDays,
+  Scale,
+  CheckCheck,
+  Eye,
+  Languages,
+  Lock,
+  Crown,
+} from 'lucide-react'
 import { fetchTestByPath, fetchTestPdf, fetchTestVersions } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import Breadcrumbs from '../components/Breadcrumbs'
 import RichText from '../components/RichText'
-import ProLockedNotice from '../components/ProLockedNotice'
+import { useProModal } from '../lib/proModal'
 import { useSeo } from '../lib/seo'
 import { testExamPath, testPath, testSeo } from '../seo/content'
 import { useI18n } from '../i18n'
@@ -17,7 +31,8 @@ export default function TestDetailPage() {
   const { t, lang, path } = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
-  const { hasPro, loading: authLoading } = useAuth()
+  const { user, hasPro, loading: authLoading } = useAuth()
+  const { openProModal } = useProModal()
   const [test, setTest] = useState(undefined)
   // Русская версия на чужом языке (перевода нет) — не для поиска: noindex и
   // canonical на русскую страницу (testSeo строит путь по языку версии).
@@ -76,16 +91,10 @@ export default function TestDetailPage() {
     )
   }
 
-  if (test.is_pro && !hasPro) {
-    return (
-      <main className="page">
-        <Breadcrumbs items={[{ label: t('breadcrumbs.tests'), to: path('tests') }, { label: test.title }]} />
-        <div className="card mt-6 p-5 sm:mt-8 sm:p-8 lg:p-10">
-          <ProLockedNotice testTitle={test.title} />
-        </div>
-      </main>
-    )
-  }
+  // PRO-пробник без PRO: описание и всё о пробнике видно, а пройти и скачать
+  // материалы — только с PRO (прямая ссылка на прохождение тоже закрыта, см.
+  // ProLockedNotice в TestTakingPage).
+  const locked = Boolean(test.is_pro) && !hasPro
 
   const meta = [
     { icon: ListChecks, text: t('testCard.questions', { count: test.questions_count }) },
@@ -141,18 +150,40 @@ export default function TestDetailPage() {
               </div>
             </div>
 
-            <button onClick={() => navigate(testExamPath(test, lang))} className="btn btn-primary btn-lg mt-5 w-full">
-              {t('testCard.start')} <ArrowRight size={17} />
-            </button>
+            {locked ? (
+              <>
+                <p className="mt-5 flex items-start gap-2 border border-amber-200 bg-amber-50 px-3 py-2.5 text-[13px] leading-snug text-amber-800">
+                  <Lock size={15} className="mt-px shrink-0" /> {t('testDetail.proOnly')}
+                </p>
+                <button onClick={() => openProModal()} className="btn btn-primary btn-lg mt-3 w-full">
+                  <Crown size={17} /> {t('testCard.openWithPro')}
+                </button>
+                {!user && (
+                  <p className="mt-3 text-center text-sm text-ink/50">
+                    {t('proLocked.alreadyPro')}{' '}
+                    <Link to={path('login')} state={{ from: location }} className="font-semibold text-pine-700 hover:text-pine-800">
+                      {t('proLocked.login')}
+                    </Link>
+                  </p>
+                )}
+              </>
+            ) : (
+              <button onClick={() => navigate(testExamPath(test, lang))} className="btn btn-primary btn-lg mt-5 w-full">
+                {t('testCard.start')} <ArrowRight size={17} />
+              </button>
+            )}
 
-            <button
-              onClick={handleDownloadPdf}
-              disabled={!test.has_pdf || downloadingPdf}
-              title={test.has_pdf ? undefined : t('testDetail.noPdf')}
-              className="btn btn-secondary mt-2.5 w-full"
-            >
-              <Download size={16} /> {downloadingPdf ? t('testDetail.preparingPdf') : t('testDetail.downloadPdf')}
-            </button>
+            {/* Материалы: ссылка (Google Диск и т.п.) или PDF из базы; нет ни того,
+                ни другого — кнопки нет. У закрытого PRO-пробника — тоже нет. */}
+            {!locked && test.download_url ? (
+              <a href={test.download_url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary mt-2.5 w-full">
+                <ExternalLink size={16} /> {t('testDetail.downloadLink')}
+              </a>
+            ) : !locked && test.has_pdf ? (
+              <button onClick={handleDownloadPdf} disabled={downloadingPdf} className="btn btn-secondary mt-2.5 w-full">
+                <Download size={16} /> {downloadingPdf ? t('testDetail.preparingPdf') : t('testDetail.downloadPdf')}
+              </button>
+            ) : null}
 
             <ul className="mt-5 space-y-2.5 border-t border-line pt-5 text-[13px] leading-snug text-ink/55">
               <li className="flex gap-2.5">

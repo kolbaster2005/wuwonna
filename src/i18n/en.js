@@ -79,6 +79,7 @@ export default {
     bestResult: 'Best result, attempts: {count}',
     done: 'Done · {percent}%',
     questions: { one: '{count} question', other: '{count} questions' },
+    details: 'Details',
     openWithPro: 'Unlock with PRO',
     inProgress: 'Started · {answered} of {total}',
     continue: 'Continue',
@@ -288,6 +289,8 @@ export default {
     questionsLabel: { one: 'question', other: 'questions' },
     minutesLabel: { one: 'minute', other: 'minutes' },
     noPdf: 'File not uploaded yet',
+    proOnly: 'This practice test is PRO only. Anyone can read the description; you can take it with PRO.',
+    downloadLink: 'Download materials',
     preparingPdf: 'Preparing file…',
     downloadPdf: 'Download as PDF',
     scoringHint: 'Scored exactly like the real exam',
@@ -541,6 +544,10 @@ export default {
     privateTitle: 'WU WONNA – WU Vienna entrance exam preparation',
   },
 
+  imageZoom: {
+    open: 'Enlarge image',
+  },
+
   errors: {
     notAllowed:
       'Change not saved – no write permission. The admin role is required; if it was just granted, log out and back in.',
@@ -550,6 +557,7 @@ export default {
     noLanguages: 'The database has no language versions yet – run supabase/add-languages.sql.',
     versionExists: 'A version in this language already exists.',
     deleteRussianFirst: 'The Russian version can’t be deleted while translations exist. Delete the translations first.',
+    noDownloadUrl: 'The database has no column for the link yet – run supabase/add-download-url.sql.',
     supabaseNotConfigured: 'Supabase isn’t connected – set up .env first (see README).',
     translateNetwork: 'Couldn’t reach the translation service – check your internet connection.',
     translateUnavailable: 'The translation service is unavailable right now, please try again later.',

@@ -23,6 +23,7 @@ import QuestionNavGrid from '../components/QuestionNavGrid'
 import HighlightableText from '../components/HighlightableText'
 import RichText from '../components/RichText'
 import AddWordModal from '../components/AddWordModal'
+import ZoomableImage from '../components/ZoomableImage'
 import ProLockedNotice from '../components/ProLockedNotice'
 import ResultScreen, { secondaryActionClass } from '../components/ResultScreen'
 import { useConfirm } from '../lib/confirmDialog'
@@ -598,13 +599,7 @@ export default function TestTakingPage({ review = false }) {
                 </div>
                 <p className="mt-1.5 text-xs text-ink/35">{t('testTaking.selectHint')}</p>
 
-                {question.image_url && (
-                  <img
-                    src={question.image_url}
-                    alt=""
-                    className="mt-4 max-h-80 w-full border border-line object-contain"
-                  />
-                )}
+                {question.image_url && <ZoomableImage src={question.image_url} className="mt-4" />}
 
                 <h3 className="mt-5 text-sm font-bold uppercase tracking-wide text-ink/40 sm:mt-6">
                   {t('testTaking.options')}{' '}

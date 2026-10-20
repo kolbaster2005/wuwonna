@@ -80,6 +80,7 @@ export default {
     bestResult: 'Bestes Ergebnis, Versuche: {count}',
     done: 'Erledigt · {percent} %',
     questions: { one: '{count} Aufgabe', other: '{count} Aufgaben' },
+    details: 'Mehr erfahren',
     openWithPro: 'Mit PRO öffnen',
     inProgress: 'Begonnen · {answered} von {total}',
     continue: 'Weitermachen',
@@ -289,6 +290,8 @@ export default {
     questionsLabel: { one: 'Aufgabe', other: 'Aufgaben' },
     minutesLabel: { one: 'Minute', other: 'Minuten' },
     noPdf: 'Datei noch nicht hochgeladen',
+    proOnly: 'Dieser Probetest ist nur mit PRO verfügbar. Die Beschreibung ist für alle sichtbar, machen kannst du ihn mit PRO.',
+    downloadLink: 'Materialien herunterladen',
     preparingPdf: 'Datei wird vorbereitet …',
     downloadPdf: 'Als PDF herunterladen',
     scoringHint: 'Punkte werden wie in der echten Prüfung berechnet',
@@ -542,6 +545,10 @@ export default {
     privateTitle: 'WU WONNA – Vorbereitung auf die Aufnahmeprüfung der WU Wien',
   },
 
+  imageZoom: {
+    open: 'Bild vergrößern',
+  },
+
   errors: {
     notAllowed:
       'Änderung nicht gespeichert – keine Schreibrechte. Dafür ist die Rolle admin nötig; wenn sie gerade vergeben wurde, melde dich ab und wieder an.',
@@ -552,6 +559,7 @@ export default {
     versionExists: 'Eine Version in dieser Sprache gibt es schon.',
     deleteRussianFirst:
       'Die russische Version kann nicht gelöscht werden, solange es Übersetzungen gibt. Lösche zuerst die Übersetzungen.',
+    noDownloadUrl: 'In der Datenbank fehlt die Spalte für den Link – führe supabase/add-download-url.sql aus.',
     supabaseNotConfigured: 'Supabase ist nicht verbunden – richte zuerst .env ein (siehe README).',
     translateNetwork: 'Der Übersetzungsdienst ist nicht erreichbar – prüfe deine Internetverbindung.',
     translateUnavailable: 'Der Übersetzungsdienst ist gerade nicht verfügbar, versuch es später noch einmal.',

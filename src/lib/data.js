@@ -64,7 +64,7 @@ export async function createCategory({ name, slug }) {
 // обычных запросах явно перечисляем колонки без pdf_url, а сам файл
 // запрашиваем отдельно, только когда пользователь жмёт "Скачать".
 const TEST_LIST_COLUMNS =
-  'id, category_id, title, description, long_description, originality, is_pinned, is_pro, questions_count, duration_minutes, year, sort_order, section, created_at, lang, translation_group, slug, seo_title, seo_description'
+  'id, category_id, title, description, long_description, originality, is_pinned, is_pro, questions_count, duration_minutes, year, sort_order, section, created_at, lang, translation_group, slug, seo_title, seo_description, download_url'
 
 // Эти колонки появляются только после отдельных SQL-скриптов. Пока скрипт не
 // выполнен, запрос с такой колонкой падает (Postgres 42703 "column does not
@@ -78,6 +78,7 @@ const OPTIONAL_COLUMNS = {
   slug: 'supabase/add-languages.sql',
   seo_title: 'supabase/add-languages.sql',
   seo_description: 'supabase/add-languages.sql',
+  download_url: 'supabase/add-download-url.sql',
 }
 const MISSING_COLUMN = '42703'
 
@@ -367,6 +368,7 @@ export async function saveTest(test) {
   }
 
   const { data, error } = await supabase.from('practice_tests').upsert(test).select().single()
+  if (error?.code === MISSING_COLUMN && error.message?.includes('download_url')) throw new Error('errors.noDownloadUrl')
   if (error) throw error
   // Общие поля (SHARED_TEST_FIELDS) — сразу во всех языковых версиях.
   if (test.id && data.translation_group) {

@@ -74,6 +74,13 @@ export default function AdminTestFormPage() {
   const [publishedSlug, setPublishedSlug] = useState(null)
   const [slugError, setSlugError] = useState('')
 
+  // Материалы для скачивания: 'none' | 'pdf' (файл в базе) | 'link' (ссылка:
+  // Google Диск и т.п.). Есть ли колонка download_url (add-download-url.sql) —
+  // видно по загруженному пробнику.
+  const [downloadMode, setDownloadMode] = useState('none')
+  const [hasDownloadColumn, setHasDownloadColumn] = useState(false)
+  const [downloadError, setDownloadError] = useState('')
+
   useEffect(() => {
     fetchCategories().then((cats) => {
       setCategories(cats)
@@ -87,6 +94,8 @@ export default function AdminTestFormPage() {
     fetchTestById(testId).then((t) => {
       if (t) {
         setForm(t)
+        setDownloadMode(t.download_url ? 'link' : t.has_pdf ? 'pdf' : 'none')
+        setHasDownloadColumn('download_url' in t)
         setPublishedSlug(t.slug)
         fetchTestVersions(t.translation_group).then(setVersions)
       }
@@ -121,6 +130,12 @@ export default function AdminTestFormPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     setSlugError('')
+    setDownloadError('')
+    const downloadUrl = form.download_url?.trim() ?? ''
+    if (downloadMode === 'link' && !/^https?:\/\/\S+$/i.test(downloadUrl)) {
+      setDownloadError('Вставь полную ссылку, начиная с https://')
+      return
+    }
     const slug = form.slug?.trim() || null
     const lang = form.lang ?? 'ru'
     if (slug && !SLUG_FORMAT.test(slug)) {
@@ -149,6 +164,11 @@ export default function AdminTestFormPage() {
         delete payload.seo_title
         delete payload.seo_description
       }
+      // Либо PDF, либо ссылка, либо ничего: лишнее очищаем.
+      if (downloadMode !== 'pdf') payload.pdf_url = null
+      if (downloadMode === 'link') payload.download_url = downloadUrl
+      else if (hasDownloadColumn) payload.download_url = null
+      else delete payload.download_url
       await reportErrors('сохранить пробник', async () => {
         const saved = await saveTest(payload)
         if (isNew) {
@@ -353,8 +373,44 @@ export default function AdminTestFormPage() {
         </div>
 
         <div className="mt-4">
-          <label className="text-sm font-semibold">PDF-файл пробника (необязательно)</label>
-          {pdfPresent ? (
+          <label className="text-sm font-semibold">Материалы для скачивания (необязательно)</label>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            {[
+              ['none', 'Нет'],
+              ['pdf', 'PDF-файл'],
+              ['link', 'Ссылка'],
+            ].map(([mode, label]) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => {
+                  setDownloadMode(mode)
+                  setDownloadError('')
+                }}
+                className={`border px-3 py-1.5 text-sm font-semibold transition-colors ${
+                  downloadMode === mode ? 'border-pine-600 bg-pine-50 text-pine-700' : 'border-line text-ink/60 hover:border-ink/30'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1 text-xs text-ink/40">
+            На странице пробника кнопка «Скачать материалы» — только если выбран PDF или ссылка.
+          </p>
+          {downloadMode === 'link' && (
+            <div className="mt-2">
+              <input
+                value={form.download_url ?? ''}
+                onChange={(e) => update('download_url', e.target.value)}
+                className="w-full max-w-xl border border-line px-3 py-2 text-sm focus:outline-none"
+                placeholder="https://drive.google.com/…"
+              />
+              <p className="mt-1 text-xs text-ink/40">Google Диск или любая другая ссылка — откроется в новой вкладке.</p>
+              {downloadError && <p className="mt-1 text-xs font-semibold text-red-600">{downloadError}</p>}
+            </div>
+          )}
+          {downloadMode !== 'pdf' ? null : pdfPresent ? (
             <div className="mt-1.5 flex items-center gap-3">
               <span className="flex items-center gap-1.5 text-sm text-ink/60">
                 <FileUp size={15} /> Файл загружен

@@ -4,7 +4,6 @@ import { FileText, ListChecks, Clock, ShieldCheck, Pin, Lock, CheckCircle2, Rota
 import { setTestPinned } from '../lib/data'
 import { useAuth } from '../lib/authContext'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
-import { useProModal } from '../lib/proModal'
 import RichText from './RichText'
 import { testExamPath, testPath, testResultPath } from '../seo/content'
 import { useI18n } from '../i18n'
@@ -17,7 +16,6 @@ import { useI18n } from '../i18n'
 export default function TestCard({ test, result, draft, onPinChange }) {
   const [pinning, setPinning] = useState(false)
   const { hasPro, isAdmin, loading: authLoading } = useAuth()
-  const { openProModal } = useProModal()
   const { t, lang, errorText } = useI18n()
   // Закреплять/откреплять может только админ. Без Supabase входа нет вообще —
   // тогда, как и в админке (RequireAuth), не мешаем локальной разработке.
@@ -132,12 +130,13 @@ export default function TestCard({ test, result, draft, onPinChange }) {
           прозрачный): так в ряду карточек они стоят ровно на одной линии,
           одна это кнопка или две. */}
       {isLockedForUser ? (
-        <button
-          onClick={() => openProModal()}
+        // Закрытый пробник: описание можно прочитать на его странице, там же — «Открыть с PRO».
+        <Link
+          to={testPath(test, lang)}
           className="mt-5 flex h-11 w-full items-center justify-center gap-2 border border-ink/25 bg-white text-sm font-bold text-ink/60 transition-colors hover:border-pine-600 hover:bg-pine-50 hover:text-pine-700 sm:mt-6"
         >
-          <Lock size={14} /> {t('testCard.openWithPro')}
-        </button>
+          <Lock size={14} /> {t('testCard.details')}
+        </Link>
       ) : inProgress && !isDone ? (
         // Начат и ни разу не завершён — продолжить с того же места.
         <Link

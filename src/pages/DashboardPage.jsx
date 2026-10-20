@@ -178,6 +178,11 @@ const smallButton = (primary) =>
 
 // --- справа, 2-я строка: пробники в формате экзамена ---
 
+// Кнопки в строках виджета — одной ширины («Начать», «Продолжить», «Ещё раз»,
+// PRO), чтобы стояли ровным столбцом; ширина — под самую длинную подпись (DE).
+const EXAM_BUTTON = 'w-[9.5rem]'
+
+
 // drafts — незавершённые попытки: у начатого пробника «Продолжить».
 function ExamsWidget({ exams, attempts, drafts }) {
   const { t, lang, path } = useI18n()
@@ -222,15 +227,15 @@ function ExamsWidget({ exams, attempts, drafts }) {
                 </p>
               </div>
               {locked ? (
-                <button onClick={() => openProModal()} className={smallButton(false)}>
+                <button onClick={() => openProModal()} className={`${smallButton(false)} ${EXAM_BUTTON}`}>
                   <Lock size={13} /> PRO
                 </button>
               ) : draft ? (
-                <Link to={testExamPath(test, lang)} className={smallButton(true)}>
+                <Link to={testExamPath(test, lang)} className={`${smallButton(true)} ${EXAM_BUTTON}`}>
                   {t('testCard.continue')} <ArrowRight size={13} />
                 </Link>
               ) : (
-                <Link to={testPath(test, lang)} className={smallButton(!stats)}>
+                <Link to={testPath(test, lang)} className={`${smallButton(!stats)} ${EXAM_BUTTON}`}>
                   {stats ? (
                     <>
                       <RotateCcw size={13} /> {t('dashboard.exams.again')}

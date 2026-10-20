@@ -114,9 +114,9 @@ const link = (href, text, attrs = '') => `<a href="${esc(href)}"${attrs}>${esc(t
 // Строка словаря без разметки (**…** и переносы строк заголовка).
 const plain = (text) => String(text).replace(/\*\*/g, '').replace(/\s*\n\s*/g, ' ')
 
-// Шапка — на языке страницы, ссылки на её языке; в конце — эта же страница
-// на других языках (hreflang).
-function nav(lang, alternates) {
+// Шапка — на языке страницы, ссылки на её языке. Выбора языка в шапке нет
+// (как на сайте) — ссылки на немецкую и английскую версии в футере.
+function nav(lang) {
   const t = (key) => translate(lang, key)
   const items = [
     link(localPath('tests', {}, lang), t('header.prep.tests')),
@@ -125,26 +125,32 @@ function nav(lang, alternates) {
     link(localPath('about', {}, lang), t('footer.about')),
     link(localPath('pro', {}, lang), 'PRO'),
   ]
-  const languages = alternates
-    .filter((a) => a.lang !== 'x-default' && a.lang !== lang)
-    .map((a) => link(a.path, LANGUAGE_NAMES[a.lang], ` hreflang="${a.lang}" lang="${a.lang}"`))
   return `<header class="mx-auto max-w-6xl px-4 py-4 sm:px-6">
 <nav aria-label="${esc(t('header.menu'))}"><strong>${link(localPath('home', {}, lang), SITE.name)}</strong> ·
-${[...items, ...languages].join(' · ')}</nav>
+${items.join(' · ')}</nav>
 </header>`
 }
 
-// В футере — описание проекта и отказ от связи с WU на языке страницы.
-function footer(lang) {
+// Языки в футере — как на сайте (FOOTER_LANGS в LanguageSwitcher.jsx): только
+// немецкий и английский.
+const FOOTER_LANGS = ['de', 'en']
+
+// В футере — описание проекта, ссылки на немецкую и английскую версии этой
+// страницы (hreflang) и отказ от связи с WU на языке страницы.
+function footer(lang, alternates) {
+  const languages = alternates
+    .filter((a) => FOOTER_LANGS.includes(a.lang) && a.lang !== lang)
+    .map((a) => link(a.path, LANGUAGE_NAMES[a.lang], ` hreflang="${a.lang}" lang="${a.lang}"`))
   return `<footer class="mx-auto max-w-6xl px-4 py-8 text-sm sm:px-6">
 <p>${esc(inLang(SITE_SUMMARY, lang))}</p>
 <p>${link(SITE.youtube, 'YouTube @wuwonna')} · ${link(SITE.telegram, 'Telegram @wuwonna')}</p>
+${languages.length ? `<p>${languages.join(' · ')}</p>` : ''}
 <p>${esc(inLang(DISCLAIMER, lang))}</p>
 </footer>`
 }
 
 function page(body, lang, alternates) {
-  return `${nav(lang, alternates)}\n<main class="page">\n${body}\n</main>\n${footer(lang)}`
+  return `${nav(lang)}\n<main class="page">\n${body}\n</main>\n${footer(lang, alternates)}`
 }
 
 // --- schema.org ---
